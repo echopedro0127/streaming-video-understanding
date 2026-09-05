@@ -1,0 +1,64 @@
+# Local environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local datasets and extracted media
+data/
+datasets/
+models/
+checkpoints/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.zip
+
+# Model and tool caches
+.cache/
+hf_cache/
+torch_cache/
+transformers_cache/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+
+# Experiment outputs and large logs
+results/
+experiments/runs/
+logs/
+*.jsonl
+*.log
+*.prof
+*.sqlite3
+
+# Secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*credentials*
+*secret*
+
+# Local worktrees
+.worktrees/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Keep directory placeholders visible in Git
+!.gitkeep
