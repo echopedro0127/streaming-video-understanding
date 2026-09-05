@@ -1,0 +1,113 @@
+# Streaming Video Understanding with Lightweight Temporal Memory
+
+一个面向 streaming video understanding 的小型、可复现研究工程。项目比较固定视觉预算下的 recent-window、uniform-history，以及“recent local context + compressed global memory”策略，并显式检查 query timestamp 之后的帧不能进入推理。
+
+## Motivation
+
+离线长视频模型可以访问完整视频，但持续到来的视频系统必须在有限显存和固定 memory budget 下工作。本项目把问题约束为：模型只看到当前 timestamp 之前的内容，并在不重复编码完整历史的前提下回答视频问题。
+
+## Research Question
+
+Can a lightweight temporal memory improve streaming video understanding without repeatedly encoding the entire video history?
+
+项目与 TAMS 的关系是研究动机上的连续性：TAMS 关注 offline long-video temporal grounding 中的 timestamp-aware compressed representation；本项目独立实现 online / streaming protocol，研究 bounded historical memory 与 local recent context 的组合。
+
+## Streaming Protocol
+
+- Primary benchmark timestamp 使用 StreamingBench 的 `time_stamp`。
+- 默认只暴露 query timestamp 前 60 秒的内容。
+- frame buffer、memory、sampler、prompt 和 resume key 都遵守同一个 causal boundary。
+- `timestamp <= query_time + 1e-6` 是唯一允许的边界；未来帧会在 backend 调用前抛出错误。
+- 每次只进行一个样本、一个请求的推理，优先适配 6GB RTX 3060 Laptop GPU。
+
+## Method
+
+每个 query 维护两类上下文：最近帧提供局部高分辨率 temporal context，历史帧经过固定容量压缩形成 global memory。Timestamp-aware 版本在 prompt 中同时提供绝对 timestamp 和相对 query 时间，frame selection 本身保持可控一致，便于解释 ablation。
+
+Architecture placeholder:
+
+![Architecture](assets/architecture-placeholder.svg)
+
+## Baselines
+
+固定总 visual budget 的主实验包含：
+
+- `recent-8`
+- `uniform-8`
+- `recent-4+uniform-memory-4`
+- `recent-4+timestamp-aware-memory-4`
+
+Sensitivity 实验只比较 B=4 和 B=16 下的 recent 与 timestamp-aware memory，避免组合成无法在一周内完成的实验矩阵。
+
+## Installation
+
+Python 3.12+ recommended。先根据本机 CUDA / PyTorch 版本安装匹配的 PyTorch wheel，再安装其余依赖：
+
+```bash
+python -m venv .venv
+python -m pip install --upgrade pip
+# 按本机 CUDA 选择 torch / torchvision wheel
+python -m pip install -r requirements.txt
+```
+
+MVP 默认 backend 是 `HuggingFaceTB/SmolVLM2-500M-Video-Instruct`；模型只在显式运行 `--backend smolvlm` 时下载。不要把模型权重、Hugging Face cache 或视频数据提交到 Git。
+
+## Dataset
+
+主数据集为公开的 [StreamingBench](https://streamingbench.github.io/)，其官方代码和数据入口见 [THUNLP-MT/StreamingBench](https://github.com/THUNLP-MT/StreamingBench) 与 [Hugging Face dataset repository](https://huggingface.co/datasets/mjuicem/StreamingBench)。完整仓库较大，本项目只下载 `real-time-1-50` bounded archive；脚本会显示约 9.08GB archive target，并要求至少 25GB 可用空间与显式确认。
+
+```bash
+python scripts/download_data.py \
+  --subset real-time-1-50 \
+  --destination data/streamingbench \
+  --confirm-large-download
+```
+
+数据集卡片没有在本项目中重新声明一个额外 license；使用者必须遵守上游数据集、视频来源和 Hugging Face 条款。本仓库不重新分发视频或模型权重。
+
+## Evaluation
+
+配置位于 `configs/main.yaml` 和 `configs/sensitivity.yaml`。评测输出 JSONL，使用 `(sample_id, config_id)` resume；每条 record 保存 selected frame IDs、timestamps、prediction、correctness、decode/model latency、input frames 和 peak GPU memory。
+
+先运行无需下载数据和模型的 smoke evaluator：
+
+```bash
+python scripts/run_eval.py --config configs/main.yaml \
+  --backend mock --limit 3 --output results/mock-smoke.jsonl --resume
+python scripts/benchmark_runtime.py \
+  --input results/mock-smoke.jsonl \
+  --output results/mock-smoke-summary.json
+```
+
+真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，并使用 `--backend smolvlm`。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
+
+## Results
+
+Not measured yet. 本节只在真实模型、真实数据运行完成并把可复现 summary artifact 复制到仓库后更新；当前不虚构 accuracy、latency 或 GPU memory 数字。
+
+## Efficiency
+
+自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。后续结果应绘制 Accuracy vs Latency、Accuracy vs GPU Memory、Accuracy vs Context Size。
+
+## Failure Analysis
+
+错误样本写入与 output 同目录的 `*-failures.jsonl`，包括 question、query timestamp、prediction、ground truth、recent / memory selected frames 和 timestamps。`scripts/render_case.py` 可以把 causal frame manifest 渲染为可公开的 qualitative case 图。
+
+预设分类：forgotten early evidence、temporal ordering error、distractor frames、insufficient recent context、memory compression loss、semantic retrieval failure、timestamp confusion。最终报告至少人工分析 20–30 个 failure cases，并在这里加入 3–5 个代表性案例。
+
+## Limitations
+
+- 第一阶段使用 training-free / minimal-training inference，不能代表经过专门训练的 streaming VLM。
+- 6GB 显存限制了模型大小和 visual budget；SmolVLM 是工程可行性选择，不是 SOTA 主张。
+- 第一阶段 subset 只用于 controlled comparison，不能替代完整 StreamingBench 评测。
+- memory policy 先采用确定性、可解释的 uniform / timestamp-aware prompt 机制，semantic retrieval 属于 optional extension。
+
+## Citation
+
+如果本项目公开发布，请同时引用 StreamingBench 原论文和官方仓库，并在最终版本补充本项目的实验配置与 commit：
+
+```text
+StreamingBench: A Comprehensive Benchmark for Streaming Video Understanding.
+Official project: https://streamingbench.github.io/
+Official repository: https://github.com/THUNLP-MT/StreamingBench
+```

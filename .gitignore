@@ -62,3 +62,10 @@ Thumbs.db
 
 # Keep directory placeholders visible in Git
 !.gitkeep
+!/assets/
+!/assets/.gitkeep
+!/experiments/
+!/experiments/.gitkeep
+!/results/
+/results/*
+!/results/.gitkeep

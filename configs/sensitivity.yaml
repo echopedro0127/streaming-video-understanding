@@ -1,0 +1,26 @@
+dataset:
+  name: StreamingBench
+  subset: real-time-1-50
+  context_horizon_s: 60.0
+  timestamp_tolerance_s: 1.0e-6
+
+experiment:
+  seed: 7
+  visual_budget: 4
+  sensitivity_budgets:
+    - 4
+    - 16
+  policy_ids:
+    - recent-4
+    - recent-4+timestamp-aware-memory-4
+    - recent-16
+    - recent-8+timestamp-aware-memory-8
+
+model:
+  backend: smolvlm
+  model_id: HuggingFaceTB/SmolVLM2-500M-Video-Instruct
+  max_new_tokens: 8
+
+runtime:
+  sample_fps: 1.0
+  batch_size: 1

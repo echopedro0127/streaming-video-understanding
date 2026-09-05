@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="280" viewBox="0 0 960 280">
+  <rect width="960" height="280" fill="#f8fafc"/>
+  <g font-family="Arial, sans-serif" font-size="18" fill="#0f172a" text-anchor="middle">
+    <rect x="35" y="95" width="170" height="80" rx="12" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="120" y="130">Incoming video</text><text x="120" y="155">chronological chunks</text>
+    <rect x="260" y="45" width="190" height="80" rx="12" fill="#dcfce7" stroke="#16a34a"/>
+    <text x="355" y="80">Recent window</text><text x="355" y="105">local context</text>
+    <rect x="260" y="155" width="190" height="80" rx="12" fill="#fef3c7" stroke="#d97706"/>
+    <text x="355" y="190">Bounded memory</text><text x="355" y="215">compressed history</text>
+    <rect x="510" y="95" width="180" height="80" rx="12" fill="#ede9fe" stroke="#7c3aed"/>
+    <text x="600" y="130">Timestamp-aware</text><text x="600" y="155">prompt + frames</text>
+    <rect x="750" y="95" width="170" height="80" rx="12" fill="#fce7f3" stroke="#db2777"/>
+    <text x="835" y="130">Streaming VLM</text><text x="835" y="155">answer + metrics</text>
+  </g>
+  <g stroke="#64748b" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M205 135 H255"/><path d="M205 135 C225 135 225 85 255 85"/>
+    <path d="M450 85 C480 85 480 125 505 125"/><path d="M450 195 C480 195 480 145 505 145"/>
+    <path d="M690 135 H745"/>
+  </g>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+</svg>
