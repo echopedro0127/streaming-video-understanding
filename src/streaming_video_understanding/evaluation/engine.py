@@ -68,7 +68,7 @@ def _select_policy(
             capacity=recent_capacity,
             tolerance_s=tolerance_s,
         )
-        return selected, selected, False
+        return selected, (), False
     if recent_capacity == 0:
         selected = uniform_history(
             frames,
@@ -76,7 +76,7 @@ def _select_policy(
             capacity=memory_capacity,
             tolerance_s=tolerance_s,
         )
-        return selected, (), policy_kind == "timestamp-aware"
+        return selected, selected, policy_kind == "timestamp-aware"
 
     ordered = tuple(sorted(frames, key=lambda frame: (frame.timestamp_s, frame.frame_id)))
     recent = recent_window(

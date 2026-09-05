@@ -89,3 +89,49 @@ def test_evaluator_rejects_future_frame_before_backend_call():
         )
 
     assert backend.call_count == 0
+
+
+def test_evaluator_manifest_separates_recent_and_memory_frames():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(10)
+            )
+
+    sample = StreamingSample(
+        sample_id="s2",
+        video_id="v2",
+        video_path=Path("video.mp4"),
+        question="What is visible?",
+        options=("cat", "dog", "ball", "car"),
+        answer="A",
+        query_time_s=9.0,
+        task_type="Object Perception",
+        temporal_clue_type="Prior",
+    )
+    record = evaluate_sample(
+        sample,
+        config=ProjectConfig(
+            dataset=DatasetConfig(context_horizon_s=60.0),
+            experiment=ExperimentConfig(visual_budget=4, seed=7),
+        ),
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-2+timestamp-aware-memory-2",
+    )
+
+    assert [frame["frame_id"] for frame in record["selected_recent_frames"]] == [8, 9]
+    assert [frame["frame_id"] for frame in record["selected_memory_frames"]] == [0, 7]

@@ -11,8 +11,8 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Machine audit | Complete | RTX 3060 Laptop GPU, 6GB VRAM, FFmpeg available, 395GB free disk reported by user |
 | Design | Complete | `docs/superpowers/specs/2026-09-05-streaming-video-understanding-design.md` |
 | Git baseline | Complete | `a0aacc1 chore: initialize repository hygiene` |
-| Repository skeleton | In progress | This branch |
-| MVP evaluator | Not started |  |
+| Repository skeleton | Complete | `README.md`, configs, scripts, package layout, and public-data `.gitignore` rules |
+| MVP evaluator | Complete | 26 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
 | Real-model smoke test | Not started |  |
 | Core experiment | Not started |  |
 | Failure analysis | Not started |  |
@@ -55,6 +55,16 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 4. Implement mock backend and optional SmolVLM backend.
 5. Implement resumable evaluator and metrics.
 6. Run synthetic smoke tests and a real-model 3–5 sample smoke test.
+
+### MVP verification evidence
+
+- `python -m pytest -q` passes with **26 tests**.
+- `python scripts/run_eval.py --config configs/main.yaml --backend mock --limit 3 --output results/mock-smoke.jsonl --overwrite` writes 3 records.
+- Re-running with `--resume` reports `processed=0 skipped=3`, confirming sample/config resumability.
+- `python scripts/benchmark_runtime.py --input results/mock-smoke.jsonl --output results/mock-smoke-summary.json` writes the expected summary keys.
+- `python scripts/render_case.py --input results/mock-smoke.jsonl --output results/mock-smoke-case.png` writes a causal timestamp contact sheet.
+- These smoke artifacts are intentionally ignored by Git; they are local verification evidence, not benchmark results.
+- Real-model smoke is still pending because PyTorch / Transformers / PyAV and model weights have not been installed or downloaded.
 
 ### Core Experiment
 
