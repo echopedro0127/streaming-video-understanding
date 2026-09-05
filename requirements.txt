@@ -1,0 +1,15 @@
+# Install a CUDA-compatible PyTorch wheel for the local driver first.
+# Example: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
+
+numpy>=2.0
+pandas>=2.2
+Pillow>=10.0
+PyYAML>=6.0
+psutil>=6.0
+pytest>=8.0
+torch>=2.6
+torchvision>=0.21
+transformers>=4.51
+accelerate>=1.2
+safetensors>=0.5
+av>=14.0
