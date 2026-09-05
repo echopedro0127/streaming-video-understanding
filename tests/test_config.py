@@ -30,3 +30,17 @@ def test_load_config_rejects_zero_visual_budget(tmp_path: Path):
 
     with pytest.raises(ValueError, match="visual_budget"):
         load_config(config_path)
+
+
+def test_load_config_preserves_policy_ids(tmp_path: Path):
+    config_path = tmp_path / "policies.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n"
+        "  policy_ids: [recent-8, uniform-8]\n",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.experiment.policy_ids == ("recent-8", "uniform-8")

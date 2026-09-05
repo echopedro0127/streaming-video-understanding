@@ -44,6 +44,19 @@ def test_uniform_history_is_deterministic_and_causal():
     assert max(frame.timestamp_s for frame in selected) <= 50.0
 
 
+def test_uniform_history_supports_single_slot():
+    selected = uniform_history(frames()[:-1], visible_until_s=50.0, capacity=1)
+    assert len(selected) == 1
+
+
+def test_buffer_rejects_non_finite_or_negative_timestamp():
+    buffer = CausalFrameBuffer(visible_until_s=50.0)
+    with pytest.raises(ValueError, match="timestamp"):
+        buffer.add(FrameRecord(7, float("nan")))
+    with pytest.raises(ValueError, match="timestamp"):
+        buffer.add(FrameRecord(8, -1.0))
+
+
 def test_bounded_memory_never_exceeds_capacity():
     memory = BoundedTemporalMemory(capacity=3, visible_until_s=60.0)
     for frame in frames():

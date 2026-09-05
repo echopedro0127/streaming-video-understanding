@@ -77,12 +77,19 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--policy", default=None)
+    parser.add_argument(
+        "--all-policies",
+        action="store_true",
+        help="Run every policy_id declared in the YAML config.",
+    )
     parser.add_argument("--mock-answer", choices=("A", "B", "C", "D"), default="A")
     args = parser.parse_args()
     if args.limit is not None and args.limit <= 0:
         raise SystemExit("--limit must be positive")
     if args.resume and args.overwrite:
         raise SystemExit("--resume and --overwrite are mutually exclusive")
+    if args.policy and args.all_policies:
+        raise SystemExit("--policy and --all-policies are mutually exclusive")
     if args.output.exists():
         if args.overwrite:
             args.output.unlink()
@@ -93,7 +100,12 @@ def main() -> int:
     samples, frame_reader = _load_samples(args.data_root)
     if args.limit is not None:
         samples = samples[: args.limit]
-    policy_id = args.policy or f"recent-{config.experiment.visual_budget}"
+    if args.all_policies:
+        policy_ids = config.experiment.policy_ids
+        if not policy_ids:
+            raise SystemExit("--all-policies requires non-empty policy_ids in the config")
+    else:
+        policy_ids = (args.policy or f"recent-{config.experiment.visual_budget}",)
     store = ResumeStore(args.output) if args.resume else ResumeStore(args.output)
     failure_store = FailureStore(args.output.with_name(args.output.stem + "-failures.jsonl"))
     backend = MockVLMBackend(args.mock_answer) if args.backend == "mock" else SmolVLMBackend()
@@ -101,19 +113,20 @@ def main() -> int:
     processed = 0
     skipped = 0
     for sample in samples:
-        if store.is_complete(sample.sample_id, policy_id):
-            skipped += 1
-            continue
-        evaluate_sample(
-            sample,
-            config=config,
-            frame_reader=frame_reader,
-            backend=backend,
-            output_store=store,
-            policy_id=policy_id,
-            failure_store=failure_store,
-        )
-        processed += 1
+        for policy_id in policy_ids:
+            if store.is_complete(sample.sample_id, policy_id):
+                skipped += 1
+                continue
+            evaluate_sample(
+                sample,
+                config=config,
+                frame_reader=frame_reader,
+                backend=backend,
+                output_store=store,
+                policy_id=policy_id,
+                failure_store=failure_store,
+            )
+            processed += 1
     print(f"processed={processed} skipped={skipped} output={args.output}")
     return 0
 

@@ -17,6 +17,7 @@ class DatasetConfig:
 class ExperimentConfig:
     visual_budget: int
     seed: int
+    policy_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -47,6 +48,7 @@ def load_config(path: str | Path) -> ProjectConfig:
         timestamp_tolerance_s = float(dataset.get("timestamp_tolerance_s", 1e-6))
         visual_budget = int(experiment["visual_budget"])
         seed = int(experiment["seed"])
+        raw_policy_ids = experiment.get("policy_ids", ())
     except KeyError as exc:
         raise ValueError(f"Missing required configuration key: {exc.args[0]}") from exc
     except (TypeError, ValueError) as exc:
@@ -58,11 +60,20 @@ def load_config(path: str | Path) -> ProjectConfig:
         raise ValueError("timestamp_tolerance_s must be non-negative")
     if visual_budget <= 0:
         raise ValueError("visual_budget must be positive")
+    if not isinstance(raw_policy_ids, (list, tuple)):
+        raise ValueError("policy_ids must be a sequence")
+    policy_ids = tuple(str(policy_id).strip() for policy_id in raw_policy_ids)
+    if any(not policy_id for policy_id in policy_ids):
+        raise ValueError("policy_ids must contain non-empty strings")
 
     return ProjectConfig(
         dataset=DatasetConfig(
             context_horizon_s=context_horizon_s,
             timestamp_tolerance_s=timestamp_tolerance_s,
         ),
-        experiment=ExperimentConfig(visual_budget=visual_budget, seed=seed),
+        experiment=ExperimentConfig(
+            visual_budget=visual_budget,
+            seed=seed,
+            policy_ids=policy_ids,
+        ),
     )

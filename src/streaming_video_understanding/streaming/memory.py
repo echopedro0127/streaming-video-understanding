@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 from ..data.schema import FrameRecord
@@ -18,6 +19,8 @@ class BoundedTemporalMemory:
             raise ValueError("memory capacity must be non-negative")
 
     def update(self, frame: FrameRecord) -> None:
+        if not math.isfinite(frame.timestamp_s) or frame.timestamp_s < 0:
+            raise ValueError(f"invalid frame timestamp: {frame.timestamp_s!r}")
         if frame.timestamp_s > self.visible_until_s + self.timestamp_tolerance_s:
             raise FutureFrameLeakageError(
                 f"Frame {frame.frame_id} at {frame.timestamp_s:.6f}s is after "
@@ -38,5 +41,7 @@ def _uniform_select(frames: list[FrameRecord], capacity: int) -> tuple[FrameReco
         return ()
     if len(ordered) <= capacity:
         return ordered
+    if capacity == 1:
+        return (ordered[0],)
     indexes = [int(index * (len(ordered) - 1) / (capacity - 1)) for index in range(capacity)]
     return tuple(ordered[index] for index in indexes)

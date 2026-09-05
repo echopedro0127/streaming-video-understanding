@@ -81,6 +81,8 @@ python scripts/benchmark_runtime.py \
 
 真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，并使用 `--backend smolvlm`。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
 
+运行 checked-in 主矩阵时使用 `--all-policies`，它会读取 `configs/main.yaml` 中的四个 policy IDs；不加该选项时默认只跑 `recent-B`，便于 smoke 和单策略调试。
+
 ## Results
 
 Not measured yet. 本节只在真实模型、真实数据运行完成并把可复现 summary artifact 复制到仓库后更新；当前不虚构 accuracy、latency 或 GPU memory 数字。

@@ -58,7 +58,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 
 ### MVP verification evidence
 
-- `python -m pytest -q` passes with **26 tests**.
+- `python -m pytest -q` passes with **29 tests**.
 - `python scripts/run_eval.py --config configs/main.yaml --backend mock --limit 3 --output results/mock-smoke.jsonl --overwrite` writes 3 records.
 - Re-running with `--resume` reports `processed=0 skipped=3`, confirming sample/config resumability.
 - `python scripts/benchmark_runtime.py --input results/mock-smoke.jsonl --output results/mock-smoke-summary.json` writes the expected summary keys.

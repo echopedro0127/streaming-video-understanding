@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 from ..data.schema import FrameRecord
@@ -17,6 +18,8 @@ class CausalFrameBuffer:
     _frames: list[FrameRecord] = field(default_factory=list, init=False, repr=False)
 
     def add(self, frame: FrameRecord) -> None:
+        if not math.isfinite(frame.timestamp_s) or frame.timestamp_s < 0:
+            raise ValueError(f"invalid frame timestamp: {frame.timestamp_s!r}")
         if frame.timestamp_s > self.visible_until_s + self.timestamp_tolerance_s:
             raise FutureFrameLeakageError(
                 f"Frame {frame.frame_id} at {frame.timestamp_s:.6f}s is after "
