@@ -10,10 +10,10 @@ __pycache__/
 .ruff_cache/
 
 # Local datasets and extracted media
-data/
-datasets/
-models/
-checkpoints/
+/data/
+/datasets/
+/models/
+/checkpoints/
 *.mp4
 *.avi
 *.mov
