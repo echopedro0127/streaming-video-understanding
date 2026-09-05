@@ -58,11 +58,14 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 
 ### MVP verification evidence
 
-- `python -m pytest -q` passes with **29 tests**.
+- `python -m pytest -q` passes with **33 tests**.
 - `python scripts/run_eval.py --config configs/main.yaml --backend mock --limit 3 --output results/mock-smoke.jsonl --overwrite` writes 3 records.
 - Re-running with `--resume` reports `processed=0 skipped=3`, confirming sample/config resumability.
 - `python scripts/benchmark_runtime.py --input results/mock-smoke.jsonl --output results/mock-smoke-summary.json` writes the expected summary keys.
 - `python scripts/render_case.py --input results/mock-smoke.jsonl --output results/mock-smoke-case.png` writes a causal timestamp contact sheet.
+- `python scripts/run_eval.py --config configs/main.yaml --backend mock --all-policies --limit 1 ...` writes 4 policy records, confirming YAML-driven matrix execution.
+- Resume IDs include a hash of the dataset/runtime/model/backend/policy configuration; changing those settings cannot silently reuse old records.
+- Real-data annotations support CSV, JSON, JSONL, and optional Parquet; video decoding uses PyAV with an FFmpeg/ffprobe fallback.
 - These smoke artifacts are intentionally ignored by Git; they are local verification evidence, not benchmark results.
 - Real-model smoke is still pending because PyTorch / Transformers / PyAV and model weights have not been installed or downloaded.
 

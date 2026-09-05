@@ -30,6 +30,15 @@ def _peak_gpu_memory_mb() -> float:
     return float(torch.cuda.max_memory_allocated() / (1024 * 1024))
 
 
+def _reset_gpu_peak_memory() -> None:
+    try:
+        import torch
+    except ImportError:
+        return
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+
+
 def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
     normalized = policy_id.lower().strip()
     if normalized in {"recent", "recent-window"}:
@@ -113,6 +122,7 @@ def evaluate_sample(
     output_store: ResumeStore | None,
     policy_id: str = "recent",
     failure_store: FailureStore | None = None,
+    config_id: str | None = None,
 ) -> dict[str, Any]:
     query_time_s = sample.query_time_s
     tolerance_s = config.dataset.timestamp_tolerance_s
@@ -126,11 +136,9 @@ def evaluate_sample(
         timestamp_tolerance_s=tolerance_s,
     )
     images_by_id: dict[int, Any] = {}
-    all_decoded_frames: list[FrameRecord] = []
     for image, frame in decoded:
         # This check occurs before context filtering so future data can never be hidden.
         buffer.add(frame)
-        all_decoded_frames.append(frame)
         images_by_id[frame.frame_id] = image
     visible_frames = buffer.snapshot()
     decode_latency_ms = (time.perf_counter() - decode_started) * 1000.0
@@ -170,6 +178,7 @@ def evaluate_sample(
         query_time_s=query_time_s,
         include_timestamps=include_timestamps,
     )
+    _reset_gpu_peak_memory()
     model_response = backend.infer(request)
     total_latency_ms = decode_latency_ms + model_response.latency_ms
     correct = model_response.answer == sample.answer
@@ -177,7 +186,8 @@ def evaluate_sample(
     record: dict[str, Any] = {
         "sample_id": sample.sample_id,
         "video_id": sample.video_id,
-        "config_id": policy_id,
+        "video_path": str(sample.video_path),
+        "config_id": config_id or policy_id,
         "policy_id": policy_id,
         "question": sample.question,
         "query_time_s": query_time_s,
@@ -205,6 +215,7 @@ def evaluate_sample(
         "input_tokens": model_response.input_tokens,
         "output_tokens": model_response.output_tokens,
         "timestamp_prompt": prompt,
+        "sample_fps": config.runtime.sample_fps,
     }
     if output_store is not None:
         output_store.append(record)

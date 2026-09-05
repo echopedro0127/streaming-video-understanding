@@ -11,13 +11,15 @@ sys.path.insert(0, str(PROJECT_ROOT / "src"))
 from PIL import Image
 
 from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
-from streaming_video_understanding.data.streamingbench import load_streamingbench_csv
+from streaming_video_understanding.data.streamingbench import load_streamingbench_file
 from streaming_video_understanding.evaluation.engine import evaluate_sample
 from streaming_video_understanding.evaluation.failures import FailureStore
 from streaming_video_understanding.evaluation.resume import ResumeStore
 from streaming_video_understanding.models.mock import MockVLMBackend
 from streaming_video_understanding.models.smolvlm import SmolVLMBackend
 from streaming_video_understanding.utils.config import load_config
+from streaming_video_understanding.utils.config import configuration_id
+from streaming_video_understanding.utils.seed import set_seed
 
 
 class SyntheticFrameReader:
@@ -46,32 +48,55 @@ def _synthetic_samples() -> list[StreamingSample]:
     ]
 
 
-def _load_samples(data_root: Path | None) -> tuple[list[StreamingSample], object]:
+def _load_samples(
+    data_root: Path | None,
+    *,
+    annotation_path: Path | None,
+    sample_fps: float,
+) -> tuple[list[StreamingSample], object]:
     if data_root is None:
         return _synthetic_samples(), SyntheticFrameReader()
-    csv_paths = sorted(data_root.rglob("*.csv"))
-    if not csv_paths:
-        raise FileNotFoundError(f"No CSV benchmark file found below {data_root}")
-    rows = load_streamingbench_csv(csv_paths[0])
+    supported = {".csv", ".json", ".jsonl", ".parquet"}
+    if annotation_path is None:
+        candidates = sorted(
+            path for path in data_root.rglob("*") if path.is_file() and path.suffix.lower() in supported
+        )
+        if not candidates:
+            raise FileNotFoundError(f"No annotation file found below {data_root}")
+        if len(candidates) > 1:
+            raise FileNotFoundError(
+                "Multiple annotation files found; pass --annotations explicitly: "
+                + ", ".join(str(path) for path in candidates)
+            )
+        annotation_path = candidates[0]
+    elif not annotation_path.is_absolute():
+        annotation_path = (data_root / annotation_path).resolve()
+    rows = load_streamingbench_file(annotation_path)
     resolved = [
         replace(
             row,
-            video_path=(data_root / row.video_path).resolve()
-            if not row.video_path.is_absolute()
-            else row.video_path,
+            video_path=(
+                (annotation_path.parent / row.video_path).resolve()
+                if not row.video_path.is_absolute()
+                and (annotation_path.parent / row.video_path).exists()
+                else (data_root / row.video_path).resolve()
+                if not row.video_path.is_absolute()
+                else row.video_path
+            ),
         )
         for row in rows
     ]
     from streaming_video_understanding.data.video import FrameReader
 
-    return resolved, FrameReader(sample_fps=1.0)
+    return resolved, FrameReader(sample_fps=sample_fps)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run the causal streaming video evaluator.")
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--data-root", type=Path, default=None)
-    parser.add_argument("--backend", choices=("mock", "smolvlm"), default="mock")
+    parser.add_argument("--annotations", type=Path, default=None)
+    parser.add_argument("--backend", choices=("mock", "smolvlm"), default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
@@ -90,14 +115,23 @@ def main() -> int:
         raise SystemExit("--resume and --overwrite are mutually exclusive")
     if args.policy and args.all_policies:
         raise SystemExit("--policy and --all-policies are mutually exclusive")
+    config = load_config(args.config)
+    backend_name = args.backend or config.model.backend
+    failure_path = args.output.with_name(args.output.stem + "-failures.jsonl")
     if args.output.exists():
         if args.overwrite:
             args.output.unlink()
+            if failure_path.exists():
+                failure_path.unlink()
         elif not args.resume:
             raise SystemExit("Output exists; use --resume or --overwrite explicitly")
 
-    config = load_config(args.config)
-    samples, frame_reader = _load_samples(args.data_root)
+    set_seed(config.experiment.seed)
+    samples, frame_reader = _load_samples(
+        args.data_root,
+        annotation_path=args.annotations,
+        sample_fps=config.runtime.sample_fps,
+    )
     if args.limit is not None:
         samples = samples[: args.limit]
     if args.all_policies:
@@ -106,27 +140,61 @@ def main() -> int:
             raise SystemExit("--all-policies requires non-empty policy_ids in the config")
     else:
         policy_ids = (args.policy or f"recent-{config.experiment.visual_budget}",)
-    store = ResumeStore(args.output) if args.resume else ResumeStore(args.output)
-    failure_store = FailureStore(args.output.with_name(args.output.stem + "-failures.jsonl"))
-    backend = MockVLMBackend(args.mock_answer) if args.backend == "mock" else SmolVLMBackend()
+    store = ResumeStore(args.output)
+    failure_store = FailureStore(failure_path)
+    backend = (
+        MockVLMBackend(args.mock_answer)
+        if backend_name == "mock"
+        else SmolVLMBackend(
+            model_id=config.model.model_id,
+            max_new_tokens=config.model.max_new_tokens,
+        )
+    )
 
     processed = 0
     skipped = 0
     for sample in samples:
         for policy_id in policy_ids:
-            if store.is_complete(sample.sample_id, policy_id):
+            run_config_id = configuration_id(
+                config,
+                policy_id=policy_id,
+                backend=backend_name,
+            )
+            if store.is_complete(sample.sample_id, run_config_id):
                 skipped += 1
                 continue
-            evaluate_sample(
-                sample,
-                config=config,
-                frame_reader=frame_reader,
-                backend=backend,
-                output_store=store,
-                policy_id=policy_id,
-                failure_store=failure_store,
-            )
-            processed += 1
+            try:
+                evaluate_sample(
+                    sample,
+                    config=config,
+                    frame_reader=frame_reader,
+                    backend=backend,
+                    output_store=store,
+                    policy_id=policy_id,
+                    failure_store=failure_store,
+                    config_id=run_config_id,
+                )
+                processed += 1
+            except Exception as exc:
+                failure_store.append_failure(
+                    {
+                        "sample_id": sample.sample_id,
+                        "video_id": sample.video_id,
+                        "video_path": str(sample.video_path),
+                        "config_id": run_config_id,
+                        "policy_id": policy_id,
+                        "question": sample.question,
+                        "query_time_s": sample.query_time_s,
+                        "status": "failed",
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                    }
+                )
+                print(
+                    f"failed sample={sample.sample_id} policy={policy_id}: "
+                    f"{type(exc).__name__}: {exc}",
+                    file=sys.stderr,
+                )
     print(f"processed={processed} skipped={skipped} output={args.output}")
     return 0
 

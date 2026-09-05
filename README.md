@@ -79,7 +79,7 @@ python scripts/benchmark_runtime.py \
   --output results/mock-smoke-summary.json
 ```
 
-真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，并使用 `--backend smolvlm`。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
+真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，并使用 `--backend smolvlm`。如果目录中存在多个 annotation 文件，请用 `--annotations` 指定 CSV / JSON / JSONL / Parquet 文件。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
 
 运行 checked-in 主矩阵时使用 `--all-policies`，它会读取 `configs/main.yaml` 中的四个 policy IDs；不加该选项时默认只跑 `recent-B`，便于 smoke 和单策略调试。
 
@@ -93,7 +93,7 @@ Not measured yet. 本节只在真实模型、真实数据运行完成并把可�
 
 ## Failure Analysis
 
-错误样本写入与 output 同目录的 `*-failures.jsonl`，包括 question、query timestamp、prediction、ground truth、recent / memory selected frames 和 timestamps。`scripts/render_case.py` 可以把 causal frame manifest 渲染为可公开的 qualitative case 图。
+错误样本写入与 output 同目录的 `*-failures.jsonl`，包括 question、query timestamp、prediction、ground truth、recent / memory selected frames 和 timestamps。`scripts/render_case.py` 会在记录的视频路径可用时读取并渲染真实 selected frames，同时叠加绝对 / 相对 timestamp；synthetic smoke 记录没有视频源时才使用 metadata-only tile。
 
 预设分类：forgotten early evidence、temporal ordering error、distractor frames、insufficient recent context、memory compression loss、semantic retrieval failure、timestamp confusion。最终报告至少人工分析 20–30 个 failure cases，并在这里加入 3–5 个代表性案例。
 

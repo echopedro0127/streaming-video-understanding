@@ -21,6 +21,24 @@ def test_loader_preserves_options_and_query_time(tmp_path: Path):
     assert rows[0].answer == "B"
 
 
+def test_json_loader_accepts_annotation_records(tmp_path: Path):
+    path = tmp_path / "rows.json"
+    path.write_text(
+        '[{"question_id": "v1_1", "task_type": "Object Perception", '
+        '"question": "What is visible?", "time_stamp": "4", "answer": "B", '
+        '"options": ["A. cat", "B. dog", "C. ball", "D. car"], '
+        '"video": "data/v1.mp4"}]',
+        encoding="utf-8",
+    )
+
+    from streaming_video_understanding.data.streamingbench import load_streamingbench_file
+
+    rows = load_streamingbench_file(path)
+
+    assert rows[0].answer == "B"
+    assert rows[0].options == ("cat", "dog", "ball", "car")
+
+
 def test_loader_reports_missing_required_column(tmp_path: Path):
     csv_path = tmp_path / "invalid.csv"
     csv_path.write_text(

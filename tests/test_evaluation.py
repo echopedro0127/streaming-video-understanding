@@ -43,6 +43,24 @@ def test_metrics_report_accuracy_and_percentiles():
     assert summary["p95_latency_ms"] == pytest.approx(29.0)
 
 
+def test_failure_store_persists_failed_samples(tmp_path: Path):
+    from streaming_video_understanding.evaluation.failures import FailureStore
+
+    path = tmp_path / "failures.jsonl"
+    FailureStore(path).append_failure(
+        {
+            "sample_id": "s-failed",
+            "config_id": "cfg",
+            "error_type": "RuntimeError",
+            "error": "synthetic failure",
+        }
+    )
+
+    record = json.loads(path.read_text(encoding="utf-8"))
+    assert record["status"] == "failed"
+    assert record["correct"] is False
+
+
 def test_evaluator_rejects_future_frame_before_backend_call():
     from PIL import Image
 
