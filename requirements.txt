@@ -12,4 +12,5 @@ torchvision>=0.21
 transformers>=4.51
 accelerate>=1.2
 safetensors>=0.5
+num2words>=0.5.14
 av>=14.0

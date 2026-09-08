@@ -63,6 +63,16 @@ python scripts/download_data.py \
   --confirm-large-download
 ```
 
+The video archive and QA annotations are distributed separately. After the
+video archive is extracted, download the 250 timestamped QA rows for the
+bounded 1-50 subset:
+
+```bash
+python scripts/download_annotations.py \
+  --subset real-time-1-50 \
+  --destination data/streamingbench/real-time-1-50/annotations.jsonl
+```
+
 数据集卡片没有在本项目中重新声明一个额外 license；使用者必须遵守上游数据集、视频来源和 Hugging Face 条款。本仓库不重新分发视频或模型权重。
 
 ## Evaluation
@@ -79,7 +89,7 @@ python scripts/benchmark_runtime.py \
   --output results/mock-smoke-summary.json
 ```
 
-真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，并使用 `--backend smolvlm`。如果目录中存在多个 annotation 文件，请用 `--annotations` 指定 CSV / JSON / JSONL / Parquet 文件。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
+真实数据运行时增加 `--data-root data/streamingbench/real-time-1-50`，使用 `--annotations annotations.jsonl` 和 `--backend smolvlm`。如果目录中存在多个 annotation 文件，请用 `--annotations` 指定 CSV / JSON / JSONL / Parquet 文件。所有策略都通过统一 evaluator 运行，避免不同方法拥有不同的数据可见范围。
 
 运行 checked-in 主矩阵时使用 `--all-policies`，它会读取 `configs/main.yaml` 中的四个 policy IDs；不加该选项时默认只跑 `recent-B`，便于 smoke 和单策略调试。
 

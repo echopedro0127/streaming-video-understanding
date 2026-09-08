@@ -21,6 +21,19 @@ def test_loader_preserves_options_and_query_time(tmp_path: Path):
     assert rows[0].answer == "B"
 
 
+def test_loader_uses_sample_directory_as_video_id(tmp_path: Path):
+    csv_path = tmp_path / "rows.csv"
+    csv_path.write_text(
+        "question_id,task_type,question,time_stamp,answer,options,frames_required,temporal_clue_type,video\n"
+        "v1_1,Object Perception,What is visible?,00:00:04,B,\"['A. cat', 'B. dog']\",single,Prior,sample_7/video.mp4\n",
+        encoding="utf-8",
+    )
+
+    rows = load_streamingbench_csv(csv_path)
+
+    assert rows[0].video_id == "sample_7"
+
+
 def test_json_loader_accepts_annotation_records(tmp_path: Path):
     path = tmp_path / "rows.json"
     path.write_text(

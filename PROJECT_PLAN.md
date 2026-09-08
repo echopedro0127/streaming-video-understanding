@@ -12,9 +12,9 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Design | Complete | `docs/superpowers/specs/2026-09-05-streaming-video-understanding-design.md` |
 | Git baseline | Complete | `a0aacc1 chore: initialize repository hygiene` |
 | Repository skeleton | Complete | `README.md`, configs, scripts, package layout, and public-data `.gitignore` rules |
-| MVP evaluator | Complete | 26 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
-| Real-model smoke test | Not started |  |
-| Core experiment | Not started |  |
+| MVP evaluator | Complete | 37 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
+| Real-model smoke test | Complete | SmolVLM2 real-video inference succeeded on RTX 3060; peak GPU memory was approximately 2.58GB |
+| Core experiment | In progress | 10 QA samples x 4 policies completed (40 records); pilot summary saved under `results/smolvlm-10-summary.json` |
 | Failure analysis | Not started |  |
 
 ## Research scope
@@ -39,6 +39,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 - `requirements.txt` with direct dependencies and a note for installing the correct PyTorch CUDA wheel.
 - `configs/` YAML files for main and sensitivity runs.
 - `scripts/download_data.py` that downloads only the selected StreamingBench archive after an explicit confirmation flag.
+- `scripts/download_annotations.py` that retrieves the bounded 250-row QA annotation subset and maps rows to local video paths.
 - `scripts/run_eval.py` for deterministic, resumable evaluation.
 - `scripts/benchmark_runtime.py` for aggregate latency/memory summaries.
 - `scripts/render_case.py` for timestamp-labeled selected-frame contact sheets.
@@ -58,7 +59,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 
 ### MVP verification evidence
 
-- `python -m pytest -q` passes with **33 tests**.
+- `python -m pytest -q` passes with **37 tests**.
 - `python scripts/run_eval.py --config configs/main.yaml --backend mock --limit 3 --output results/mock-smoke.jsonl --overwrite` writes 3 records.
 - Re-running with `--resume` reports `processed=0 skipped=3`, confirming sample/config resumability.
 - `python scripts/benchmark_runtime.py --input results/mock-smoke.jsonl --output results/mock-smoke-summary.json` writes the expected summary keys.
@@ -67,7 +68,8 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 - Resume IDs include a hash of the dataset/runtime/model/backend/policy configuration; changing those settings cannot silently reuse old records.
 - Real-data annotations support CSV, JSON, JSONL, and optional Parquet; video decoding uses PyAV with an FFmpeg/ffprobe fallback.
 - These smoke artifacts are intentionally ignored by Git; they are local verification evidence, not benchmark results.
-- Real-model smoke is still pending because PyTorch / Transformers / PyAV and model weights have not been installed or downloaded.
+- Real-model smoke completed on one real video; the cached model ran without OOM and recorded latency / GPU-memory fields.
+- A 10-sample pilot completed all 40 policy/sample evaluations after leading-letter answer parsing was made tolerant of explanatory model outputs. It is a pipeline check, not a final benchmark result.
 
 ### Core Experiment
 

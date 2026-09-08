@@ -61,10 +61,15 @@ def _rows_to_samples(rows: Iterable[Mapping[str, object]], *, source: Path, star
             if not sample_id or not video_text or not question or not task_type:
                 raise ValueError("question_id, video, question, and task_type must be non-empty")
             video_path = Path(video_text)
+            video_id = (
+                video_path.parent.name
+                if video_path.stem.lower() == "video" and video_path.parent.name
+                else video_path.stem
+            )
             samples.append(
                 StreamingSample(
                     sample_id=sample_id,
-                    video_id=video_path.stem,
+                    video_id=video_id,
                     video_path=video_path,
                     question=question,
                     options=_parse_options(row["options"]),

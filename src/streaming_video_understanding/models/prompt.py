@@ -38,7 +38,12 @@ def build_prompt(
 
 
 def parse_answer_letter(raw_text: str) -> str:
-    candidates = re.findall(r"(?<![A-Z])([A-D])(?![A-Z])", raw_text.upper())
+    normalized = raw_text.strip().upper()
+    leading = re.match(r"^([A-D])(?:\s*[.)\]:-]|\s*$)", normalized)
+    if leading:
+        return leading.group(1)
+
+    candidates = re.findall(r"(?<![A-Z])([A-D])(?![A-Z])", normalized)
     unique = list(dict.fromkeys(candidates))
     if not unique:
         raise ValueError(f"Could not parse an answer letter from model output: {raw_text!r}")
