@@ -26,6 +26,7 @@ def test_parse_answer_accepts_only_unambiguous_letter():
     assert parse_answer_letter("The answer is C.") == "C"
     assert parse_answer_letter("C. He scored a goal.") == "C"
     assert parse_answer_letter("D. A goal celebration.") == "D"
+    assert parse_answer_letter("C, he positioned it on a cutting board.") == "C"
     with pytest.raises(ValueError, match="ambiguous"):
         parse_answer_letter("A or B")
 

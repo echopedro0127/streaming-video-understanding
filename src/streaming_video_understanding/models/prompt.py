@@ -39,7 +39,7 @@ def build_prompt(
 
 def parse_answer_letter(raw_text: str) -> str:
     normalized = raw_text.strip().upper()
-    leading = re.match(r"^([A-D])(?:\s*[.)\]:-]|\s*$)", normalized)
+    leading = re.match(r"^([A-D])(?:\s*[.)\]:,\-]|\s*$)", normalized)
     if leading:
         return leading.group(1)
 
