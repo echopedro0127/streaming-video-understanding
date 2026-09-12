@@ -14,3 +14,4 @@ accelerate>=1.2
 safetensors>=0.5
 num2words>=0.5.14
 av>=14.0
+matplotlib>=3.9
