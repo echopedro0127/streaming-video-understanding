@@ -95,11 +95,27 @@ python scripts/benchmark_runtime.py \
 
 ## Results
 
-Not measured yet. 本节只在真实模型、真实数据运行完成并把可复现 summary artifact 复制到仓库后更新；当前不虚构 accuracy、latency 或 GPU memory 数字。
+Fixed-budget evaluation has been completed on 250 timestamped QA items from
+50 videos with `SmolVLM2-500M-Video-Instruct` on an RTX 3060 Laptop GPU.
+Every policy used the same causal evaluator and a maximum visual budget of
+eight input frames.
+
+| Policy | QA accuracy | P50 latency (s) | P95 latency (s) | Peak GPU (MB) | Avg. input frames |
+|---|---:|---:|---:|---:|---:|
+| Recent-8 | 65.2% | 33.71 | 98.53 | 3537.3 | 7.944 |
+| Uniform-8 | 62.8% | 35.30 | 101.31 | 3537.3 | 7.944 |
+| Recent-4 + Uniform-Memory-4 | 64.0% | 25.46 | 82.75 | 3537.3 | 7.944 |
+| Recent-4 + Timestamp-aware-Memory-4 | 63.6% | 34.99 | 97.25 | 3537.8 | 7.944 |
+
+The first full run shows that bounded memory is competitive with the recent
+window baseline, but the timestamp-aware variant is not an accuracy
+improvement in this initial measurement. Latency is reported with P50/P95
+because several long runs were affected by laptop suspend/interruption; raw
+per-sample JSONL and summaries remain local and reproducible.
 
 ## Efficiency
 
-自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。后续结果应绘制 Accuracy vs Latency、Accuracy vs GPU Memory、Accuracy vs Context Size。
+自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。固定预算结果显示所有策略平均输入 7.944 帧，压缩比例为 0.1912；Accuracy vs Latency、Accuracy vs GPU Memory、Accuracy vs Context Size 图表将在失败分析阶段补充。
 
 ## Failure Analysis
 
