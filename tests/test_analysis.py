@@ -2,6 +2,11 @@ from __future__ import annotations
 
 import pytest
 
+from streaming_video_understanding.analysis.failures import (
+    select_failures,
+    validate_causal_manifest,
+    write_failure_review,
+)
 from streaming_video_understanding.analysis.summaries import (
     normalize_summary,
     ordered_summary_rows,
@@ -54,3 +59,69 @@ def test_ordered_summary_rows_use_fixed_policy_order() -> None:
     rows = ordered_summary_rows(summaries)
 
     assert [row["policy_id"] for row in rows] == ["recent-8", "uniform-8"]
+
+
+def _failure(sample_id: str, policy_id: str, *, frame_time: float = 4.0) -> dict[str, object]:
+    return {
+        "sample_id": sample_id,
+        "policy_id": policy_id,
+        "video_id": sample_id.split("_")[0],
+        "question": "Which event happened?",
+        "query_time_s": 4.0,
+        "prediction": "A",
+        "ground_truth": "B",
+        "selected_frames": [{"frame_id": 0, "timestamp_s": frame_time}],
+        "selected_recent_frames": [],
+        "selected_memory_frames": [],
+    }
+
+
+def test_validate_causal_manifest_rejects_future_frame() -> None:
+    with pytest.raises(ValueError, match="future frame"):
+        validate_causal_manifest(_failure("sample_1", "recent-8", frame_time=4.1))
+
+
+def test_select_failures_is_stable_balanced_and_deduplicated() -> None:
+    records = [
+        _failure("sample_2", "uniform-8"),
+        _failure("sample_1", "recent-8"),
+        _failure("sample_1", "recent-8"),
+        _failure("sample_3", "recent-8"),
+        _failure("sample_4", "recent-4+uniform-memory-4"),
+    ]
+
+    first = select_failures(records, limit=3, seed=7)
+    second = select_failures(list(reversed(records)), limit=3, seed=7)
+
+    assert [row["review_id"] for row in first] == [row["review_id"] for row in second]
+    assert len({(row["sample_id"], row["policy_id"]) for row in first}) == 3
+    assert {row["policy_id"] for row in first} == {
+        "recent-8",
+        "uniform-8",
+        "recent-4+uniform-memory-4",
+    }
+
+
+def test_write_failure_review_writes_expected_csv_headers(tmp_path) -> None:
+    records = select_failures(
+        [_failure("sample_1", "recent-8"), _failure("sample_2", "uniform-8")],
+        limit=2,
+        seed=7,
+    )
+
+    paths = write_failure_review(records, tmp_path)
+
+    assert set(paths) == {"jsonl", "csv", "markdown"}
+    header = paths["csv"].read_text(encoding="utf-8").splitlines()[0]
+    assert header.split(",") == [
+        "review_id",
+        "sample_id",
+        "policy_id",
+        "video_id",
+        "question",
+        "query_time_s",
+        "prediction",
+        "ground_truth",
+        "category",
+        "notes",
+    ]
