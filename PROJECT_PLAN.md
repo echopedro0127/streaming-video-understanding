@@ -12,10 +12,11 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Design | Complete | `docs/superpowers/specs/2026-09-05-streaming-video-understanding-design.md` |
 | Git baseline | Complete | `a0aacc1 chore: initialize repository hygiene` |
 | Repository skeleton | Complete | `README.md`, configs, scripts, package layout, and public-data `.gitignore` rules |
-| MVP evaluator | Complete | 37 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
+| MVP evaluator | Complete | 47 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
 | Real-model smoke test | Complete | SmolVLM2 real-video inference succeeded on RTX 3060; peak GPU memory was approximately 2.58GB |
 | Core experiment | Complete | Four fixed-budget policies completed on 250 QA rows each; causal audit found 0 future-frame violations and summaries are saved under `results/` |
 | Failure analysis | Complete | 30 failure cases manually reviewed in `docs/FAILURE_ANALYSIS.md`; five representative contact sheets rendered; trade-off plots generated under `assets/figures/` |
+| Budget sensitivity | Complete | Four safe policies completed on the first 50 QA rows; 200/200 records passed the causal audit; 16-frame probe excluded after reaching the 6GB/context limit |
 
 ## Research scope
 
@@ -30,7 +31,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 | Group | Configurations | Purpose |
 |---|---|---|
 | Main fixed budget | Recent-8, Uniform-8, Recent-4 + Memory-4, Recent-4 + Timestamp-aware-Memory-4 | Controlled comparison with exactly 8 input frames |
-| Budget sensitivity | Recent-4 vs Timestamp-aware-Memory-4; Recent-16 vs Timestamp-aware-Memory-16 | Context-size trade-off |
+| Budget sensitivity | B=4: Recent-4 vs Recent-2 + Timestamp-aware-Memory-2; B=8: Recent-8 vs Recent-4 + Timestamp-aware-Memory-4 | Safe context-size trade-off on a 50-QA split |
 | Runtime | One sample per call, CUDA synchronization, resume enabled | Latency and OOM-safe profiling |
 
 ## Deliverables
@@ -59,7 +60,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 
 ### MVP verification evidence
 
-- `python -m pytest -q` passes with **37 tests**.
+- `python -m pytest -q` passes with **47 tests**.
 - `python scripts/run_eval.py --config configs/main.yaml --backend mock --limit 3 --output results/mock-smoke.jsonl --overwrite` writes 3 records.
 - Re-running with `--resume` reports `processed=0 skipped=3`, confirming sample/config resumability.
 - `python scripts/benchmark_runtime.py --input results/mock-smoke.jsonl --output results/mock-smoke-summary.json` writes the expected summary keys.
@@ -78,6 +79,12 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 3. Save per-sample JSONL, summary CSV/JSON, leakage audit, and failure JSONL.
 4. Generate accuracy/latency/GPU-memory trade-off plots.
 5. Manually categorize 20–30 measured failure cases.
+
+### Budget Sensitivity
+
+- Four policies completed on 50 QA rows from `sample_1`–`sample_10`, with 200 total records and 0 future-frame violations.
+- The compact comparison is recorded in `assets/figures/sensitivity-comparison.csv`; raw JSONL remains local and ignored by Git.
+- A 16-frame SmolVLM probe was stopped after the first diagnostic record because the 6GB GPU was nearly full and the processor reported a sequence longer than the 8192-token limit; it is a documented hardware boundary, not a benchmark result.
 
 ### Optional Extension
 

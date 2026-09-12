@@ -1,0 +1,5 @@
+total_budget,policy_id,policy_label,num_samples,question_accuracy,p50_latency_s,p95_latency_s,peak_gpu_memory_mb,average_input_frames,compression_ratio,throughput_samples_per_s
+4,recent-4,Recent-4,50,0.62,19.7061702,78.651250705,2256.80859375,4.0,0.1473815822,0.0367243488
+4,recent-2+timestamp-aware-memory-2,Recent-2 + Timestamp-aware-Memory-2,50,0.60,17.3452163,56.794390555,2257.05224609,4.0,0.1473815822,0.0438922543
+8,recent-8,Recent-8,50,0.58,14.97254435,50.011169885,3537.27636719,7.88,0.2707631643,0.0514199017
+8,recent-4+timestamp-aware-memory-4,Recent-4 + Timestamp-aware-Memory-4,50,0.52,23.08967775,81.10545598,3537.74755859,7.88,0.2707631643,0.0339769364

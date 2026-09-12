@@ -37,7 +37,9 @@ Architecture placeholder:
 - `recent-4+uniform-memory-4`
 - `recent-4+timestamp-aware-memory-4`
 
-Sensitivity 实验只比较 B=4 和 B=16 下的 recent 与 timestamp-aware memory，避免组合成无法在一周内完成的实验矩阵。
+Sensitivity 实验在 6GB RTX 3060 上只比较安全可运行的总预算 B=4 和 B=8：
+`recent-4` vs `recent-2+timestamp-aware-memory-2`，以及
+`recent-8` vs `recent-4+timestamp-aware-memory-4`。
 
 ## Installation
 
@@ -113,6 +115,27 @@ improvement in this initial measurement. Latency is reported with P50/P95
 because several long runs were affected by laptop suspend/interruption; raw
 per-sample JSONL and summaries remain local and reproducible.
 
+### Budget sensitivity
+
+We also ran a separate, deterministic 50-QA split covering `sample_1` through
+`sample_10` (five questions per video). The table keeps the total visual
+budget fixed within each pair. The compact public record is
+[`assets/figures/sensitivity-comparison.csv`](assets/figures/sensitivity-comparison.csv);
+raw JSONL remains ignored because it contains local video paths.
+
+| Total budget | Policy | QA accuracy | P50 latency (s) | P95 latency (s) | Peak GPU (MB) | Avg. input frames |
+|---:|---|---:|---:|---:|---:|---:|
+| 4 | Recent-4 | 62.0% | 19.71 | 78.65 | 2256.8 | 4.00 |
+| 4 | Recent-2 + Timestamp-aware-Memory-2 | 60.0% | 17.35 | 56.79 | 2257.1 | 4.00 |
+| 8 | Recent-8 | 58.0% | 14.97 | 50.01 | 3537.3 | 7.88 |
+| 8 | Recent-4 + Timestamp-aware-Memory-4 | 52.0% | 23.09 | 81.11 | 3537.7 | 7.88 |
+
+On this small split, adding timestamp-aware historical memory did not improve
+accuracy. This is a useful negative result: the current training-free memory
+policy is a bounded-context engineering baseline, not evidence of a learned
+memory advantage. The latency columns are exploratory P50/P95 measurements
+and should not be compared with the full-run table as a matched rerun.
+
 ## Efficiency
 
 自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。固定预算结果显示所有策略平均输入 7.944 帧，压缩比例为 0.1912；三类 trade-off 图表已生成并放在 `assets/figures/`。
@@ -137,8 +160,9 @@ Public comparison figures:
 
 - 第一阶段使用 training-free / minimal-training inference，不能代表经过专门训练的 streaming VLM。
 - 6GB 显存限制了模型大小和 visual budget；SmolVLM 是工程可行性选择，不是 SOTA 主张。
-- 第一阶段 subset 只用于 controlled comparison，不能替代完整 StreamingBench 评测。
+- 第一阶段 subset 只用于 controlled comparison，不能替代完整 StreamingBench 评测；sensitivity 使用其中前 50 条 QA。
 - memory policy 先采用确定性、可解释的 uniform / timestamp-aware prompt 机制，semantic retrieval 属于 optional extension。
+- 在本机 6GB RTX 3060 上，16 帧探测使显存接近 6GB，并触发超过 8192 tokens 的 processor 警告，因此没有把 16 帧结果纳入报告；更大预算需要先做显存与 context-window profiling。
 
 ## Citation
 
