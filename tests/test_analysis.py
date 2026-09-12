@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from streaming_video_understanding.analysis.failures import (
@@ -8,9 +10,11 @@ from streaming_video_understanding.analysis.failures import (
     write_failure_review,
 )
 from streaming_video_understanding.analysis.summaries import (
+    build_comparison_rows,
     normalize_summary,
     ordered_summary_rows,
 )
+from scripts.plot_results import _annotation_offsets
 
 
 def _summary(policy_id: str = "recent-8") -> dict[str, object]:
@@ -125,3 +129,65 @@ def test_write_failure_review_writes_expected_csv_headers(tmp_path) -> None:
         "category",
         "notes",
     ]
+
+
+def test_build_comparison_rows_uses_fixed_policy_order_and_seconds(tmp_path) -> None:
+    policy_ids = [
+        "recent-8",
+        "uniform-8",
+        "recent-4+uniform-memory-4",
+        "recent-4+timestamp-aware-memory-4",
+    ]
+    paths = []
+    for policy_id in reversed(policy_ids):
+        path = tmp_path / f"full-{policy_id}-summary.json"
+        path.write_text(json.dumps(_summary(policy_id)), encoding="utf-8")
+        paths.append(path)
+
+    rows = build_comparison_rows(paths)
+
+    assert [row["policy_id"] for row in rows] == policy_ids
+    assert rows[0]["p50_latency_s"] == pytest.approx(33.7059)
+    assert all(row["num_samples"] == 250 for row in rows)
+
+
+def test_build_comparison_rows_rejects_wrong_sample_count(tmp_path) -> None:
+    path = tmp_path / "full-recent-8-summary.json"
+    summary = _summary()
+    summary["num_samples"] = 249
+    path.write_text(json.dumps(summary), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="250"):
+        build_comparison_rows([path])
+
+
+def test_build_comparison_rows_accepts_hyphenated_real_result_filenames(tmp_path) -> None:
+    filenames = [
+        "full-recent-8-summary.json",
+        "full-uniform-8-summary.json",
+        "full-recent-4-uniform-memory-4-summary.json",
+        "full-recent-4-timestamp-aware-memory-4-summary.json",
+    ]
+    paths = []
+    for filename in filenames:
+        path = tmp_path / filename
+        summary = _summary()
+        summary.pop("policy_id")
+        summary["question_accuracy"] = 0.64
+        path.write_text(json.dumps(summary), encoding="utf-8")
+        paths.append(path)
+
+    rows = build_comparison_rows(paths)
+
+    assert [row["policy_id"] for row in rows] == [
+        "recent-8",
+        "uniform-8",
+        "recent-4+uniform-memory-4",
+        "recent-4+timestamp-aware-memory-4",
+    ]
+
+
+def test_annotation_offsets_separate_collocated_labels() -> None:
+    offsets = _annotation_offsets(4)
+
+    assert len(set(offsets)) == 4
