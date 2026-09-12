@@ -15,7 +15,7 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | MVP evaluator | Complete | 37 unit tests pass; causal evaluator, four policy families, resume store, metrics, failure export, and CLI are implemented |
 | Real-model smoke test | Complete | SmolVLM2 real-video inference succeeded on RTX 3060; peak GPU memory was approximately 2.58GB |
 | Core experiment | Complete | Four fixed-budget policies completed on 250 QA rows each; causal audit found 0 future-frame violations and summaries are saved under `results/` |
-| Failure analysis | In progress | Per-policy failure JSONL exports are available; manual categorization, representative renders, and trade-off plots are next |
+| Failure analysis | Complete | 30 failure cases manually reviewed in `docs/FAILURE_ANALYSIS.md`; five representative contact sheets rendered; trade-off plots generated under `assets/figures/` |
 
 ## Research scope
 

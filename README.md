@@ -115,13 +115,23 @@ per-sample JSONL and summaries remain local and reproducible.
 
 ## Efficiency
 
-自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。固定预算结果显示所有策略平均输入 7.944 帧，压缩比例为 0.1912；Accuracy vs Latency、Accuracy vs GPU Memory、Accuracy vs Context Size 图表将在失败分析阶段补充。
+自动汇总：question accuracy、video-macro accuracy、mean / P50 / P95 latency、throughput、average input frames、retained frames、compression ratio 和 peak GPU memory。固定预算结果显示所有策略平均输入 7.944 帧，压缩比例为 0.1912；三类 trade-off 图表已生成并放在 `assets/figures/`。
 
 ## Failure Analysis
 
+The fixed-budget run includes a deterministic manual review of 30 unique
+failure records. The category counts, evidence notes, and representative cases
+are documented in [docs/FAILURE_ANALYSIS.md](docs/FAILURE_ANALYSIS.md).
+
+Public comparison figures:
+
+- [Accuracy vs latency](assets/figures/accuracy-vs-latency.png)
+- [Accuracy vs GPU memory](assets/figures/accuracy-vs-gpu-memory.png)
+- [Accuracy vs visual context](assets/figures/accuracy-vs-context.png)
+
 错误样本写入与 output 同目录的 `*-failures.jsonl`，包括 question、query timestamp、prediction、ground truth、recent / memory selected frames 和 timestamps。`scripts/render_case.py` 会在记录的视频路径可用时读取并渲染真实 selected frames，同时叠加绝对 / 相对 timestamp；synthetic smoke 记录没有视频源时才使用 metadata-only tile。
 
-预设分类：forgotten early evidence、temporal ordering error、distractor frames、insufficient recent context、memory compression loss、semantic retrieval failure、timestamp confusion。最终报告至少人工分析 20–30 个 failure cases，并在这里加入 3–5 个代表性案例。
+预设分类：forgotten early evidence、temporal ordering error、distractor frames、insufficient recent context、memory compression loss、semantic retrieval failure、timestamp confusion。本项目已人工分析 30 个 failure cases，代表性案例和证据记录见 `docs/FAILURE_ANALYSIS.md`。
 
 ## Limitations
 
