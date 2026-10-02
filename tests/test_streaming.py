@@ -75,11 +75,13 @@ def test_recent_plus_memory_has_fixed_total_budget():
     assert [frame.frame_id for frame in selected] == [0, 3, 4, 5]
 
 
-def test_timestamp_aware_memory_keeps_same_frame_selection():
+def test_timestamp_aware_memory_selects_temporal_bin_centers():
     ordinary = recent_plus_memory(
         frames()[:-1], visible_until_s=50.0, recent_capacity=2, memory_capacity=2
     )
     aware = timestamp_aware_memory(
         frames()[:-1], visible_until_s=50.0, recent_capacity=2, memory_capacity=2
     )
-    assert aware == ordinary
+    assert [frame.frame_id for frame in ordinary] == [0, 3, 4, 5]
+    assert [frame.frame_id for frame in aware] == [1, 2, 4, 5]
+    assert aware != ordinary

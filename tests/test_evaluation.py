@@ -171,7 +171,7 @@ def test_evaluator_manifest_separates_recent_and_memory_frames():
     )
 
     assert [frame["frame_id"] for frame in record["selected_recent_frames"]] == [8, 9]
-    assert [frame["frame_id"] for frame in record["selected_memory_frames"]] == [0, 7]
+    assert [frame["frame_id"] for frame in record["selected_memory_frames"]] == [2, 5]
 
 
 def test_evaluator_writes_stage_level_profile(tmp_path: Path):

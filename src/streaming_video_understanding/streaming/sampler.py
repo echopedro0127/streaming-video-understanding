@@ -64,6 +64,42 @@ def uniform_history(
     return _uniform_select(visible, capacity)
 
 
+def timestamp_aware_history(
+    frames: Sequence[FrameRecord],
+    *,
+    visible_until_s: float,
+    capacity: int,
+    tolerance_s: float = 1e-6,
+) -> tuple[FrameRecord, ...]:
+    """Select historical frames near evenly spaced temporal-bin centers."""
+    if capacity < 0:
+        raise ValueError("capacity must be non-negative")
+    visible = _causal_frames(frames, visible_until_s, tolerance_s)
+    if capacity <= 0 or not visible:
+        return ()
+    if len(visible) <= capacity:
+        return visible
+
+    start_s = visible[0].timestamp_s
+    end_s = visible[-1].timestamp_s
+    if end_s <= start_s:
+        return _uniform_select(visible, capacity)
+
+    selected: list[FrameRecord] = []
+    for index in range(capacity):
+        center_s = start_s + (index + 0.5) * (end_s - start_s) / capacity
+        candidate = min(
+            (frame for frame in visible if frame not in selected),
+            key=lambda frame: (
+                abs(frame.timestamp_s - center_s),
+                frame.timestamp_s,
+                frame.frame_id,
+            ),
+        )
+        selected.append(candidate)
+    return tuple(sorted(selected, key=lambda frame: (frame.timestamp_s, frame.frame_id)))
+
+
 def recent_plus_memory(
     frames: Sequence[FrameRecord],
     *,
@@ -89,10 +125,15 @@ def timestamp_aware_memory(
     memory_capacity: int,
     tolerance_s: float = 1e-6,
 ) -> tuple[FrameRecord, ...]:
-    return recent_plus_memory(
-        frames,
+    if recent_capacity < 0 or memory_capacity < 0:
+        raise ValueError("recent_capacity and memory_capacity must be non-negative")
+    visible = _causal_frames(frames, visible_until_s, tolerance_s)
+    recent = visible[-recent_capacity:] if recent_capacity else ()
+    history = visible[:-recent_capacity] if recent_capacity else visible
+    memory = timestamp_aware_history(
+        history,
         visible_until_s=visible_until_s,
-        recent_capacity=recent_capacity,
-        memory_capacity=memory_capacity,
+        capacity=memory_capacity,
         tolerance_s=tolerance_s,
     )
+    return tuple(sorted((*memory, *recent), key=lambda frame: (frame.timestamp_s, frame.frame_id)))

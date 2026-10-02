@@ -13,6 +13,7 @@ from ..streaming.buffer import CausalFrameBuffer
 from ..streaming.memory import BoundedTemporalMemory
 from ..streaming.sampler import (
     recent_window,
+    timestamp_aware_history,
     uniform_history,
 )
 from ..utils.config import ProjectConfig
@@ -97,7 +98,10 @@ def _select_policy(
     )
     recent_ids = {frame.frame_id for frame in recent}
     history = tuple(frame for frame in ordered if frame.frame_id not in recent_ids)
-    memory = uniform_history(
+    history_sampler = (
+        timestamp_aware_history if policy_kind == "timestamp-aware" else uniform_history
+    )
+    memory = history_sampler(
         history,
         visible_until_s=query_time_s,
         capacity=memory_capacity,
