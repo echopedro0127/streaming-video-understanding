@@ -6,6 +6,7 @@ import shutil
 import subprocess
 from collections.abc import Iterator, Sequence
 from pathlib import Path
+from typing import Any
 
 from PIL import Image
 
@@ -163,3 +164,50 @@ class FrameReader:
             if return_code != 0:
                 stderr = process.stderr.read().decode("utf-8", errors="replace") if process.stderr else ""
                 raise RuntimeError(f"ffmpeg frame decode failed: {stderr.strip()}")
+
+
+class CachedFrameReader:
+    """Optionally reuse one bounded decoded query across policy evaluations."""
+
+    def __init__(
+        self,
+        reader: Any,
+        *,
+        max_cache_frames: int = 128,
+        timestamp_tolerance_s: float = 1e-6,
+    ) -> None:
+        if max_cache_frames < 0:
+            raise ValueError("max_cache_frames must be non-negative")
+        if not math.isfinite(timestamp_tolerance_s) or timestamp_tolerance_s < 0:
+            raise ValueError("timestamp_tolerance_s must be finite and non-negative")
+        self.reader = reader
+        self.max_cache_frames = max_cache_frames
+        self.timestamp_tolerance_s = timestamp_tolerance_s
+        self._cached_path: Path | None = None
+        self._cached_end_time_s: float | None = None
+        self._cached_frames: tuple[tuple[Image.Image, FrameRecord], ...] = ()
+
+    def read_until(
+        self, video_path: str | Path, end_time_s: float
+    ) -> Iterator[tuple[Image.Image, FrameRecord]]:
+        path = Path(video_path).resolve()
+        cache_hit = (
+            self.max_cache_frames > 0
+            and self._cached_path == path
+            and self._cached_end_time_s is not None
+            and abs(self._cached_end_time_s - end_time_s) <= self.timestamp_tolerance_s
+        )
+        if cache_hit:
+            yield from self._cached_frames
+            return
+
+        decoded = tuple(self.reader.read_until(video_path, end_time_s))
+        if self.max_cache_frames > 0 and len(decoded) <= self.max_cache_frames:
+            self._cached_path = path
+            self._cached_end_time_s = float(end_time_s)
+            self._cached_frames = decoded
+        else:
+            self._cached_path = None
+            self._cached_end_time_s = None
+            self._cached_frames = ()
+        yield from decoded

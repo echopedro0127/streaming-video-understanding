@@ -56,6 +56,7 @@ def _load_samples(
     *,
     annotation_path: Path | None,
     sample_fps: float,
+    cache_decoded_frames: bool = False,
 ) -> tuple[list[StreamingSample], object]:
     if data_root is None:
         return _synthetic_samples(), SyntheticFrameReader()
@@ -89,9 +90,10 @@ def _load_samples(
         )
         for row in rows
     ]
-    from streaming_video_understanding.data.video import FrameReader
+    from streaming_video_understanding.data.video import CachedFrameReader, FrameReader
 
-    return resolved, FrameReader(sample_fps=sample_fps)
+    reader = FrameReader(sample_fps=sample_fps)
+    return resolved, CachedFrameReader(reader) if cache_decoded_frames else reader
 
 
 def main() -> int:
@@ -107,6 +109,11 @@ def main() -> int:
     parser.add_argument("--split", type=Path, default=None)
     parser.add_argument("--option-permutation-seed", type=int, default=None)
     parser.add_argument("--profile-output", type=Path, default=None)
+    parser.add_argument(
+        "--cache-decoded-frames",
+        action="store_true",
+        help="Reuse a bounded decoded query across policies for the same sample.",
+    )
     parser.add_argument("--policy", default=None)
     parser.add_argument(
         "--all-policies",
@@ -140,6 +147,7 @@ def main() -> int:
         args.data_root,
         annotation_path=args.annotations,
         sample_fps=config.runtime.sample_fps,
+        cache_decoded_frames=args.cache_decoded_frames,
     )
     if args.split is not None:
         split_path = args.split if args.split.is_absolute() else (PROJECT_ROOT / args.split).resolve()
