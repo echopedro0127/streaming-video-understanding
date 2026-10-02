@@ -65,8 +65,27 @@ def summarize_records(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         )
         for label in labels
     }
+    stage_fields = (
+        "decode_ms",
+        "sampling_ms",
+        "memory_ms",
+        "processor_ms",
+        "generation_ms",
+        "postprocess_ms",
+        "write_ms",
+        "total_ms",
+    )
+    stage_timing = {}
+    for field in stage_fields:
+        values = _finite_values(rows, field)
+        if values:
+            stage_timing[field] = {
+                "mean_ms": sum(values) / len(values),
+                "p50_ms": _percentile(values, 50.0),
+                "p95_ms": _percentile(values, 95.0),
+            }
 
-    return {
+    summary = {
         "num_samples": total,
         "question_accuracy": correct / total if total else 0.0,
         "video_macro_accuracy": sum(video_scores) / len(video_scores) if video_scores else 0.0,
@@ -90,3 +109,6 @@ def summarize_records(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         },
         "accuracy_by_ground_truth_position": position_accuracy,
     }
+    if stage_timing:
+        summary["stage_timing"] = stage_timing
+    return summary

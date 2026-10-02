@@ -15,6 +15,7 @@ from streaming_video_understanding.data.streamingbench import load_streamingbenc
 from streaming_video_understanding.evaluation.engine import evaluate_sample
 from streaming_video_understanding.evaluation.failures import FailureStore
 from streaming_video_understanding.evaluation.permutation import permute_sample
+from streaming_video_understanding.evaluation.profiling import RuntimeProfileStore
 from streaming_video_understanding.evaluation.resume import ResumeStore
 from streaming_video_understanding.evaluation.splits import load_split_sample_ids
 from streaming_video_understanding.models.mock import MockVLMBackend
@@ -105,6 +106,7 @@ def main() -> int:
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--split", type=Path, default=None)
     parser.add_argument("--option-permutation-seed", type=int, default=None)
+    parser.add_argument("--profile-output", type=Path, default=None)
     parser.add_argument("--policy", default=None)
     parser.add_argument(
         "--all-policies",
@@ -122,11 +124,14 @@ def main() -> int:
     config = load_config(args.config)
     backend_name = args.backend or config.model.backend
     failure_path = args.output.with_name(args.output.stem + "-failures.jsonl")
+    profile_store = RuntimeProfileStore(args.profile_output) if args.profile_output else None
     if args.output.exists():
         if args.overwrite:
             args.output.unlink()
             if failure_path.exists():
                 failure_path.unlink()
+            if args.profile_output and args.profile_output.exists():
+                args.profile_output.unlink()
         elif not args.resume:
             raise SystemExit("Output exists; use --resume or --overwrite explicitly")
 
@@ -198,6 +203,7 @@ def main() -> int:
                     failure_store=failure_store,
                     config_id=run_config_id,
                     record_metadata=record_metadata,
+                    profile_store=profile_store,
                 )
                 processed += 1
             except Exception as exc:

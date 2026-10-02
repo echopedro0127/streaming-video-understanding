@@ -45,9 +45,13 @@ class SmolVLMBackend:
         messages = [{"role": "user", "content": content}]
 
         started = time.perf_counter()
+        processor_latency_ms: float | None = None
+        generation_latency_ms: float | None = None
+        postprocess_latency_ms: float | None = None
         try:
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
+            processor_started = time.perf_counter()
             inputs = self.processor.apply_chat_template(
                 messages,
                 add_generation_prompt=True,
@@ -56,19 +60,28 @@ class SmolVLMBackend:
                 return_tensors="pt",
             )
             inputs = inputs.to(self.model.device)
+            processor_latency_ms = (time.perf_counter() - processor_started) * 1000.0
+
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            generation_started = time.perf_counter()
             generated_ids = self.model.generate(
                 **inputs,
                 do_sample=False,
                 max_new_tokens=self.max_new_tokens,
             )
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            generation_latency_ms = (time.perf_counter() - generation_started) * 1000.0
+
+            postprocess_started = time.perf_counter()
             input_length = inputs["input_ids"].shape[-1]
             generated_text = self.processor.batch_decode(
                 generated_ids[:, input_length:],
                 skip_special_tokens=True,
             )[0]
             answer = parse_answer_letter(generated_text)
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
+            postprocess_latency_ms = (time.perf_counter() - postprocess_started) * 1000.0
         except torch.cuda.OutOfMemoryError as exc:
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
@@ -80,4 +93,7 @@ class SmolVLMBackend:
             raw_text=generated_text,
             answer=answer,
             latency_ms=(time.perf_counter() - started) * 1000.0,
+            processor_latency_ms=processor_latency_ms,
+            generation_latency_ms=generation_latency_ms,
+            postprocess_latency_ms=postprocess_latency_ms,
         )

@@ -17,6 +17,7 @@ from ..streaming.sampler import (
 )
 from ..utils.config import ProjectConfig
 from .failures import FailureStore
+from .profiling import RuntimeProfileStore
 from .resume import ResumeStore
 
 
@@ -124,7 +125,9 @@ def evaluate_sample(
     failure_store: FailureStore | None = None,
     config_id: str | None = None,
     record_metadata: Mapping[str, Any] | None = None,
+    profile_store: RuntimeProfileStore | None = None,
 ) -> dict[str, Any]:
+    total_started = time.perf_counter()
     query_time_s = sample.query_time_s
     tolerance_s = config.dataset.timestamp_tolerance_s
     context_start_s = max(0.0, query_time_s - config.dataset.context_horizon_s)
@@ -144,6 +147,7 @@ def evaluate_sample(
     visible_frames = buffer.snapshot()
     decode_latency_ms = (time.perf_counter() - decode_started) * 1000.0
 
+    memory_started = time.perf_counter()
     memory = BoundedTemporalMemory(
         capacity=config.experiment.visual_budget,
         visible_until_s=query_time_s,
@@ -152,7 +156,9 @@ def evaluate_sample(
     for frame in visible_frames:
         memory.update(frame)
     frozen_memory = memory.snapshot()
+    memory_latency_ms = (time.perf_counter() - memory_started) * 1000.0
 
+    sampling_started = time.perf_counter()
     selected_frames, memory_frames, include_timestamps = _select_policy(
         visible_frames,
         query_time_s=query_time_s,
@@ -160,6 +166,7 @@ def evaluate_sample(
         policy_id=policy_id,
         tolerance_s=tolerance_s,
     )
+    sampling_latency_ms = (time.perf_counter() - sampling_started) * 1000.0
     if selected_frames and max(frame.timestamp_s for frame in selected_frames) > query_time_s + tolerance_s:
         raise ValueError("selected frame is after the causal query boundary")
     selected_images = tuple(images_by_id[frame.frame_id] for frame in selected_frames)
@@ -220,8 +227,28 @@ def evaluate_sample(
     }
     if record_metadata:
         record.update(dict(record_metadata))
+    write_started = time.perf_counter()
     if output_store is not None:
         output_store.append(record)
     if failure_store is not None:
         failure_store.append(record)
+    write_latency_ms = (time.perf_counter() - write_started) * 1000.0
+    total_latency_ms = (time.perf_counter() - total_started) * 1000.0
+    if profile_store is not None:
+        profile_store.append(
+            {
+                "sample_id": sample.sample_id,
+                "video_id": sample.video_id,
+                "config_id": config_id or policy_id,
+                "policy_id": policy_id,
+                "decode_ms": decode_latency_ms,
+                "sampling_ms": sampling_latency_ms,
+                "memory_ms": memory_latency_ms,
+                "processor_ms": model_response.processor_latency_ms,
+                "generation_ms": model_response.generation_latency_ms,
+                "postprocess_ms": model_response.postprocess_latency_ms,
+                "write_ms": write_latency_ms,
+                "total_ms": total_latency_ms,
+            }
+        )
     return record

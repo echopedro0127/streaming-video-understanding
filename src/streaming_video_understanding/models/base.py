@@ -23,6 +23,9 @@ class ModelResponse:
     latency_ms: float
     input_tokens: int | None = None
     output_tokens: int | None = None
+    processor_latency_ms: float | None = None
+    generation_latency_ms: float | None = None
+    postprocess_latency_ms: float | None = None
 
 
 class ModelBackend(Protocol):
