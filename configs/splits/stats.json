@@ -1,0 +1,93 @@
+{
+  "seed": 42,
+  "validation": {
+    "num_samples": 100,
+    "num_videos": 68,
+    "task_type": {
+      "Action Recognition": 30,
+      "Attribute Recognition": 8,
+      "Causal Reasoning": 2,
+      "Clips Summarize": 1,
+      "Counting": 30,
+      "Event Understanding": 10,
+      "Object Recognition": 15,
+      "Prospective Reasoning": 1,
+      "Spatial Understanding": 1,
+      "Text-Rich Understanding": 2
+    },
+    "frames_required": {
+      "multiple": 65,
+      "single": 35
+    },
+    "temporal_clue_type": {
+      "Concurrent": 85,
+      "Prior": 15
+    },
+    "ground_truth": {
+      "A": 29,
+      "B": 24,
+      "C": 20,
+      "D": 27
+    }
+  },
+  "final_test": {
+    "num_samples": 400,
+    "num_videos": 100,
+    "task_type": {
+      "Action Recognition": 118,
+      "Attribute Recognition": 28,
+      "Causal Reasoning": 7,
+      "Clips Summarize": 1,
+      "Counting": 122,
+      "Event Understanding": 15,
+      "Object Recognition": 88,
+      "Prospective Reasoning": 1,
+      "Spatial Understanding": 2,
+      "Text-Rich Understanding": 18
+    },
+    "frames_required": {
+      "multiple": 231,
+      "single": 169
+    },
+    "temporal_clue_type": {
+      "Concurrent": 340,
+      "Prior": 60
+    },
+    "ground_truth": {
+      "A": 108,
+      "B": 101,
+      "C": 93,
+      "D": 98
+    }
+  },
+  "total": {
+    "num_samples": 500,
+    "num_videos": 100,
+    "task_type": {
+      "Action Recognition": 148,
+      "Attribute Recognition": 36,
+      "Causal Reasoning": 9,
+      "Clips Summarize": 2,
+      "Counting": 152,
+      "Event Understanding": 25,
+      "Object Recognition": 103,
+      "Prospective Reasoning": 2,
+      "Spatial Understanding": 3,
+      "Text-Rich Understanding": 20
+    },
+    "frames_required": {
+      "multiple": 296,
+      "single": 204
+    },
+    "temporal_clue_type": {
+      "Concurrent": 425,
+      "Prior": 75
+    },
+    "ground_truth": {
+      "A": 137,
+      "B": 125,
+      "C": 113,
+      "D": 125
+    }
+  }
+}

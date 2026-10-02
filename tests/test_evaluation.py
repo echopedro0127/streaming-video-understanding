@@ -43,6 +43,25 @@ def test_metrics_report_accuracy_and_percentiles():
     assert summary["p95_latency_ms"] == pytest.approx(29.0)
 
 
+def test_metrics_report_option_position_distributions():
+    summary = summarize_records(
+        [
+            {"correct": True, "latency_ms": 10.0, "video_id": "v1", "ground_truth": "A", "prediction": "A"},
+            {"correct": False, "latency_ms": 20.0, "video_id": "v1", "ground_truth": "B", "prediction": "C"},
+            {"correct": True, "latency_ms": 30.0, "video_id": "v2", "ground_truth": "C", "prediction": "C"},
+        ]
+    )
+
+    assert summary["ground_truth_distribution"] == {"A": 1, "B": 1, "C": 1, "D": 0}
+    assert summary["prediction_distribution"] == {"A": 1, "B": 0, "C": 2, "D": 0}
+    assert summary["accuracy_by_ground_truth_position"] == {
+        "A": 1.0,
+        "B": 0.0,
+        "C": 1.0,
+        "D": 0.0,
+    }
+
+
 def test_failure_store_persists_failed_samples(tmp_path: Path):
     from streaming_video_understanding.evaluation.failures import FailureStore
 

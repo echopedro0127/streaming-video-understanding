@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from collections.abc import Iterable, Mapping
 from math import isfinite
 from typing import Any
@@ -45,6 +45,26 @@ def summarize_records(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     compression_values = _finite_values(rows, "compression_ratio")
     peak_memory = _finite_values(rows, "peak_gpu_memory_mb")
     total_latency_s = sum(latencies) / 1000.0
+    labels = ("A", "B", "C", "D")
+    ground_truth_counts = Counter(
+        str(row["ground_truth"]) for row in rows if row.get("ground_truth") is not None
+    )
+    prediction_counts = Counter(
+        str(row["prediction"]) for row in rows if row.get("prediction") is not None
+    )
+    position_accuracy = {
+        label: (
+            sum(
+                bool(row.get("correct", False))
+                for row in rows
+                if row.get("ground_truth") == label
+            )
+            / ground_truth_counts[label]
+            if ground_truth_counts[label]
+            else 0.0
+        )
+        for label in labels
+    }
 
     return {
         "num_samples": total,
@@ -62,4 +82,11 @@ def summarize_records(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
         if compression_values
         else 0.0,
         "peak_gpu_memory_mb": max(peak_memory, default=0.0),
+        "ground_truth_distribution": {
+            label: int(ground_truth_counts[label]) for label in labels
+        },
+        "prediction_distribution": {
+            label: int(prediction_counts[label]) for label in labels
+        },
+        "accuracy_by_ground_truth_position": position_accuracy,
     }

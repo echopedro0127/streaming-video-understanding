@@ -22,6 +22,7 @@ class StreamingSample:
     query_time_s: float
     task_type: str
     temporal_clue_type: str
+    frames_required: str = ""
 
 
 def parse_timestamp(value: str | int | float) -> float:

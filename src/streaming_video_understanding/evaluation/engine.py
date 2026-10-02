@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import time
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -123,6 +123,7 @@ def evaluate_sample(
     policy_id: str = "recent",
     failure_store: FailureStore | None = None,
     config_id: str | None = None,
+    record_metadata: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     query_time_s = sample.query_time_s
     tolerance_s = config.dataset.timestamp_tolerance_s
@@ -217,6 +218,8 @@ def evaluate_sample(
         "timestamp_prompt": prompt,
         "sample_fps": config.runtime.sample_fps,
     }
+    if record_metadata:
+        record.update(dict(record_metadata))
     if output_store is not None:
         output_store.append(record)
     if failure_store is not None:

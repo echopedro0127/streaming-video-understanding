@@ -77,6 +77,7 @@ def _rows_to_samples(rows: Iterable[Mapping[str, object]], *, source: Path, star
                     query_time_s=parse_timestamp(str(row["time_stamp"])),
                     task_type=task_type,
                     temporal_clue_type=str(row.get("temporal_clue_type") or "").strip(),
+                    frames_required=str(row.get("frames_required") or "").strip().lower(),
                 )
             )
         except (KeyError, TypeError, ValueError) as exc:

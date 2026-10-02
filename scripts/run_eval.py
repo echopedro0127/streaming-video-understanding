@@ -14,7 +14,9 @@ from streaming_video_understanding.data.schema import FrameRecord, StreamingSamp
 from streaming_video_understanding.data.streamingbench import load_streamingbench_file
 from streaming_video_understanding.evaluation.engine import evaluate_sample
 from streaming_video_understanding.evaluation.failures import FailureStore
+from streaming_video_understanding.evaluation.permutation import permute_sample
 from streaming_video_understanding.evaluation.resume import ResumeStore
+from streaming_video_understanding.evaluation.splits import load_split_sample_ids
 from streaming_video_understanding.models.mock import MockVLMBackend
 from streaming_video_understanding.models.smolvlm import SmolVLMBackend
 from streaming_video_understanding.utils.config import load_config
@@ -101,6 +103,8 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--split", type=Path, default=None)
+    parser.add_argument("--option-permutation-seed", type=int, default=None)
     parser.add_argument("--policy", default=None)
     parser.add_argument(
         "--all-policies",
@@ -132,6 +136,12 @@ def main() -> int:
         annotation_path=args.annotations,
         sample_fps=config.runtime.sample_fps,
     )
+    if args.split is not None:
+        split_path = args.split if args.split.is_absolute() else (PROJECT_ROOT / args.split).resolve()
+        split_ids = load_split_sample_ids(split_path)
+        samples = [sample for sample in samples if sample.sample_id in split_ids]
+        if not samples:
+            raise SystemExit(f"--split selected no samples from {split_path}")
     if args.limit is not None:
         samples = samples[: args.limit]
     if args.all_policies:
@@ -155,17 +165,31 @@ def main() -> int:
     skipped = 0
     for sample in samples:
         for policy_id in policy_ids:
+            evaluation_sample = sample
+            record_metadata: dict[str, object] = {}
+            permutation_suffix = ""
+            if args.option_permutation_seed is not None:
+                permutation = permute_sample(sample, seed=args.option_permutation_seed)
+                evaluation_sample = permutation.sample
+                permutation_suffix = f"-option-permutation-{args.option_permutation_seed}"
+                record_metadata = {
+                    "option_permutation": list(permutation.permutation),
+                    "original_options": list(sample.options),
+                    "permuted_options": list(permutation.sample.options),
+                    "original_ground_truth": permutation.original_answer,
+                    "option_permutation_seed": args.option_permutation_seed,
+                }
             run_config_id = configuration_id(
                 config,
                 policy_id=policy_id,
                 backend=backend_name,
-            )
+            ) + permutation_suffix
             if store.is_complete(sample.sample_id, run_config_id):
                 skipped += 1
                 continue
             try:
                 evaluate_sample(
-                    sample,
+                    evaluation_sample,
                     config=config,
                     frame_reader=frame_reader,
                     backend=backend,
@@ -173,6 +197,7 @@ def main() -> int:
                     policy_id=policy_id,
                     failure_store=failure_store,
                     config_id=run_config_id,
+                    record_metadata=record_metadata,
                 )
                 processed += 1
             except Exception as exc:

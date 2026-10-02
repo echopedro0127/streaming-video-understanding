@@ -19,6 +19,7 @@ def test_loader_preserves_options_and_query_time(tmp_path: Path):
     assert rows[0].query_time_s == 4.0
     assert rows[0].options == ("cat", "dog", "ball", "car")
     assert rows[0].answer == "B"
+    assert rows[0].frames_required == "single"
 
 
 def test_loader_uses_sample_directory_as_video_id(tmp_path: Path):

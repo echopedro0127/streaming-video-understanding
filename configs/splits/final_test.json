@@ -1,0 +1,4037 @@
+{
+  "split": "final_test",
+  "sample_ids": [
+    "Real-Time Visual Understanding_sample_1_1",
+    "Real-Time Visual Understanding_sample_1_2",
+    "Real-Time Visual Understanding_sample_1_3",
+    "Real-Time Visual Understanding_sample_2_1",
+    "Real-Time Visual Understanding_sample_2_2",
+    "Real-Time Visual Understanding_sample_2_4",
+    "Real-Time Visual Understanding_sample_3_1",
+    "Real-Time Visual Understanding_sample_3_3",
+    "Real-Time Visual Understanding_sample_3_4",
+    "Real-Time Visual Understanding_sample_3_5",
+    "Real-Time Visual Understanding_sample_4_1",
+    "Real-Time Visual Understanding_sample_4_2",
+    "Real-Time Visual Understanding_sample_4_3",
+    "Real-Time Visual Understanding_sample_4_5",
+    "Real-Time Visual Understanding_sample_5_1",
+    "Real-Time Visual Understanding_sample_5_2",
+    "Real-Time Visual Understanding_sample_5_3",
+    "Real-Time Visual Understanding_sample_5_4",
+    "Real-Time Visual Understanding_sample_6_1",
+    "Real-Time Visual Understanding_sample_6_2",
+    "Real-Time Visual Understanding_sample_6_4",
+    "Real-Time Visual Understanding_sample_6_5",
+    "Real-Time Visual Understanding_sample_7_1",
+    "Real-Time Visual Understanding_sample_7_2",
+    "Real-Time Visual Understanding_sample_7_3",
+    "Real-Time Visual Understanding_sample_7_5",
+    "Real-Time Visual Understanding_sample_8_1",
+    "Real-Time Visual Understanding_sample_8_2",
+    "Real-Time Visual Understanding_sample_8_3",
+    "Real-Time Visual Understanding_sample_8_4",
+    "Real-Time Visual Understanding_sample_9_1",
+    "Real-Time Visual Understanding_sample_9_2",
+    "Real-Time Visual Understanding_sample_9_3",
+    "Real-Time Visual Understanding_sample_9_4",
+    "Real-Time Visual Understanding_sample_10_1",
+    "Real-Time Visual Understanding_sample_10_3",
+    "Real-Time Visual Understanding_sample_10_4",
+    "Real-Time Visual Understanding_sample_11_1",
+    "Real-Time Visual Understanding_sample_11_3",
+    "Real-Time Visual Understanding_sample_11_4",
+    "Real-Time Visual Understanding_sample_12_1",
+    "Real-Time Visual Understanding_sample_12_3",
+    "Real-Time Visual Understanding_sample_12_4",
+    "Real-Time Visual Understanding_sample_12_5",
+    "Real-Time Visual Understanding_sample_13_2",
+    "Real-Time Visual Understanding_sample_13_3",
+    "Real-Time Visual Understanding_sample_13_4",
+    "Real-Time Visual Understanding_sample_13_5",
+    "Real-Time Visual Understanding_sample_14_1",
+    "Real-Time Visual Understanding_sample_14_2",
+    "Real-Time Visual Understanding_sample_14_3",
+    "Real-Time Visual Understanding_sample_14_4",
+    "Real-Time Visual Understanding_sample_14_5",
+    "Real-Time Visual Understanding_sample_15_1",
+    "Real-Time Visual Understanding_sample_15_2",
+    "Real-Time Visual Understanding_sample_15_3",
+    "Real-Time Visual Understanding_sample_15_4",
+    "Real-Time Visual Understanding_sample_16_1",
+    "Real-Time Visual Understanding_sample_16_2",
+    "Real-Time Visual Understanding_sample_16_3",
+    "Real-Time Visual Understanding_sample_17_1",
+    "Real-Time Visual Understanding_sample_17_2",
+    "Real-Time Visual Understanding_sample_17_4",
+    "Real-Time Visual Understanding_sample_17_5",
+    "Real-Time Visual Understanding_sample_18_1",
+    "Real-Time Visual Understanding_sample_18_3",
+    "Real-Time Visual Understanding_sample_18_5",
+    "Real-Time Visual Understanding_sample_19_2",
+    "Real-Time Visual Understanding_sample_19_3",
+    "Real-Time Visual Understanding_sample_19_4",
+    "Real-Time Visual Understanding_sample_19_5",
+    "Real-Time Visual Understanding_sample_20_1",
+    "Real-Time Visual Understanding_sample_20_3",
+    "Real-Time Visual Understanding_sample_20_5",
+    "Real-Time Visual Understanding_sample_21_1",
+    "Real-Time Visual Understanding_sample_21_2",
+    "Real-Time Visual Understanding_sample_21_3",
+    "Real-Time Visual Understanding_sample_21_4",
+    "Real-Time Visual Understanding_sample_21_5",
+    "Real-Time Visual Understanding_sample_22_1",
+    "Real-Time Visual Understanding_sample_22_2",
+    "Real-Time Visual Understanding_sample_22_3",
+    "Real-Time Visual Understanding_sample_22_4",
+    "Real-Time Visual Understanding_sample_22_5",
+    "Real-Time Visual Understanding_sample_23_1",
+    "Real-Time Visual Understanding_sample_23_2",
+    "Real-Time Visual Understanding_sample_23_3",
+    "Real-Time Visual Understanding_sample_23_4",
+    "Real-Time Visual Understanding_sample_23_5",
+    "Real-Time Visual Understanding_sample_24_1",
+    "Real-Time Visual Understanding_sample_24_2",
+    "Real-Time Visual Understanding_sample_24_3",
+    "Real-Time Visual Understanding_sample_24_4",
+    "Real-Time Visual Understanding_sample_24_5",
+    "Real-Time Visual Understanding_sample_25_1",
+    "Real-Time Visual Understanding_sample_25_2",
+    "Real-Time Visual Understanding_sample_25_3",
+    "Real-Time Visual Understanding_sample_25_4",
+    "Real-Time Visual Understanding_sample_26_1",
+    "Real-Time Visual Understanding_sample_26_2",
+    "Real-Time Visual Understanding_sample_26_3",
+    "Real-Time Visual Understanding_sample_26_4",
+    "Real-Time Visual Understanding_sample_26_5",
+    "Real-Time Visual Understanding_sample_27_2",
+    "Real-Time Visual Understanding_sample_27_3",
+    "Real-Time Visual Understanding_sample_27_4",
+    "Real-Time Visual Understanding_sample_27_5",
+    "Real-Time Visual Understanding_sample_28_1",
+    "Real-Time Visual Understanding_sample_28_2",
+    "Real-Time Visual Understanding_sample_28_3",
+    "Real-Time Visual Understanding_sample_28_4",
+    "Real-Time Visual Understanding_sample_28_5",
+    "Real-Time Visual Understanding_sample_29_1",
+    "Real-Time Visual Understanding_sample_29_2",
+    "Real-Time Visual Understanding_sample_29_3",
+    "Real-Time Visual Understanding_sample_29_4",
+    "Real-Time Visual Understanding_sample_29_5",
+    "Real-Time Visual Understanding_sample_30_1",
+    "Real-Time Visual Understanding_sample_30_3",
+    "Real-Time Visual Understanding_sample_30_4",
+    "Real-Time Visual Understanding_sample_30_5",
+    "Real-Time Visual Understanding_sample_31_1",
+    "Real-Time Visual Understanding_sample_31_2",
+    "Real-Time Visual Understanding_sample_31_3",
+    "Real-Time Visual Understanding_sample_31_4",
+    "Real-Time Visual Understanding_sample_31_5",
+    "Real-Time Visual Understanding_sample_32_1",
+    "Real-Time Visual Understanding_sample_32_2",
+    "Real-Time Visual Understanding_sample_32_3",
+    "Real-Time Visual Understanding_sample_32_4",
+    "Real-Time Visual Understanding_sample_32_5",
+    "Real-Time Visual Understanding_sample_33_2",
+    "Real-Time Visual Understanding_sample_33_3",
+    "Real-Time Visual Understanding_sample_33_4",
+    "Real-Time Visual Understanding_sample_34_1",
+    "Real-Time Visual Understanding_sample_34_2",
+    "Real-Time Visual Understanding_sample_34_3",
+    "Real-Time Visual Understanding_sample_34_5",
+    "Real-Time Visual Understanding_sample_35_1",
+    "Real-Time Visual Understanding_sample_35_2",
+    "Real-Time Visual Understanding_sample_35_3",
+    "Real-Time Visual Understanding_sample_35_4",
+    "Real-Time Visual Understanding_sample_35_5",
+    "Real-Time Visual Understanding_sample_36_1",
+    "Real-Time Visual Understanding_sample_36_2",
+    "Real-Time Visual Understanding_sample_36_3",
+    "Real-Time Visual Understanding_sample_36_4",
+    "Real-Time Visual Understanding_sample_37_1",
+    "Real-Time Visual Understanding_sample_37_3",
+    "Real-Time Visual Understanding_sample_37_4",
+    "Real-Time Visual Understanding_sample_37_5",
+    "Real-Time Visual Understanding_sample_38_4",
+    "Real-Time Visual Understanding_sample_39_1",
+    "Real-Time Visual Understanding_sample_39_2",
+    "Real-Time Visual Understanding_sample_39_3",
+    "Real-Time Visual Understanding_sample_39_4",
+    "Real-Time Visual Understanding_sample_39_5",
+    "Real-Time Visual Understanding_sample_40_1",
+    "Real-Time Visual Understanding_sample_40_2",
+    "Real-Time Visual Understanding_sample_40_3",
+    "Real-Time Visual Understanding_sample_40_5",
+    "Real-Time Visual Understanding_sample_41_1",
+    "Real-Time Visual Understanding_sample_41_2",
+    "Real-Time Visual Understanding_sample_41_3",
+    "Real-Time Visual Understanding_sample_41_5",
+    "Real-Time Visual Understanding_sample_42_1",
+    "Real-Time Visual Understanding_sample_42_2",
+    "Real-Time Visual Understanding_sample_42_3",
+    "Real-Time Visual Understanding_sample_42_4",
+    "Real-Time Visual Understanding_sample_42_5",
+    "Real-Time Visual Understanding_sample_43_1",
+    "Real-Time Visual Understanding_sample_43_3",
+    "Real-Time Visual Understanding_sample_43_4",
+    "Real-Time Visual Understanding_sample_44_2",
+    "Real-Time Visual Understanding_sample_44_3",
+    "Real-Time Visual Understanding_sample_44_4",
+    "Real-Time Visual Understanding_sample_45_1",
+    "Real-Time Visual Understanding_sample_45_2",
+    "Real-Time Visual Understanding_sample_45_3",
+    "Real-Time Visual Understanding_sample_45_4",
+    "Real-Time Visual Understanding_sample_45_5",
+    "Real-Time Visual Understanding_sample_46_1",
+    "Real-Time Visual Understanding_sample_46_2",
+    "Real-Time Visual Understanding_sample_46_3",
+    "Real-Time Visual Understanding_sample_46_4",
+    "Real-Time Visual Understanding_sample_46_5",
+    "Real-Time Visual Understanding_sample_47_1",
+    "Real-Time Visual Understanding_sample_47_2",
+    "Real-Time Visual Understanding_sample_47_3",
+    "Real-Time Visual Understanding_sample_48_1",
+    "Real-Time Visual Understanding_sample_48_3",
+    "Real-Time Visual Understanding_sample_48_5",
+    "Real-Time Visual Understanding_sample_49_1",
+    "Real-Time Visual Understanding_sample_49_2",
+    "Real-Time Visual Understanding_sample_49_3",
+    "Real-Time Visual Understanding_sample_49_4",
+    "Real-Time Visual Understanding_sample_49_5",
+    "Real-Time Visual Understanding_sample_50_1",
+    "Real-Time Visual Understanding_sample_50_2",
+    "Real-Time Visual Understanding_sample_50_3",
+    "Real-Time Visual Understanding_sample_50_4",
+    "Real-Time Visual Understanding_sample_51_1",
+    "Real-Time Visual Understanding_sample_51_2",
+    "Real-Time Visual Understanding_sample_51_4",
+    "Real-Time Visual Understanding_sample_51_5",
+    "Real-Time Visual Understanding_sample_52_1",
+    "Real-Time Visual Understanding_sample_52_2",
+    "Real-Time Visual Understanding_sample_52_3",
+    "Real-Time Visual Understanding_sample_52_4",
+    "Real-Time Visual Understanding_sample_53_1",
+    "Real-Time Visual Understanding_sample_53_2",
+    "Real-Time Visual Understanding_sample_53_3",
+    "Real-Time Visual Understanding_sample_53_4",
+    "Real-Time Visual Understanding_sample_53_5",
+    "Real-Time Visual Understanding_sample_54_1",
+    "Real-Time Visual Understanding_sample_54_2",
+    "Real-Time Visual Understanding_sample_54_3",
+    "Real-Time Visual Understanding_sample_54_4",
+    "Real-Time Visual Understanding_sample_54_5",
+    "Real-Time Visual Understanding_sample_55_2",
+    "Real-Time Visual Understanding_sample_55_3",
+    "Real-Time Visual Understanding_sample_55_4",
+    "Real-Time Visual Understanding_sample_55_5",
+    "Real-Time Visual Understanding_sample_56_1",
+    "Real-Time Visual Understanding_sample_56_3",
+    "Real-Time Visual Understanding_sample_57_2",
+    "Real-Time Visual Understanding_sample_57_3",
+    "Real-Time Visual Understanding_sample_57_4",
+    "Real-Time Visual Understanding_sample_57_5",
+    "Real-Time Visual Understanding_sample_58_1",
+    "Real-Time Visual Understanding_sample_58_2",
+    "Real-Time Visual Understanding_sample_58_3",
+    "Real-Time Visual Understanding_sample_58_4",
+    "Real-Time Visual Understanding_sample_59_1",
+    "Real-Time Visual Understanding_sample_59_2",
+    "Real-Time Visual Understanding_sample_59_3",
+    "Real-Time Visual Understanding_sample_59_4",
+    "Real-Time Visual Understanding_sample_59_5",
+    "Real-Time Visual Understanding_sample_60_1",
+    "Real-Time Visual Understanding_sample_60_3",
+    "Real-Time Visual Understanding_sample_60_4",
+    "Real-Time Visual Understanding_sample_60_5",
+    "Real-Time Visual Understanding_sample_61_2",
+    "Real-Time Visual Understanding_sample_61_3",
+    "Real-Time Visual Understanding_sample_61_4",
+    "Real-Time Visual Understanding_sample_61_5",
+    "Real-Time Visual Understanding_sample_62_1",
+    "Real-Time Visual Understanding_sample_62_2",
+    "Real-Time Visual Understanding_sample_62_3",
+    "Real-Time Visual Understanding_sample_62_4",
+    "Real-Time Visual Understanding_sample_62_5",
+    "Real-Time Visual Understanding_sample_63_2",
+    "Real-Time Visual Understanding_sample_63_3",
+    "Real-Time Visual Understanding_sample_63_4",
+    "Real-Time Visual Understanding_sample_63_5",
+    "Real-Time Visual Understanding_sample_64_1",
+    "Real-Time Visual Understanding_sample_64_2",
+    "Real-Time Visual Understanding_sample_64_3",
+    "Real-Time Visual Understanding_sample_64_4",
+    "Real-Time Visual Understanding_sample_64_5",
+    "Real-Time Visual Understanding_sample_65_1",
+    "Real-Time Visual Understanding_sample_65_4",
+    "Real-Time Visual Understanding_sample_66_1",
+    "Real-Time Visual Understanding_sample_66_2",
+    "Real-Time Visual Understanding_sample_66_3",
+    "Real-Time Visual Understanding_sample_66_4",
+    "Real-Time Visual Understanding_sample_67_1",
+    "Real-Time Visual Understanding_sample_67_2",
+    "Real-Time Visual Understanding_sample_67_3",
+    "Real-Time Visual Understanding_sample_67_4",
+    "Real-Time Visual Understanding_sample_67_5",
+    "Real-Time Visual Understanding_sample_68_2",
+    "Real-Time Visual Understanding_sample_68_4",
+    "Real-Time Visual Understanding_sample_69_1",
+    "Real-Time Visual Understanding_sample_69_3",
+    "Real-Time Visual Understanding_sample_69_4",
+    "Real-Time Visual Understanding_sample_69_5",
+    "Real-Time Visual Understanding_sample_70_1",
+    "Real-Time Visual Understanding_sample_70_2",
+    "Real-Time Visual Understanding_sample_70_5",
+    "Real-Time Visual Understanding_sample_71_1",
+    "Real-Time Visual Understanding_sample_71_2",
+    "Real-Time Visual Understanding_sample_71_3",
+    "Real-Time Visual Understanding_sample_71_4",
+    "Real-Time Visual Understanding_sample_71_5",
+    "Real-Time Visual Understanding_sample_72_1",
+    "Real-Time Visual Understanding_sample_72_2",
+    "Real-Time Visual Understanding_sample_72_3",
+    "Real-Time Visual Understanding_sample_73_1",
+    "Real-Time Visual Understanding_sample_73_2",
+    "Real-Time Visual Understanding_sample_73_3",
+    "Real-Time Visual Understanding_sample_73_4",
+    "Real-Time Visual Understanding_sample_73_5",
+    "Real-Time Visual Understanding_sample_74_1",
+    "Real-Time Visual Understanding_sample_74_2",
+    "Real-Time Visual Understanding_sample_74_3",
+    "Real-Time Visual Understanding_sample_75_1",
+    "Real-Time Visual Understanding_sample_75_2",
+    "Real-Time Visual Understanding_sample_75_3",
+    "Real-Time Visual Understanding_sample_75_4",
+    "Real-Time Visual Understanding_sample_76_1",
+    "Real-Time Visual Understanding_sample_76_2",
+    "Real-Time Visual Understanding_sample_76_4",
+    "Real-Time Visual Understanding_sample_76_5",
+    "Real-Time Visual Understanding_sample_77_1",
+    "Real-Time Visual Understanding_sample_77_2",
+    "Real-Time Visual Understanding_sample_77_3",
+    "Real-Time Visual Understanding_sample_77_4",
+    "Real-Time Visual Understanding_sample_77_5",
+    "Real-Time Visual Understanding_sample_78_1",
+    "Real-Time Visual Understanding_sample_78_2",
+    "Real-Time Visual Understanding_sample_78_3",
+    "Real-Time Visual Understanding_sample_78_4",
+    "Real-Time Visual Understanding_sample_78_5",
+    "Real-Time Visual Understanding_sample_79_1",
+    "Real-Time Visual Understanding_sample_79_2",
+    "Real-Time Visual Understanding_sample_79_3",
+    "Real-Time Visual Understanding_sample_79_4",
+    "Real-Time Visual Understanding_sample_79_5",
+    "Real-Time Visual Understanding_sample_80_2",
+    "Real-Time Visual Understanding_sample_80_3",
+    "Real-Time Visual Understanding_sample_80_4",
+    "Real-Time Visual Understanding_sample_81_1",
+    "Real-Time Visual Understanding_sample_81_3",
+    "Real-Time Visual Understanding_sample_81_4",
+    "Real-Time Visual Understanding_sample_81_5",
+    "Real-Time Visual Understanding_sample_82_2",
+    "Real-Time Visual Understanding_sample_82_3",
+    "Real-Time Visual Understanding_sample_82_4",
+    "Real-Time Visual Understanding_sample_82_5",
+    "Real-Time Visual Understanding_sample_83_2",
+    "Real-Time Visual Understanding_sample_83_3",
+    "Real-Time Visual Understanding_sample_83_4",
+    "Real-Time Visual Understanding_sample_83_5",
+    "Real-Time Visual Understanding_sample_84_1",
+    "Real-Time Visual Understanding_sample_84_2",
+    "Real-Time Visual Understanding_sample_84_3",
+    "Real-Time Visual Understanding_sample_84_4",
+    "Real-Time Visual Understanding_sample_84_5",
+    "Real-Time Visual Understanding_sample_85_1",
+    "Real-Time Visual Understanding_sample_85_3",
+    "Real-Time Visual Understanding_sample_85_4",
+    "Real-Time Visual Understanding_sample_86_1",
+    "Real-Time Visual Understanding_sample_86_2",
+    "Real-Time Visual Understanding_sample_86_3",
+    "Real-Time Visual Understanding_sample_86_4",
+    "Real-Time Visual Understanding_sample_86_5",
+    "Real-Time Visual Understanding_sample_87_1",
+    "Real-Time Visual Understanding_sample_87_2",
+    "Real-Time Visual Understanding_sample_87_3",
+    "Real-Time Visual Understanding_sample_88_2",
+    "Real-Time Visual Understanding_sample_88_3",
+    "Real-Time Visual Understanding_sample_88_4",
+    "Real-Time Visual Understanding_sample_88_5",
+    "Real-Time Visual Understanding_sample_89_1",
+    "Real-Time Visual Understanding_sample_89_2",
+    "Real-Time Visual Understanding_sample_89_3",
+    "Real-Time Visual Understanding_sample_89_4",
+    "Real-Time Visual Understanding_sample_89_5",
+    "Real-Time Visual Understanding_sample_90_1",
+    "Real-Time Visual Understanding_sample_90_2",
+    "Real-Time Visual Understanding_sample_90_4",
+    "Real-Time Visual Understanding_sample_90_5",
+    "Real-Time Visual Understanding_sample_91_3",
+    "Real-Time Visual Understanding_sample_91_4",
+    "Real-Time Visual Understanding_sample_91_5",
+    "Real-Time Visual Understanding_sample_92_1",
+    "Real-Time Visual Understanding_sample_92_2",
+    "Real-Time Visual Understanding_sample_92_3",
+    "Real-Time Visual Understanding_sample_92_4",
+    "Real-Time Visual Understanding_sample_92_5",
+    "Real-Time Visual Understanding_sample_93_2",
+    "Real-Time Visual Understanding_sample_93_3",
+    "Real-Time Visual Understanding_sample_93_4",
+    "Real-Time Visual Understanding_sample_93_5",
+    "Real-Time Visual Understanding_sample_94_2",
+    "Real-Time Visual Understanding_sample_94_3",
+    "Real-Time Visual Understanding_sample_94_4",
+    "Real-Time Visual Understanding_sample_95_2",
+    "Real-Time Visual Understanding_sample_95_3",
+    "Real-Time Visual Understanding_sample_95_4",
+    "Real-Time Visual Understanding_sample_95_5",
+    "Real-Time Visual Understanding_sample_96_1",
+    "Real-Time Visual Understanding_sample_96_2",
+    "Real-Time Visual Understanding_sample_96_3",
+    "Real-Time Visual Understanding_sample_96_4",
+    "Real-Time Visual Understanding_sample_96_5",
+    "Real-Time Visual Understanding_sample_97_1",
+    "Real-Time Visual Understanding_sample_97_2",
+    "Real-Time Visual Understanding_sample_98_1",
+    "Real-Time Visual Understanding_sample_98_2",
+    "Real-Time Visual Understanding_sample_98_4",
+    "Real-Time Visual Understanding_sample_98_5",
+    "Real-Time Visual Understanding_sample_99_1",
+    "Real-Time Visual Understanding_sample_99_2",
+    "Real-Time Visual Understanding_sample_99_3",
+    "Real-Time Visual Understanding_sample_99_5",
+    "Real-Time Visual Understanding_sample_100_1",
+    "Real-Time Visual Understanding_sample_100_3",
+    "Real-Time Visual Understanding_sample_100_4"
+  ],
+  "samples": [
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_1_1",
+      "video_id": "sample_1",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 4.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_1_2",
+      "video_id": "sample_1",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 53.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_1_3",
+      "video_id": "sample_1",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 82.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_2_1",
+      "video_id": "sample_2",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 10.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_2_2",
+      "video_id": "sample_2",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_2_4",
+      "video_id": "sample_2",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 211.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_3_1",
+      "video_id": "sample_3",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 8.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_3_3",
+      "video_id": "sample_3",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 69.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_3_4",
+      "video_id": "sample_3",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 123.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_3_5",
+      "video_id": "sample_3",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 171.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_4_1",
+      "video_id": "sample_4",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_4_2",
+      "video_id": "sample_4",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_4_3",
+      "video_id": "sample_4",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 64.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_4_5",
+      "video_id": "sample_4",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 220.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_5_1",
+      "video_id": "sample_5",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 14.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_5_2",
+      "video_id": "sample_5",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_5_3",
+      "video_id": "sample_5",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 147.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_5_4",
+      "video_id": "sample_5",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 273.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_6_1",
+      "video_id": "sample_6",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 14.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_6_2",
+      "video_id": "sample_6",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 145.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_6_4",
+      "video_id": "sample_6",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 293.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_6_5",
+      "video_id": "sample_6",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 425.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_7_1",
+      "video_id": "sample_7",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_7_2",
+      "video_id": "sample_7",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 135.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_7_3",
+      "video_id": "sample_7",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 260.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_7_5",
+      "video_id": "sample_7",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 396.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_8_1",
+      "video_id": "sample_8",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 5.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_8_2",
+      "video_id": "sample_8",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 14.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_8_3",
+      "video_id": "sample_8",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 85.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_8_4",
+      "video_id": "sample_8",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 163.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_9_1",
+      "video_id": "sample_9",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 11.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_9_2",
+      "video_id": "sample_9",
+      "task_type": "Clips Summarize",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_9_3",
+      "video_id": "sample_9",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 54.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_9_4",
+      "video_id": "sample_9",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 71.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_10_1",
+      "video_id": "sample_10",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 31.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_10_3",
+      "video_id": "sample_10",
+      "task_type": "Spatial Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 282.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_10_4",
+      "video_id": "sample_10",
+      "task_type": "Attribute Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 304.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_11_1",
+      "video_id": "sample_11",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 22.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_11_3",
+      "video_id": "sample_11",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 128.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_11_4",
+      "video_id": "sample_11",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 431.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_12_1",
+      "video_id": "sample_12",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 57.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_12_3",
+      "video_id": "sample_12",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 185.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_12_4",
+      "video_id": "sample_12",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 544.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_12_5",
+      "video_id": "sample_12",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 664.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_13_2",
+      "video_id": "sample_13",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 426.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_13_3",
+      "video_id": "sample_13",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 497.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_13_4",
+      "video_id": "sample_13",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 575.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_13_5",
+      "video_id": "sample_13",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 686.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_14_1",
+      "video_id": "sample_14",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_14_2",
+      "video_id": "sample_14",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 74.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_14_3",
+      "video_id": "sample_14",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 132.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_14_4",
+      "video_id": "sample_14",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 274.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_14_5",
+      "video_id": "sample_14",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 621.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_15_1",
+      "video_id": "sample_15",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 92.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_15_2",
+      "video_id": "sample_15",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 160.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_15_3",
+      "video_id": "sample_15",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 279.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_15_4",
+      "video_id": "sample_15",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 305.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_16_1",
+      "video_id": "sample_16",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 9.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_16_2",
+      "video_id": "sample_16",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 327.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_16_3",
+      "video_id": "sample_16",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 481.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_17_1",
+      "video_id": "sample_17",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 124.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_17_2",
+      "video_id": "sample_17",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 243.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_17_4",
+      "video_id": "sample_17",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 481.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_17_5",
+      "video_id": "sample_17",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 552.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_18_1",
+      "video_id": "sample_18",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 40.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_18_3",
+      "video_id": "sample_18",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 200.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_18_5",
+      "video_id": "sample_18",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 545.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_19_2",
+      "video_id": "sample_19",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 363.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_19_3",
+      "video_id": "sample_19",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 361.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_19_4",
+      "video_id": "sample_19",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 542.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_19_5",
+      "video_id": "sample_19",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 726.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_20_1",
+      "video_id": "sample_20",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 51.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_20_3",
+      "video_id": "sample_20",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 121.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_20_5",
+      "video_id": "sample_20",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 322.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_21_1",
+      "video_id": "sample_21",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 66.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_21_2",
+      "video_id": "sample_21",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 165.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_21_3",
+      "video_id": "sample_21",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 185.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_21_4",
+      "video_id": "sample_21",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 241.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_21_5",
+      "video_id": "sample_21",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 315.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_22_1",
+      "video_id": "sample_22",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 62.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_22_2",
+      "video_id": "sample_22",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 75.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_22_3",
+      "video_id": "sample_22",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 183.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_22_4",
+      "video_id": "sample_22",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 250.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_22_5",
+      "video_id": "sample_22",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 276.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_23_1",
+      "video_id": "sample_23",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_23_2",
+      "video_id": "sample_23",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 62.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_23_3",
+      "video_id": "sample_23",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 132.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_23_4",
+      "video_id": "sample_23",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 231.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_23_5",
+      "video_id": "sample_23",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 258.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_24_1",
+      "video_id": "sample_24",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 60.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_24_2",
+      "video_id": "sample_24",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 84.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_24_3",
+      "video_id": "sample_24",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 177.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_24_4",
+      "video_id": "sample_24",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 246.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_24_5",
+      "video_id": "sample_24",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 349.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_25_1",
+      "video_id": "sample_25",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 3.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_25_2",
+      "video_id": "sample_25",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 130.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_25_3",
+      "video_id": "sample_25",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 164.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_25_4",
+      "video_id": "sample_25",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 329.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_26_1",
+      "video_id": "sample_26",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 127.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_26_2",
+      "video_id": "sample_26",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 131.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_26_3",
+      "video_id": "sample_26",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 361.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_26_4",
+      "video_id": "sample_26",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 374.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_26_5",
+      "video_id": "sample_26",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 386.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_27_2",
+      "video_id": "sample_27",
+      "task_type": "Prospective Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 328.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_27_3",
+      "video_id": "sample_27",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 384.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_27_4",
+      "video_id": "sample_27",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 482.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_27_5",
+      "video_id": "sample_27",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 505.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_28_1",
+      "video_id": "sample_28",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 13.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_28_2",
+      "video_id": "sample_28",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 324.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_28_3",
+      "video_id": "sample_28",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 331.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_28_4",
+      "video_id": "sample_28",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 639.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_28_5",
+      "video_id": "sample_28",
+      "task_type": "Event Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 660.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_29_1",
+      "video_id": "sample_29",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_29_2",
+      "video_id": "sample_29",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 125.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_29_3",
+      "video_id": "sample_29",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 247.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_29_4",
+      "video_id": "sample_29",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 247.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_29_5",
+      "video_id": "sample_29",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 498.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_30_1",
+      "video_id": "sample_30",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 190.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_30_3",
+      "video_id": "sample_30",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 392.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_30_4",
+      "video_id": "sample_30",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 732.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_30_5",
+      "video_id": "sample_30",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 739.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_31_1",
+      "video_id": "sample_31",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 13.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_31_2",
+      "video_id": "sample_31",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 160.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_31_3",
+      "video_id": "sample_31",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 120.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_31_4",
+      "video_id": "sample_31",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_31_5",
+      "video_id": "sample_31",
+      "task_type": "Counting",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 372.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_32_1",
+      "video_id": "sample_32",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 122.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_32_2",
+      "video_id": "sample_32",
+      "task_type": "Spatial Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 139.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_32_3",
+      "video_id": "sample_32",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_32_4",
+      "video_id": "sample_32",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 384.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_32_5",
+      "video_id": "sample_32",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 367.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_33_2",
+      "video_id": "sample_33",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 150.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_33_3",
+      "video_id": "sample_33",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 561.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_33_4",
+      "video_id": "sample_33",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 567.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_34_1",
+      "video_id": "sample_34",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 151.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_34_2",
+      "video_id": "sample_34",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 170.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_34_3",
+      "video_id": "sample_34",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 282.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_34_5",
+      "video_id": "sample_34",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 565.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_35_1",
+      "video_id": "sample_35",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 196.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_35_2",
+      "video_id": "sample_35",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 360.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_35_3",
+      "video_id": "sample_35",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 369.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_35_4",
+      "video_id": "sample_35",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 541.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_35_5",
+      "video_id": "sample_35",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 729.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_36_1",
+      "video_id": "sample_36",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 202.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_36_2",
+      "video_id": "sample_36",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 207.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_36_3",
+      "video_id": "sample_36",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 402.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_36_4",
+      "video_id": "sample_36",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 602.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_37_1",
+      "video_id": "sample_37",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 154.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_37_3",
+      "video_id": "sample_37",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 311.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_37_4",
+      "video_id": "sample_37",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 503.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_37_5",
+      "video_id": "sample_37",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 614.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_38_4",
+      "video_id": "sample_38",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 375.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_39_1",
+      "video_id": "sample_39",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 105.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_39_2",
+      "video_id": "sample_39",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 105.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_39_3",
+      "video_id": "sample_39",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 200.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_39_4",
+      "video_id": "sample_39",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_39_5",
+      "video_id": "sample_39",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 403.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_40_1",
+      "video_id": "sample_40",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_40_2",
+      "video_id": "sample_40",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 240.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_40_3",
+      "video_id": "sample_40",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 481.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_40_5",
+      "video_id": "sample_40",
+      "task_type": "Causal Reasoning",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 492.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_41_1",
+      "video_id": "sample_41",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_41_2",
+      "video_id": "sample_41",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 64.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_41_3",
+      "video_id": "sample_41",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 63.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_41_5",
+      "video_id": "sample_41",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 244.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_42_1",
+      "video_id": "sample_42",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 121.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_42_2",
+      "video_id": "sample_42",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 160.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_42_3",
+      "video_id": "sample_42",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 363.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_42_4",
+      "video_id": "sample_42",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 385.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_42_5",
+      "video_id": "sample_42",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 365.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_43_1",
+      "video_id": "sample_43",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_43_3",
+      "video_id": "sample_43",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 406.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_43_4",
+      "video_id": "sample_43",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 600.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_44_2",
+      "video_id": "sample_44",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 243.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_44_3",
+      "video_id": "sample_44",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 261.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_44_4",
+      "video_id": "sample_44",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 325.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_45_1",
+      "video_id": "sample_45",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 8.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_45_2",
+      "video_id": "sample_45",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 104.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_45_3",
+      "video_id": "sample_45",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 118.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_45_4",
+      "video_id": "sample_45",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 216.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_45_5",
+      "video_id": "sample_45",
+      "task_type": "Object Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "B",
+      "query_time_s": 406.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_46_1",
+      "video_id": "sample_46",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 79.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_46_2",
+      "video_id": "sample_46",
+      "task_type": "Event Understanding",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 119.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_46_3",
+      "video_id": "sample_46",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 210.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_46_4",
+      "video_id": "sample_46",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 314.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_46_5",
+      "video_id": "sample_46",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 414.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_47_1",
+      "video_id": "sample_47",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_47_2",
+      "video_id": "sample_47",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 126.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_47_3",
+      "video_id": "sample_47",
+      "task_type": "Object Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 241.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_48_1",
+      "video_id": "sample_48",
+      "task_type": "Attribute Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 3.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_48_3",
+      "video_id": "sample_48",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 218.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_48_5",
+      "video_id": "sample_48",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "A",
+      "query_time_s": 410.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_49_1",
+      "video_id": "sample_49",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_49_2",
+      "video_id": "sample_49",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 134.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_49_3",
+      "video_id": "sample_49",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 245.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_49_4",
+      "video_id": "sample_49",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 367.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_49_5",
+      "video_id": "sample_49",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 490.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_50_1",
+      "video_id": "sample_50",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 8.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_50_2",
+      "video_id": "sample_50",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 140.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_50_3",
+      "video_id": "sample_50",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 247.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_50_4",
+      "video_id": "sample_50",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 372.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_51_1",
+      "video_id": "sample_51",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_51_2",
+      "video_id": "sample_51",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 92.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_51_4",
+      "video_id": "sample_51",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 259.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_51_5",
+      "video_id": "sample_51",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 340.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_52_1",
+      "video_id": "sample_52",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 15.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_52_2",
+      "video_id": "sample_52",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 107.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_52_3",
+      "video_id": "sample_52",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 219.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_52_4",
+      "video_id": "sample_52",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_53_1",
+      "video_id": "sample_53",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 21.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_53_2",
+      "video_id": "sample_53",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 60.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_53_3",
+      "video_id": "sample_53",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 86.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_53_4",
+      "video_id": "sample_53",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 143.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_53_5",
+      "video_id": "sample_53",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 184.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_54_1",
+      "video_id": "sample_54",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_54_2",
+      "video_id": "sample_54",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 113.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_54_3",
+      "video_id": "sample_54",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 209.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_54_4",
+      "video_id": "sample_54",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 310.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_54_5",
+      "video_id": "sample_54",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 407.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_55_2",
+      "video_id": "sample_55",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 139.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_55_3",
+      "video_id": "sample_55",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 247.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_55_4",
+      "video_id": "sample_55",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 378.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_55_5",
+      "video_id": "sample_55",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 496.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_56_1",
+      "video_id": "sample_56",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_56_3",
+      "video_id": "sample_56",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 371.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_57_2",
+      "video_id": "sample_57",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 183.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_57_3",
+      "video_id": "sample_57",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 339.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_57_4",
+      "video_id": "sample_57",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 483.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_57_5",
+      "video_id": "sample_57",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 660.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_58_1",
+      "video_id": "sample_58",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 8.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_58_2",
+      "video_id": "sample_58",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 138.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_58_3",
+      "video_id": "sample_58",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 260.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_58_4",
+      "video_id": "sample_58",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 362.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_59_1",
+      "video_id": "sample_59",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 23.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_59_2",
+      "video_id": "sample_59",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 83.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_59_3",
+      "video_id": "sample_59",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 183.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_59_4",
+      "video_id": "sample_59",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 259.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_59_5",
+      "video_id": "sample_59",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 341.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_60_1",
+      "video_id": "sample_60",
+      "task_type": "Text-Rich Understanding",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 14.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_60_3",
+      "video_id": "sample_60",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 259.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_60_4",
+      "video_id": "sample_60",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 379.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_60_5",
+      "video_id": "sample_60",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 480.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_61_2",
+      "video_id": "sample_61",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 114.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_61_3",
+      "video_id": "sample_61",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 210.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_61_4",
+      "video_id": "sample_61",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 317.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_61_5",
+      "video_id": "sample_61",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 403.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_62_1",
+      "video_id": "sample_62",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 19.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_62_2",
+      "video_id": "sample_62",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 143.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_62_3",
+      "video_id": "sample_62",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 260.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_62_4",
+      "video_id": "sample_62",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 379.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_62_5",
+      "video_id": "sample_62",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "D",
+      "query_time_s": 488.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_63_2",
+      "video_id": "sample_63",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 119.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_63_3",
+      "video_id": "sample_63",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 205.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_63_4",
+      "video_id": "sample_63",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 310.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_63_5",
+      "video_id": "sample_63",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 442.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_64_1",
+      "video_id": "sample_64",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_64_2",
+      "video_id": "sample_64",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 117.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_64_3",
+      "video_id": "sample_64",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 224.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_64_4",
+      "video_id": "sample_64",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 309.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_64_5",
+      "video_id": "sample_64",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Prior",
+      "ground_truth": "C",
+      "query_time_s": 420.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_65_1",
+      "video_id": "sample_65",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 5.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_65_4",
+      "video_id": "sample_65",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 317.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_66_1",
+      "video_id": "sample_66",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 12.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_66_2",
+      "video_id": "sample_66",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 139.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_66_3",
+      "video_id": "sample_66",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 259.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_66_4",
+      "video_id": "sample_66",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 386.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_67_1",
+      "video_id": "sample_67",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 8.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_67_2",
+      "video_id": "sample_67",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 139.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_67_3",
+      "video_id": "sample_67",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 276.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_67_4",
+      "video_id": "sample_67",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 376.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_67_5",
+      "video_id": "sample_67",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 499.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_68_2",
+      "video_id": "sample_68",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 120.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_68_4",
+      "video_id": "sample_68",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 295.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_69_1",
+      "video_id": "sample_69",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 9.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_69_3",
+      "video_id": "sample_69",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 144.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_69_4",
+      "video_id": "sample_69",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 195.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_69_5",
+      "video_id": "sample_69",
+      "task_type": "Action Recognition",
+      "frames_required": "single",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 233.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_70_1",
+      "video_id": "sample_70",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 20.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_70_2",
+      "video_id": "sample_70",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 161.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_70_5",
+      "video_id": "sample_70",
+      "task_type": "Action Recognition",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 493.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_71_1",
+      "video_id": "sample_71",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_71_2",
+      "video_id": "sample_71",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 58.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_71_3",
+      "video_id": "sample_71",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 138.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_71_4",
+      "video_id": "sample_71",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 178.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_71_5",
+      "video_id": "sample_71",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_72_1",
+      "video_id": "sample_72",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 192.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_72_2",
+      "video_id": "sample_72",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 208.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_72_3",
+      "video_id": "sample_72",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 262.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_73_1",
+      "video_id": "sample_73",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 192.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_73_2",
+      "video_id": "sample_73",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 271.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_73_3",
+      "video_id": "sample_73",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_73_4",
+      "video_id": "sample_73",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 438.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_73_5",
+      "video_id": "sample_73",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 741.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_74_1",
+      "video_id": "sample_74",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 198.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_74_2",
+      "video_id": "sample_74",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 271.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_74_3",
+      "video_id": "sample_74",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_75_1",
+      "video_id": "sample_75",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_75_2",
+      "video_id": "sample_75",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 203.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_75_3",
+      "video_id": "sample_75",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 271.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_75_4",
+      "video_id": "sample_75",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_76_1",
+      "video_id": "sample_76",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_76_2",
+      "video_id": "sample_76",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 203.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_76_4",
+      "video_id": "sample_76",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_76_5",
+      "video_id": "sample_76",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 427.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_77_1",
+      "video_id": "sample_77",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_77_2",
+      "video_id": "sample_77",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 208.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_77_3",
+      "video_id": "sample_77",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 271.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_77_4",
+      "video_id": "sample_77",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 318.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_77_5",
+      "video_id": "sample_77",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 427.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_78_1",
+      "video_id": "sample_78",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_78_2",
+      "video_id": "sample_78",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 185.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_78_3",
+      "video_id": "sample_78",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_78_4",
+      "video_id": "sample_78",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_78_5",
+      "video_id": "sample_78",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 333.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_79_1",
+      "video_id": "sample_79",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_79_2",
+      "video_id": "sample_79",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 185.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_79_3",
+      "video_id": "sample_79",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_79_4",
+      "video_id": "sample_79",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_79_5",
+      "video_id": "sample_79",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 333.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "video_id": "sample_80",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 185.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_80_3",
+      "video_id": "sample_80",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_80_4",
+      "video_id": "sample_80",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_81_1",
+      "video_id": "sample_81",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_81_3",
+      "video_id": "sample_81",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_81_4",
+      "video_id": "sample_81",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_81_5",
+      "video_id": "sample_81",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 333.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_82_2",
+      "video_id": "sample_82",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 187.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_82_3",
+      "video_id": "sample_82",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 249.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_82_4",
+      "video_id": "sample_82",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_82_5",
+      "video_id": "sample_82",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 333.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_83_2",
+      "video_id": "sample_83",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 187.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_83_3",
+      "video_id": "sample_83",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_83_4",
+      "video_id": "sample_83",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_83_5",
+      "video_id": "sample_83",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 333.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "video_id": "sample_84",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_2",
+      "video_id": "sample_84",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 187.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_3",
+      "video_id": "sample_84",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_4",
+      "video_id": "sample_84",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_5",
+      "video_id": "sample_84",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 360.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_85_1",
+      "video_id": "sample_85",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_85_3",
+      "video_id": "sample_85",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_85_4",
+      "video_id": "sample_85",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_86_1",
+      "video_id": "sample_86",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 18.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_86_2",
+      "video_id": "sample_86",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 222.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_86_3",
+      "video_id": "sample_86",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 242.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_86_4",
+      "video_id": "sample_86",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_86_5",
+      "video_id": "sample_86",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 379.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_87_1",
+      "video_id": "sample_87",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_87_2",
+      "video_id": "sample_87",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 184.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_87_3",
+      "video_id": "sample_87",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 251.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_88_2",
+      "video_id": "sample_88",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 188.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_88_3",
+      "video_id": "sample_88",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 251.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_88_4",
+      "video_id": "sample_88",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 301.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_88_5",
+      "video_id": "sample_88",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 379.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_89_1",
+      "video_id": "sample_89",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_89_2",
+      "video_id": "sample_89",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 214.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_89_3",
+      "video_id": "sample_89",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 261.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_89_4",
+      "video_id": "sample_89",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 319.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_89_5",
+      "video_id": "sample_89",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 379.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_90_1",
+      "video_id": "sample_90",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_90_2",
+      "video_id": "sample_90",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 224.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_90_4",
+      "video_id": "sample_90",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 327.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_90_5",
+      "video_id": "sample_90",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 384.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_91_3",
+      "video_id": "sample_91",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 196.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_91_4",
+      "video_id": "sample_91",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 254.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_91_5",
+      "video_id": "sample_91",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 313.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_92_1",
+      "video_id": "sample_92",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_92_2",
+      "video_id": "sample_92",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 45.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_92_3",
+      "video_id": "sample_92",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 212.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_92_4",
+      "video_id": "sample_92",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 250.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_92_5",
+      "video_id": "sample_92",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 317.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_93_2",
+      "video_id": "sample_93",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 74.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_93_3",
+      "video_id": "sample_93",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 206.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_93_4",
+      "video_id": "sample_93",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 247.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_93_5",
+      "video_id": "sample_93",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 331.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_94_2",
+      "video_id": "sample_94",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 75.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_94_3",
+      "video_id": "sample_94",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 212.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_94_4",
+      "video_id": "sample_94",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 258.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_95_2",
+      "video_id": "sample_95",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 89.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_95_3",
+      "video_id": "sample_95",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 238.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_95_4",
+      "video_id": "sample_95",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 258.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_95_5",
+      "video_id": "sample_95",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 340.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_96_1",
+      "video_id": "sample_96",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_96_2",
+      "video_id": "sample_96",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 60.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_96_3",
+      "video_id": "sample_96",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 195.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_96_4",
+      "video_id": "sample_96",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 268.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_96_5",
+      "video_id": "sample_96",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 340.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_97_1",
+      "video_id": "sample_97",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_97_2",
+      "video_id": "sample_97",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 50.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_98_1",
+      "video_id": "sample_98",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_98_2",
+      "video_id": "sample_98",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 86.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_98_4",
+      "video_id": "sample_98",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 281.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_98_5",
+      "video_id": "sample_98",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "B",
+      "query_time_s": 324.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_99_1",
+      "video_id": "sample_99",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_99_2",
+      "video_id": "sample_99",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 56.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_99_3",
+      "video_id": "sample_99",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "A",
+      "query_time_s": 86.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_99_5",
+      "video_id": "sample_99",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "D",
+      "query_time_s": 281.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_100_1",
+      "video_id": "sample_100",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 16.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "video_id": "sample_100",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 86.0
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_100_4",
+      "video_id": "sample_100",
+      "task_type": "Counting",
+      "frames_required": "multiple",
+      "temporal_clue_type": "Concurrent",
+      "ground_truth": "C",
+      "query_time_s": 206.0
+    }
+  ],
+  "stats": {
+    "num_samples": 400,
+    "num_videos": 100,
+    "task_type": {
+      "Action Recognition": 118,
+      "Attribute Recognition": 28,
+      "Causal Reasoning": 7,
+      "Clips Summarize": 1,
+      "Counting": 122,
+      "Event Understanding": 15,
+      "Object Recognition": 88,
+      "Prospective Reasoning": 1,
+      "Spatial Understanding": 2,
+      "Text-Rich Understanding": 18
+    },
+    "frames_required": {
+      "multiple": 231,
+      "single": 169
+    },
+    "temporal_clue_type": {
+      "Concurrent": 340,
+      "Prior": 60
+    },
+    "ground_truth": {
+      "A": 108,
+      "B": 101,
+      "C": 93,
+      "D": 98
+    }
+  }
+}
