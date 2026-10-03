@@ -25,6 +25,10 @@ from streaming_video_understanding.utils.config import configuration_id
 from streaming_video_understanding.utils.seed import set_seed
 
 
+def _requires_semantic_scorer(policy_ids: tuple[str, ...]) -> bool:
+    return any("+semantic" in policy_id.lower() for policy_id in policy_ids)
+
+
 class SyntheticFrameReader:
     def read_until(self, video_path: Path, end_time_s: float):
         for frame_id in range(int(end_time_s) + 1):
@@ -163,6 +167,16 @@ def main() -> int:
             raise SystemExit("--all-policies requires non-empty policy_ids in the config")
     else:
         policy_ids = (args.policy or f"recent-{config.experiment.visual_budget}",)
+    semantic_scorer = None
+    if _requires_semantic_scorer(policy_ids):
+        from streaming_video_understanding.retrieval.clip import ClipFrameScorer
+
+        semantic_scorer = ClipFrameScorer(
+            model_id=config.retrieval.model_id,
+            device=config.retrieval.device,
+            cache_dir=config.retrieval.cache_dir,
+            image_batch_size=config.retrieval.image_batch_size,
+        )
     store = ResumeStore(args.output)
     failure_store = FailureStore(failure_path)
     backend = (
@@ -212,6 +226,7 @@ def main() -> int:
                     config_id=run_config_id,
                     record_metadata=record_metadata,
                     profile_store=profile_store,
+                    semantic_scorer=semantic_scorer,
                 )
                 processed += 1
             except Exception as exc:
