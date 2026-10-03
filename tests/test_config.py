@@ -154,8 +154,10 @@ def test_load_config_rejects_invalid_retrieval_values(
     ("field", "yaml_value"),
     [
         ("model_id", "''"),
+        ("model_id", "null"),
         ("device", "metal"),
         ("cache_dir", "''"),
+        ("cache_dir", "null"),
         ("cluster_window_s", ".nan"),
         ("diversity_weight", ".nan"),
     ],
@@ -163,7 +165,33 @@ def test_load_config_rejects_invalid_retrieval_values(
 def test_load_config_rejects_other_invalid_retrieval_values(
     tmp_path: Path, field: str, yaml_value: str
 ):
-    config_path = tmp_path / f"invalid-{field}.yaml"
+    config_path = tmp_path / "invalid-retrieval.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n"
+        f"retrieval:\n  {field}: {yaml_value}\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=field):
+        load_config(config_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "yaml_value"),
+    [
+        ("image_batch_size", "true"),
+        ("image_batch_size", "1.9"),
+        ("image_batch_size", "'1.9'"),
+        ("candidate_multiplier", "true"),
+        ("candidate_multiplier", "2.7"),
+        ("candidate_multiplier", "'2.7'"),
+    ],
+)
+def test_load_config_rejects_non_integer_retrieval_values(
+    tmp_path: Path, field: str, yaml_value: str
+):
+    config_path = tmp_path / "invalid-retrieval.yaml"
     config_path.write_text(
         "dataset:\n  context_horizon_s: 60\n"
         "experiment:\n  visual_budget: 8\n  seed: 7\n"

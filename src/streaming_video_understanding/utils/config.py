@@ -64,6 +64,19 @@ def _mapping(data: Any, name: str) -> dict[str, Any]:
     return data
 
 
+def _strict_int(value: Any, name: str) -> int:
+    if isinstance(value, bool):
+        raise ValueError(f"{name} must be an integer")
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        try:
+            return int(value.strip())
+        except ValueError as exc:
+            raise ValueError(f"{name} must be an integer") from exc
+    raise ValueError(f"{name} must be an integer")
+
+
 def load_config(path: str | Path) -> ProjectConfig:
     config_path = Path(path)
     if not config_path.is_file():
@@ -77,6 +90,23 @@ def load_config(path: str | Path) -> ProjectConfig:
     model = _mapping(raw.get("model", {}), "model")
     runtime = _mapping(raw.get("runtime", {}), "runtime")
     retrieval = _mapping(raw.get("retrieval", {}), "retrieval")
+
+    raw_retrieval_model_id = retrieval.get(
+        "model_id", "openai/clip-vit-base-patch32"
+    )
+    if raw_retrieval_model_id is None:
+        raise ValueError("retrieval.model_id must be non-empty")
+    raw_retrieval_cache_dir = retrieval.get(
+        "cache_dir", ".cache/semantic_features"
+    )
+    if raw_retrieval_cache_dir is None:
+        raise ValueError("retrieval.cache_dir must be non-empty")
+    image_batch_size = _strict_int(
+        retrieval.get("image_batch_size", 16), "retrieval.image_batch_size"
+    )
+    candidate_multiplier = _strict_int(
+        retrieval.get("candidate_multiplier", 4), "retrieval.candidate_multiplier"
+    )
 
     try:
         context_horizon_s = float(dataset["context_horizon_s"])
@@ -93,15 +123,9 @@ def load_config(path: str | Path) -> ProjectConfig:
         max_new_tokens = int(model.get("max_new_tokens", 8))
         sample_fps = float(runtime.get("sample_fps", 1.0))
         batch_size = int(runtime.get("batch_size", 1))
-        retrieval_model_id = str(
-            retrieval.get("model_id", "openai/clip-vit-base-patch32")
-        ).strip()
+        retrieval_model_id = str(raw_retrieval_model_id).strip()
         retrieval_device = str(retrieval.get("device", "auto")).strip().lower()
-        retrieval_cache_dir = str(
-            retrieval.get("cache_dir", ".cache/semantic_features")
-        ).strip()
-        image_batch_size = int(retrieval.get("image_batch_size", 16))
-        candidate_multiplier = int(retrieval.get("candidate_multiplier", 4))
+        retrieval_cache_dir = str(raw_retrieval_cache_dir).strip()
         cluster_window_s = float(retrieval.get("cluster_window_s", 3.0))
         diversity_weight = float(retrieval.get("diversity_weight", 0.25))
     except KeyError as exc:
