@@ -67,6 +67,7 @@ def summarize_records(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
     }
     stage_fields = (
         "decode_ms",
+        "retrieval_ms",
         "sampling_ms",
         "memory_ms",
         "processor_ms",

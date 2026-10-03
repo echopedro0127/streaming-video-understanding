@@ -172,6 +172,234 @@ def test_evaluator_manifest_separates_recent_and_memory_frames():
 
     assert [frame["frame_id"] for frame in record["selected_recent_frames"]] == [8, 9]
     assert [frame["frame_id"] for frame in record["selected_memory_frames"]] == [2, 5]
+    assert record["retrieval_latency_ms"] == 0.0
+
+
+def test_evaluator_semantic_policy_scores_history_only_and_keeps_budget_causal():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(10)
+            )
+
+    class RecordingScorer:
+        def __init__(self):
+            self.calls = []
+
+        def score_frames(self, **kwargs):
+            self.calls.append(kwargs)
+            return {frame.frame_id: float(frame.frame_id) for frame in kwargs["frames"]}
+
+    scorer = RecordingScorer()
+    backend = MockVLMBackend(answer="A")
+    sample = StreamingSample(
+        sample_id="semantic-sample",
+        video_id="semantic-video",
+        video_path=Path("video.mp4"),
+        question="Which object is visible?",
+        options=("cat", "dog", "ball", "car"),
+        answer="A",
+        query_time_s=9.0,
+        task_type="Object Recognition",
+        temporal_clue_type="Prior",
+    )
+    record = evaluate_sample(
+        sample,
+        config=ProjectConfig(
+            dataset=DatasetConfig(context_horizon_s=60.0),
+            experiment=ExperimentConfig(visual_budget=6, seed=7),
+        ),
+        frame_reader=StaticReader(),
+        backend=backend,
+        output_store=None,
+        policy_id="recent-2+semantic-memory-4",
+        semantic_scorer=scorer,
+    )
+
+    assert len(scorer.calls) == 1
+    call = scorer.calls[0]
+    assert set(call) == {"video_path", "frames", "images_by_id", "query"}
+    assert [frame.frame_id for frame in call["frames"]] == list(range(8))
+    assert sorted(call["images_by_id"]) == list(range(10))
+    assert call["query"] == sample.question
+    assert [frame["frame_id"] for frame in record["selected_memory_frames"]] == [4, 5, 6, 7]
+    assert [frame["frame_id"] for frame in record["selected_recent_frames"]] == [8, 9]
+    assert len(record["selected_frames"]) == 6
+    assert record["timestamps_s"] == [4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+    assert all(timestamp <= sample.query_time_s for timestamp in record["timestamps_s"])
+    assert [item["frame_id"] for item in record["semantic_selection_trace"]] == [4, 5, 6, 7]
+    assert [item["semantic_score"] for item in record["semantic_selection_trace"]] == [4.0, 5.0, 6.0, 7.0]
+    assert backend.last_request is not None
+    assert backend.last_request.include_timestamps is False
+    assert record["retrieval_latency_ms"] >= 0.0
+
+
+def test_evaluator_semantic_selection_does_not_depend_on_answer():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(10)
+            )
+
+    class RecordingScorer:
+        def score_frames(self, *, video_path, frames, images_by_id, query):
+            return {frame.frame_id: float(frame.frame_id) for frame in frames}
+
+    common = dict(
+        sample_id="answer-independent",
+        video_id="answer-video",
+        video_path=Path("video.mp4"),
+        question="Which object is visible?",
+        options=("cat", "dog", "ball", "car"),
+        query_time_s=9.0,
+        task_type="Object Recognition",
+        temporal_clue_type="Prior",
+    )
+    config = ProjectConfig(
+        dataset=DatasetConfig(context_horizon_s=60.0),
+        experiment=ExperimentConfig(visual_budget=6, seed=7),
+    )
+    first = evaluate_sample(
+        StreamingSample(answer="A", **common),
+        config=config,
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-2+semantic-memory-4",
+        semantic_scorer=RecordingScorer(),
+    )
+    second = evaluate_sample(
+        StreamingSample(answer="B", **common),
+        config=config,
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-2+semantic-memory-4",
+        semantic_scorer=RecordingScorer(),
+    )
+
+    assert first["selected_memory_frames"] == second["selected_memory_frames"]
+    assert first["semantic_selection_trace"] == second["semantic_selection_trace"]
+
+
+def test_evaluator_semantic_policy_requires_scorer_before_backend_call():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return ((Image.new("RGB", (8, 8)), FrameRecord(0, 0.0)),)
+
+    backend = MockVLMBackend(answer="A")
+    with pytest.raises(ValueError, match="requires semantic_scorer"):
+        evaluate_sample(
+            StreamingSample(
+                sample_id="missing-scorer",
+                video_id="video",
+                video_path=Path("video.mp4"),
+                question="What is visible?",
+                options=("cat", "dog", "ball", "car"),
+                answer="A",
+                query_time_s=0.0,
+                task_type="Object Recognition",
+                temporal_clue_type="Prior",
+            ),
+            config=ProjectConfig(
+                dataset=DatasetConfig(context_horizon_s=60.0),
+                experiment=ExperimentConfig(visual_budget=4, seed=7),
+            ),
+            frame_reader=StaticReader(),
+            backend=backend,
+            output_store=None,
+            policy_id="recent-2+semantic-memory-2",
+        )
+
+    assert backend.call_count == 0
+
+
+@pytest.mark.parametrize(
+    "policy_id",
+    ["recent-2+semantic-memory-2", "recent-2+semantic-diverse-memory-2"],
+)
+def test_evaluator_accepts_semantic_policy_ids(policy_id: str):
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(6)
+            )
+
+    class RecordingScorer:
+        def score_frames(self, *, video_path, frames, images_by_id, query):
+            return {frame.frame_id: float(frame.frame_id) for frame in frames}
+
+    record = evaluate_sample(
+        StreamingSample(
+            sample_id="semantic-policy",
+            video_id="video",
+            video_path=Path("video.mp4"),
+            question="What is visible?",
+            options=("cat", "dog", "ball", "car"),
+            answer="A",
+            query_time_s=5.0,
+            task_type="Object Recognition",
+            temporal_clue_type="Prior",
+        ),
+        config=ProjectConfig(
+            dataset=DatasetConfig(context_horizon_s=60.0),
+            experiment=ExperimentConfig(visual_budget=4, seed=7),
+        ),
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id=policy_id,
+        semantic_scorer=RecordingScorer(),
+    )
+
+    assert len(record["selected_frames"]) == 4
 
 
 def test_evaluator_writes_stage_level_profile(tmp_path: Path):
@@ -222,6 +450,7 @@ def test_evaluator_writes_stage_level_profile(tmp_path: Path):
     profile = json.loads(profile_path.read_text(encoding="utf-8"))
     assert {
         "decode_ms",
+        "retrieval_ms",
         "sampling_ms",
         "memory_ms",
         "processor_ms",
@@ -229,5 +458,21 @@ def test_evaluator_writes_stage_level_profile(tmp_path: Path):
         "write_ms",
         "total_ms",
     } <= profile.keys()
+    assert profile["retrieval_ms"] == 0.0
     assert profile["decode_ms"] >= 0.0
     assert profile["total_ms"] >= profile["decode_ms"]
+
+
+def test_metrics_summarize_retrieval_stage_timing():
+    summary = summarize_records(
+        [
+            {"retrieval_ms": 0.0},
+            {"retrieval_ms": 4.0},
+        ]
+    )
+
+    assert summary["stage_timing"]["retrieval_ms"] == {
+        "mean_ms": 2.0,
+        "p50_ms": 2.0,
+        "p95_ms": 3.8,
+    }

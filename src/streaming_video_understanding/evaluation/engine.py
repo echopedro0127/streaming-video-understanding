@@ -9,6 +9,7 @@ from typing import Any
 from ..data.schema import FrameRecord, StreamingSample
 from ..models.base import ModelBackend, ModelRequest
 from ..models.prompt import build_prompt
+from ..retrieval.base import SemanticFrameScorer
 from ..streaming.buffer import CausalFrameBuffer
 from ..streaming.memory import BoundedTemporalMemory
 from ..streaming.sampler import (
@@ -16,6 +17,7 @@ from ..streaming.sampler import (
     timestamp_aware_history,
     uniform_history,
 )
+from ..streaming.semantic import select_semantic_history
 from ..utils.config import ProjectConfig
 from .failures import FailureStore
 from .profiling import RuntimeProfileStore
@@ -48,7 +50,8 @@ def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
     if normalized in {"uniform", "uniform-history"}:
         return "uniform", 0, budget
     match = re.fullmatch(
-        r"recent-(\d+)\+(uniform|timestamp-aware)-memory-(\d+)", normalized
+        r"recent-(\d+)\+(uniform|timestamp-aware|semantic|semantic-diverse)-memory-(\d+)",
+        normalized,
     )
     if match:
         return match.group(2), int(match.group(1)), int(match.group(3))
@@ -111,6 +114,74 @@ def _select_policy(
     return selected, memory, policy_kind == "timestamp-aware"
 
 
+def _select_semantic_policy(
+    frames: Sequence[FrameRecord],
+    *,
+    video_path: Path,
+    images_by_id: Mapping[int, Any],
+    query: str,
+    query_time_s: float,
+    budget: int,
+    policy_id: str,
+    tolerance_s: float,
+    semantic_scorer: SemanticFrameScorer | None,
+    candidate_multiplier: int,
+    cluster_window_s: float,
+    diversity_weight: float,
+) -> tuple[
+    tuple[FrameRecord, ...],
+    tuple[FrameRecord, ...],
+    tuple[dict[str, float | int], ...],
+    float,
+]:
+    policy_kind, recent_capacity, memory_capacity = _policy_parts(policy_id, budget)
+    if semantic_scorer is None:
+        raise ValueError("semantic policy requires semantic_scorer")
+
+    ordered = tuple(sorted(frames, key=lambda frame: (frame.timestamp_s, frame.frame_id)))
+    recent = recent_window(
+        ordered,
+        visible_until_s=query_time_s,
+        capacity=recent_capacity,
+        tolerance_s=tolerance_s,
+    )
+    recent_ids = {frame.frame_id for frame in recent}
+    history = tuple(frame for frame in ordered if frame.frame_id not in recent_ids)
+
+    retrieval_started = time.perf_counter()
+    scores = semantic_scorer.score_frames(
+        video_path=video_path,
+        frames=history,
+        images_by_id=images_by_id,
+        query=query,
+    )
+    selection = select_semantic_history(
+        history,
+        scores=scores,
+        visible_until_s=query_time_s,
+        capacity=memory_capacity,
+        diversity=policy_kind == "semantic-diverse",
+        candidate_multiplier=candidate_multiplier,
+        cluster_window_s=cluster_window_s,
+        diversity_weight=diversity_weight,
+        tolerance_s=tolerance_s,
+    )
+    retrieval_latency_ms = (time.perf_counter() - retrieval_started) * 1000.0
+    selected = tuple(
+        sorted((*selection.frames, *recent), key=lambda frame: (frame.timestamp_s, frame.frame_id))
+    )
+    trace = tuple(
+        {
+            "frame_id": item.frame_id,
+            "timestamp_s": item.timestamp_s,
+            "semantic_score": item.semantic_score,
+            "objective_score": item.objective_score,
+        }
+        for item in selection.trace
+    )
+    return selected, selection.frames, trace, retrieval_latency_ms
+
+
 def _frame_manifest(frames: Sequence[FrameRecord]) -> list[dict[str, float | int]]:
     return [
         {"frame_id": frame.frame_id, "timestamp_s": frame.timestamp_s}
@@ -130,6 +201,7 @@ def evaluate_sample(
     config_id: str | None = None,
     record_metadata: Mapping[str, Any] | None = None,
     profile_store: RuntimeProfileStore | None = None,
+    semantic_scorer: SemanticFrameScorer | None = None,
 ) -> dict[str, Any]:
     total_started = time.perf_counter()
     query_time_s = sample.query_time_s
@@ -162,14 +234,39 @@ def evaluate_sample(
     frozen_memory = memory.snapshot()
     memory_latency_ms = (time.perf_counter() - memory_started) * 1000.0
 
+    policy_kind, _, _ = _policy_parts(policy_id, config.experiment.visual_budget)
     sampling_started = time.perf_counter()
-    selected_frames, memory_frames, include_timestamps = _select_policy(
-        visible_frames,
-        query_time_s=query_time_s,
-        budget=config.experiment.visual_budget,
-        policy_id=policy_id,
-        tolerance_s=tolerance_s,
-    )
+    if policy_kind in {"semantic", "semantic-diverse"}:
+        (
+            selected_frames,
+            memory_frames,
+            semantic_trace,
+            retrieval_latency_ms,
+        ) = _select_semantic_policy(
+            visible_frames,
+            video_path=sample.video_path,
+            images_by_id=images_by_id,
+            query=sample.question,
+            query_time_s=query_time_s,
+            budget=config.experiment.visual_budget,
+            policy_id=policy_id,
+            tolerance_s=tolerance_s,
+            semantic_scorer=semantic_scorer,
+            candidate_multiplier=config.retrieval.candidate_multiplier,
+            cluster_window_s=config.retrieval.cluster_window_s,
+            diversity_weight=config.retrieval.diversity_weight,
+        )
+        include_timestamps = False
+    else:
+        selected_frames, memory_frames, include_timestamps = _select_policy(
+            visible_frames,
+            query_time_s=query_time_s,
+            budget=config.experiment.visual_budget,
+            policy_id=policy_id,
+            tolerance_s=tolerance_s,
+        )
+        semantic_trace = ()
+        retrieval_latency_ms = 0.0
     sampling_latency_ms = (time.perf_counter() - sampling_started) * 1000.0
     if selected_frames and max(frame.timestamp_s for frame in selected_frames) > query_time_s + tolerance_s:
         raise ValueError("selected frame is after the causal query boundary")
@@ -228,7 +325,10 @@ def evaluate_sample(
         "output_tokens": model_response.output_tokens,
         "timestamp_prompt": prompt,
         "sample_fps": config.runtime.sample_fps,
+        "retrieval_latency_ms": retrieval_latency_ms,
     }
+    if policy_kind in {"semantic", "semantic-diverse"}:
+        record["semantic_selection_trace"] = [dict(item) for item in semantic_trace]
     if record_metadata:
         record.update(dict(record_metadata))
     write_started = time.perf_counter()
@@ -247,6 +347,7 @@ def evaluate_sample(
                 "policy_id": policy_id,
                 "decode_ms": decode_latency_ms,
                 "sampling_ms": sampling_latency_ms,
+                "retrieval_ms": retrieval_latency_ms,
                 "memory_ms": memory_latency_ms,
                 "processor_ms": model_response.processor_latency_ms,
                 "generation_ms": model_response.generation_latency_ms,
