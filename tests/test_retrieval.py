@@ -1,5 +1,8 @@
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
+import os
 from pathlib import Path
+import threading
 
 import numpy as np
 import pytest
@@ -8,10 +11,11 @@ from streaming_video_understanding.data.schema import FrameRecord
 from streaming_video_understanding.retrieval import FrameFeatureCache
 
 
-class _CloseFailingHandle:
-    def __init__(self, handle, *, fail_before_close):
+class _DescriptorReuseCloseFailingHandle:
+    def __init__(self, handle, replacement_path):
         self._handle = handle
-        self._fail_before_close = fail_before_close
+        self._replacement_path = replacement_path
+        self.replacement = None
 
     def __getattr__(self, name):
         return getattr(self._handle, name)
@@ -23,12 +27,20 @@ class _CloseFailingHandle:
         self.close()
 
     def close(self):
-        if self._fail_before_close:
-            raise OSError("close failure before release")
+        if self.replacement is not None:
+            raise AssertionError("cache retried close after ownership was released")
+        descriptor = self._handle.fileno()
         self._handle.close()
-        raise OSError("close failure after release")
+        self.replacement = open(self._replacement_path, "wb", buffering=0)
+        assert self.replacement.fileno() == descriptor
+        raise OSError("close failure after descriptor reuse")
 
     def cleanup(self):
+        if self.replacement is not None:
+            try:
+                self.replacement.close()
+            except OSError:
+                pass
         try:
             self._handle.close()
         except OSError:
@@ -145,6 +157,58 @@ def test_load_rejects_corrupt_file_and_mentions_path(tmp_path):
         cache.load(video_path, frame)
 
 
+def test_load_rejects_truncated_npy_and_mentions_path(tmp_path):
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(3, 4.0)
+    target = cache.store(video_path, frame, np.array([1.0]))
+    target.write_bytes(b"\x93NUMPY\x01\x00")
+
+    with pytest.raises(ValueError, match=rf"Invalid cached feature.*{target.name}"):
+        cache.load(video_path, frame)
+
+
+def test_load_propagates_permission_error_without_calling_it_invalid(
+    tmp_path, monkeypatch
+):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(3, 4.0)
+    target = cache.store(video_path, frame, np.array([1.0]))
+    real_open = cache_module.Path.open
+
+    def permission_denied(path, *args, **kwargs):
+        if path == target:
+            raise PermissionError("sharing violation")
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(cache_module.Path, "open", permission_denied)
+
+    with pytest.raises(PermissionError, match="sharing violation"):
+        cache.load(video_path, frame)
+
+
+def test_load_propagates_transient_read_error_without_calling_it_invalid(
+    tmp_path, monkeypatch
+):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(3, 4.0)
+    cache.store(video_path, frame, np.array([1.0]))
+
+    def failing_load(handle, *, allow_pickle):
+        raise OSError("transient read failure")
+
+    monkeypatch.setattr(cache_module.np, "load", failing_load)
+
+    with pytest.raises(OSError, match="transient read failure"):
+        cache.load(video_path, frame)
+
+
 def test_path_is_deterministic_normalized_and_leaves_no_temp_files(tmp_path):
     root = tmp_path / "cache"
     video_path = tmp_path / "nested" / ".." / "video.mp4"
@@ -154,14 +218,33 @@ def test_path_is_deterministic_normalized_and_leaves_no_temp_files(tmp_path):
     first = cache.store(video_path, frame, np.array([1.0]))
     second = cache.store(video_path, frame, np.array([2.0]))
     expected_model = hashlib.sha256(b"model/example").hexdigest()[:16]
-    resolved_video = video_path.resolve(strict=False).as_posix()
+    resolved_video = os.path.normcase(
+        os.fspath(video_path.resolve(strict=False))
+    ).replace(os.sep, "/")
     expected_video = hashlib.sha256(resolved_video.encode()).hexdigest()[:20]
     expected = root / expected_model / expected_video / "42-1.234568.npy"
 
     assert first == second == expected
     assert first.resolve().is_relative_to(root.resolve())
     assert list(first.parent.iterdir()) == [first]
-    np.testing.assert_array_equal(cache.load(video_path, frame), np.array([2.0], dtype=np.float32))
+    np.testing.assert_array_equal(
+        cache.load(video_path, frame), np.array([1.0], dtype=np.float32)
+    )
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows paths are case-insensitive")
+def test_video_path_case_is_normalized_on_windows(tmp_path):
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    video_path = tmp_path / "MixedCase" / "Video.MP4"
+    alternate_case = Path(os.fspath(video_path).swapcase())
+    frame = FrameRecord(1, 0.5)
+
+    stored = cache.store(video_path, frame, np.array([1.0]))
+
+    assert cache._target(alternate_case, frame) == stored
+    np.testing.assert_array_equal(
+        cache.load(alternate_case, frame), np.array([1.0], dtype=np.float32)
+    )
 
 
 def test_store_closes_raw_descriptor_when_fdopen_fails(tmp_path, monkeypatch):
@@ -217,7 +300,9 @@ def test_store_closes_owned_handle_before_cleaning_save_failure(tmp_path, monkey
     assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
 
 
-def test_store_preserves_save_failure_when_close_also_fails(tmp_path, monkeypatch):
+def test_store_preserves_save_failure_when_close_reuses_descriptor(
+    tmp_path, monkeypatch
+):
     import streaming_video_understanding.retrieval.cache as cache_module
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
@@ -225,10 +310,10 @@ def test_store_preserves_save_failure_when_close_also_fails(tmp_path, monkeypatc
     captured = {}
 
     def wrapping_fdopen(descriptor, mode):
-        handle = _CloseFailingHandle(
-            real_fdopen(descriptor, mode), fail_before_close=False
+        handle = _DescriptorReuseCloseFailingHandle(
+            real_fdopen(descriptor, mode), tmp_path / "unrelated-write-failure.bin"
         )
-        captured.update(descriptor=descriptor, handle=handle)
+        captured["handle"] = handle
         return handle
 
     def failing_save(handle, feature, *, allow_pickle):
@@ -243,9 +328,7 @@ def test_store_preserves_save_failure_when_close_also_fails(tmp_path, monkeypatc
                 tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
             )
 
-        with pytest.raises(OSError):
-            cache_module.os.fstat(captured["descriptor"])
-        assert captured["handle"].closed
+        assert captured["handle"].replacement.write(b"still writable") == 14
         assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
     finally:
         if "handle" in captured:
@@ -254,7 +337,9 @@ def test_store_preserves_save_failure_when_close_also_fails(tmp_path, monkeypatc
             temp_path.unlink()
 
 
-def test_store_surfaces_close_failure_after_successful_save(tmp_path, monkeypatch):
+def test_store_does_not_close_reused_descriptor_after_close_failure(
+    tmp_path, monkeypatch
+):
     import streaming_video_understanding.retrieval.cache as cache_module
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
@@ -262,28 +347,140 @@ def test_store_surfaces_close_failure_after_successful_save(tmp_path, monkeypatc
     captured = {}
 
     def wrapping_fdopen(descriptor, mode):
-        handle = _CloseFailingHandle(
-            real_fdopen(descriptor, mode), fail_before_close=True
+        handle = _DescriptorReuseCloseFailingHandle(
+            real_fdopen(descriptor, mode), tmp_path / "unrelated-close-failure.bin"
         )
-        captured.update(descriptor=descriptor, handle=handle)
+        captured["handle"] = handle
         return handle
 
     monkeypatch.setattr(cache_module.os, "fdopen", wrapping_fdopen)
 
     try:
-        with pytest.raises(OSError, match="close failure before release"):
+        with pytest.raises(OSError, match="close failure after descriptor reuse"):
             cache.store(
                 tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
             )
 
-        with pytest.raises(OSError):
-            cache_module.os.fstat(captured["descriptor"])
+        assert captured["handle"].replacement.write(b"still writable") == 14
         assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
     finally:
         if "handle" in captured:
             captured["handle"].cleanup()
         for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
             temp_path.unlink()
+
+
+def test_concurrent_same_target_stores_publish_one_valid_feature(tmp_path):
+    root = tmp_path / "cache"
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(5, 1.5)
+    features = [np.array([float(index), index + 0.5]) for index in range(16)]
+    caches = [FrameFeatureCache(root, model_id="model") for _ in features]
+    barrier = threading.Barrier(len(features))
+
+    def store(cache, feature):
+        barrier.wait()
+        return cache.store(video_path, frame, feature)
+
+    with ThreadPoolExecutor(max_workers=len(features)) as executor:
+        futures = [
+            executor.submit(store, cache, feature)
+            for cache, feature in zip(caches, features, strict=True)
+        ]
+        targets = [future.result() for future in futures]
+
+    loaded = caches[0].load(video_path, frame)
+    assert loaded is not None
+    assert all(target == targets[0] for target in targets)
+    assert any(
+        np.array_equal(loaded, feature.astype(np.float32)) for feature in features
+    )
+    assert not any(root.rglob("*.tmp.npy"))
+
+
+def test_same_target_load_waits_for_store_publication(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    root = tmp_path / "cache"
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(5, 1.5)
+    feature = np.array([3.0, 4.0])
+    writer = FrameFeatureCache(root, model_id="model")
+    reader = FrameFeatureCache(root, model_id="model")
+    save_started = threading.Event()
+    release_save = threading.Event()
+    load_requested_lock = threading.Event()
+    real_save = cache_module.np.save
+    real_target_lock = cache_module._target_lock
+
+    def blocking_save(handle, value, *, allow_pickle):
+        real_save(handle, value, allow_pickle=allow_pickle)
+        save_started.set()
+        assert release_save.wait(timeout=5)
+
+    def recording_target_lock(target):
+        if threading.current_thread().name.startswith("cache-reader"):
+            load_requested_lock.set()
+        return real_target_lock(target)
+
+    monkeypatch.setattr(cache_module.np, "save", blocking_save)
+    monkeypatch.setattr(cache_module, "_target_lock", recording_target_lock)
+
+    with ThreadPoolExecutor(
+        max_workers=1, thread_name_prefix="cache-writer"
+    ) as writers, ThreadPoolExecutor(
+        max_workers=1, thread_name_prefix="cache-reader"
+    ) as readers:
+        stored = writers.submit(writer.store, video_path, frame, feature)
+        assert save_started.wait(timeout=5)
+        loaded = readers.submit(reader.load, video_path, frame)
+        try:
+            assert load_requested_lock.wait(timeout=5)
+            assert not loaded.done()
+        finally:
+            release_save.set()
+
+        assert stored.result(timeout=5).is_file()
+        np.testing.assert_array_equal(loaded.result(timeout=5), feature.astype(np.float32))
+
+
+def test_concurrent_stores_for_unrelated_targets_do_not_block_each_other(
+    tmp_path, monkeypatch
+):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    video_path = tmp_path / "video.mp4"
+    first_frame = FrameRecord(1, 1.0)
+    second_frame = FrameRecord(2, 2.0)
+    first_entered_save = threading.Event()
+    release_first_save = threading.Event()
+    real_save = cache_module.np.save
+
+    def blocking_save(handle, feature, *, allow_pickle):
+        real_save(handle, feature, allow_pickle=allow_pickle)
+        if feature[0] == 1.0:
+            first_entered_save.set()
+            assert release_first_save.wait(timeout=5)
+
+    monkeypatch.setattr(cache_module.np, "save", blocking_save)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        first = executor.submit(
+            cache.store, video_path, first_frame, np.array([1.0])
+        )
+        assert first_entered_save.wait(timeout=5)
+        second = executor.submit(
+            cache.store, video_path, second_frame, np.array([2.0])
+        )
+        try:
+            second_target = second.result(timeout=2)
+        finally:
+            release_first_save.set()
+        first_target = first.result(timeout=5)
+
+    assert first_target.is_file()
+    assert second_target.is_file()
 
 
 def test_store_closes_handle_before_cleaning_replace_failure(tmp_path, monkeypatch):
