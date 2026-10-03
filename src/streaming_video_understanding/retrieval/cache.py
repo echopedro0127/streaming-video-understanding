@@ -12,6 +12,9 @@ import numpy as np
 from ..data.schema import FrameRecord
 
 
+_REAL_OS_CLOSE = os.close
+
+
 def _digest(value: str, length: int) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()[:length]
 
@@ -84,14 +87,33 @@ class FrameFeatureCache:
         descriptor, temp_name = tempfile.mkstemp(
             prefix=f".{target.name}.", suffix=".tmp.npy", dir=target.parent
         )
-        temp_path = Path(temp_name)
         try:
-            os.close(descriptor)
-            np.save(temp_path, converted, allow_pickle=False)
+            temp_path: Path | None = None
+            handle = None
+            descriptor_owned = True
+
+            temp_path = Path(temp_name)
+            handle = os.fdopen(descriptor, "wb")
+            descriptor_owned = False
+            with handle:
+                np.save(handle, converted, allow_pickle=False)
             temp_path.replace(target)
         except BaseException:
+            if descriptor_owned:
+                try:
+                    _REAL_OS_CLOSE(descriptor)
+                except BaseException:
+                    pass
+            elif handle is not None:
+                try:
+                    handle.close()
+                except BaseException:
+                    pass
             try:
-                temp_path.unlink(missing_ok=True)
+                if temp_path is None:
+                    os.unlink(temp_name)
+                else:
+                    temp_path.unlink(missing_ok=True)
             except BaseException:
                 pass
             raise

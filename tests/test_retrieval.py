@@ -137,39 +137,125 @@ def test_path_is_deterministic_normalized_and_leaves_no_temp_files(tmp_path):
     np.testing.assert_array_equal(cache.load(video_path, frame), np.array([2.0], dtype=np.float32))
 
 
-def test_store_cleans_temp_file_when_save_fails(tmp_path, monkeypatch):
+def test_store_closes_raw_descriptor_when_fdopen_fails(tmp_path, monkeypatch):
     import streaming_video_understanding.retrieval.cache as cache_module
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    captured = {}
 
-    def failing_save(path, feature, *, allow_pickle):
-        Path(path).write_bytes(b"partial")
-        raise OSError("disk failure")
+    def failing_fdopen(descriptor, mode):
+        captured["descriptor"] = descriptor
+        assert mode == "wb"
+        raise OSError("fdopen failure")
+
+    monkeypatch.setattr(cache_module.os, "fdopen", failing_fdopen)
+
+    try:
+        with pytest.raises(OSError, match="fdopen failure"):
+            cache.store(
+                tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
+            )
+
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
+        assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+    finally:
+        if "descriptor" in captured:
+            try:
+                cache_module.os.close(captured["descriptor"])
+            except OSError:
+                pass
+        for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
+            temp_path.unlink()
+
+
+def test_store_closes_owned_handle_before_cleaning_save_failure(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    captured = {}
+
+    def failing_save(handle, feature, *, allow_pickle):
+        captured["handle"] = handle
+        if handle.closed:
+            raise AssertionError("np.save received a closed handle")
+        raise OSError("save failure")
 
     monkeypatch.setattr(cache_module.np, "save", failing_save)
 
-    with pytest.raises(OSError, match="disk failure"):
+    with pytest.raises(OSError, match="save failure"):
         cache.store(tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0]))
 
-    assert not any((tmp_path / "cache").rglob("*.*"))
+    assert captured["handle"].closed
+    assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
 
 
-def test_store_cleans_temp_file_and_preserves_close_failure(tmp_path, monkeypatch):
+def test_store_closes_handle_before_cleaning_replace_failure(tmp_path, monkeypatch):
     import streaming_video_understanding.retrieval.cache as cache_module
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
-    real_close = cache_module.os.close
+    real_save = cache_module.np.save
+    captured = {}
 
-    def failing_close(descriptor):
-        real_close(descriptor)
-        raise OSError("close failure")
+    def recording_save(handle, feature, *, allow_pickle):
+        captured["handle"] = handle
+        real_save(handle, feature, allow_pickle=allow_pickle)
 
-    monkeypatch.setattr(cache_module.os, "close", failing_close)
+    def failing_replace(path, target):
+        captured["closed_at_replace"] = getattr(captured["handle"], "closed", False)
+        raise OSError("replace failure")
 
-    with pytest.raises(OSError, match="close failure"):
+    monkeypatch.setattr(cache_module.np, "save", recording_save)
+    monkeypatch.setattr(cache_module.Path, "replace", failing_replace)
+
+    with pytest.raises(OSError, match="replace failure"):
         cache.store(tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0]))
 
+    assert captured["closed_at_replace"] is True
+    assert captured["handle"].closed
     assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+
+
+def test_store_uses_string_cleanup_fallback_when_temp_path_creation_fails(
+    tmp_path, monkeypatch
+):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    real_mkstemp = cache_module.tempfile.mkstemp
+    real_path = cache_module.Path
+    captured = {}
+
+    def recording_mkstemp(*args, **kwargs):
+        descriptor, temp_name = real_mkstemp(*args, **kwargs)
+        captured.update(descriptor=descriptor, temp_name=temp_name)
+        return descriptor, temp_name
+
+    def failing_temp_path(value):
+        if isinstance(value, str) and value.endswith(".tmp.npy"):
+            raise OSError("path construction failure")
+        return real_path(value)
+
+    monkeypatch.setattr(cache_module.tempfile, "mkstemp", recording_mkstemp)
+    monkeypatch.setattr(cache_module, "Path", failing_temp_path)
+
+    try:
+        with pytest.raises(OSError, match="path construction failure"):
+            cache.store(
+                tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
+            )
+
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
+        assert not real_path(captured["temp_name"]).exists()
+    finally:
+        if "descriptor" in captured:
+            try:
+                cache_module.os.close(captured["descriptor"])
+            except OSError:
+                pass
+        if "temp_name" in captured:
+            real_path(captured["temp_name"]).unlink(missing_ok=True)
 
 
 def test_store_cleanup_failure_does_not_mask_write_failure(tmp_path, monkeypatch):
@@ -177,7 +263,7 @@ def test_store_cleanup_failure_does_not_mask_write_failure(tmp_path, monkeypatch
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
 
-    def failing_save(path, feature, *, allow_pickle):
+    def failing_save(handle, feature, *, allow_pickle):
         raise OSError("write failure")
 
     def failing_unlink(path, *, missing_ok):
@@ -188,6 +274,10 @@ def test_store_cleanup_failure_does_not_mask_write_failure(tmp_path, monkeypatch
 
     with pytest.raises(OSError, match="write failure"):
         cache.store(tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0]))
+
+    monkeypatch.undo()
+    for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
+        temp_path.unlink()
 
 
 @pytest.mark.parametrize("frame_id", [True, False, 1.0, "1", None])
