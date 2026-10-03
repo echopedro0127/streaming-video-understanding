@@ -10,6 +10,7 @@ from streaming_video_understanding.analysis.failures import (
     write_failure_review,
 )
 from streaming_video_understanding.analysis.summaries import (
+    POLICY_LABELS,
     build_comparison_rows,
     normalize_summary,
     ordered_summary_rows,
@@ -63,6 +64,28 @@ def test_ordered_summary_rows_use_fixed_policy_order() -> None:
     rows = ordered_summary_rows(summaries)
 
     assert [row["policy_id"] for row in rows] == ["recent-8", "uniform-8"]
+
+
+def test_policy_labels_include_semantic_memory_methods() -> None:
+    assert POLICY_LABELS["recent-4+semantic-memory-4"] == "Recent-4 + Semantic-Memory-4"
+    assert POLICY_LABELS["recent-4+semantic-diverse-memory-4"] == (
+        "Recent-4 + Semantic-Diverse-Memory-4"
+    )
+
+
+def test_ordered_summary_rows_put_semantic_methods_after_fixed_methods() -> None:
+    policy_ids = [
+        "recent-8",
+        "uniform-8",
+        "recent-4+uniform-memory-4",
+        "recent-4+timestamp-aware-memory-4",
+        "recent-4+semantic-memory-4",
+        "recent-4+semantic-diverse-memory-4",
+    ]
+
+    rows = ordered_summary_rows([_summary(policy_id) for policy_id in reversed(policy_ids)])
+
+    assert [row["policy_id"] for row in rows] == policy_ids
 
 
 def _failure(sample_id: str, policy_id: str, *, frame_time: float = 4.0) -> dict[str, object]:

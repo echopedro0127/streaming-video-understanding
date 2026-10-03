@@ -13,12 +13,19 @@ POLICY_ORDER = (
     "recent-4+uniform-memory-4",
     "recent-4+timestamp-aware-memory-4",
 )
+SEMANTIC_POLICY_ORDER = (
+    "recent-4+semantic-memory-4",
+    "recent-4+semantic-diverse-memory-4",
+)
+DISPLAY_POLICY_ORDER = POLICY_ORDER + SEMANTIC_POLICY_ORDER
 
 POLICY_LABELS = {
     "recent-8": "Recent-8",
     "uniform-8": "Uniform-8",
     "recent-4+uniform-memory-4": "Recent-4 + Uniform-Memory-4",
     "recent-4+timestamp-aware-memory-4": "Recent-4 + Timestamp-aware-Memory-4",
+    "recent-4+semantic-memory-4": "Recent-4 + Semantic-Memory-4",
+    "recent-4+semantic-diverse-memory-4": "Recent-4 + Semantic-Diverse-Memory-4",
 }
 
 _REQUIRED_FIELDS = (
@@ -86,7 +93,7 @@ def ordered_summary_rows(summaries: Iterable[Mapping[str, Any]]) -> list[dict[st
         if policy_id in seen:
             raise ValueError(f"duplicate summary for policy {policy_id!r}")
         seen.add(policy_id)
-    order = {policy_id: index for index, policy_id in enumerate(POLICY_ORDER)}
+    order = {policy_id: index for index, policy_id in enumerate(DISPLAY_POLICY_ORDER)}
     return sorted(rows, key=lambda row: order[str(row["policy_id"])])
 
 
