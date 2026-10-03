@@ -1,4 +1,6 @@
 import json
+import math
+import time
 from pathlib import Path
 
 import pytest
@@ -349,6 +351,63 @@ def test_evaluator_semantic_policy_requires_scorer_before_backend_call():
     assert backend.call_count == 0
 
 
+def test_evaluator_rejects_combined_policy_over_visual_budget_before_work():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(10)
+            )
+
+    class RecordingScorer:
+        def __init__(self):
+            self.call_count = 0
+
+        def score_frames(self, *, video_path, frames, images_by_id, query):
+            self.call_count += 1
+            return {frame.frame_id: float(frame.frame_id) for frame in frames}
+
+    backend = MockVLMBackend(answer="A")
+    scorer = RecordingScorer()
+    with pytest.raises(ValueError, match="visual_budget|budget"):
+        evaluate_sample(
+            StreamingSample(
+                sample_id="over-budget",
+                video_id="video",
+                video_path=Path("video.mp4"),
+                question="What is visible?",
+                options=("cat", "dog", "ball", "car"),
+                answer="A",
+                query_time_s=9.0,
+                task_type="Object Recognition",
+                temporal_clue_type="Prior",
+            ),
+            config=ProjectConfig(
+                dataset=DatasetConfig(context_horizon_s=60.0),
+                experiment=ExperimentConfig(visual_budget=4, seed=7),
+            ),
+            frame_reader=StaticReader(),
+            backend=backend,
+            output_store=None,
+            policy_id="recent-3+semantic-memory-3",
+            semantic_scorer=scorer,
+        )
+
+    assert backend.call_count == 0
+    assert scorer.call_count == 0
+
+
 @pytest.mark.parametrize(
     "policy_id",
     ["recent-2+semantic-memory-2", "recent-2+semantic-diverse-memory-2"],
@@ -461,6 +520,64 @@ def test_evaluator_writes_stage_level_profile(tmp_path: Path):
     assert profile["retrieval_ms"] == 0.0
     assert profile["decode_ms"] >= 0.0
     assert profile["total_ms"] >= profile["decode_ms"]
+
+
+def test_evaluator_profiles_semantic_retrieval_separately_from_sampling(tmp_path: Path):
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.evaluation.profiling import RuntimeProfileStore
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(6)
+            )
+
+    class SlowScorer:
+        def score_frames(self, *, video_path, frames, images_by_id, query):
+            time.sleep(0.05)
+            return {frame.frame_id: float(frame.frame_id) for frame in frames}
+
+    profile_path = tmp_path / "semantic-profile.jsonl"
+    record = evaluate_sample(
+        StreamingSample(
+            sample_id="semantic-profile-sample",
+            video_id="semantic-profile-video",
+            video_path=Path("video.mp4"),
+            question="What is visible?",
+            options=("cat", "dog", "ball", "car"),
+            answer="A",
+            query_time_s=5.0,
+            task_type="Object Recognition",
+            temporal_clue_type="Prior",
+        ),
+        config=ProjectConfig(
+            dataset=DatasetConfig(context_horizon_s=60.0),
+            experiment=ExperimentConfig(visual_budget=4, seed=7),
+        ),
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-2+semantic-memory-2",
+        semantic_scorer=SlowScorer(),
+        profile_store=RuntimeProfileStore(profile_path),
+    )
+
+    profile = json.loads(profile_path.read_text(encoding="utf-8"))
+    assert math.isfinite(profile["retrieval_ms"])
+    assert math.isfinite(profile["sampling_ms"])
+    assert profile["retrieval_ms"] >= 30.0
+    assert profile["sampling_ms"] < profile["retrieval_ms"]
+    assert record["retrieval_latency_ms"] == profile["retrieval_ms"]
 
 
 def test_metrics_summarize_retrieval_stage_timing():

@@ -54,16 +54,36 @@ def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
         normalized,
     )
     if match:
-        return match.group(2), int(match.group(1)), int(match.group(3))
-    match = re.fullmatch(r"(recent|uniform)-(\d+)", normalized)
-    if match:
-        if match.group(1) == "recent":
-            return "recent", int(match.group(2)), 0
-        return "uniform", 0, int(match.group(2))
-    raise ValueError(
-        f"Unsupported policy_id {policy_id!r}; expected recent-B, uniform-B, "
-        "or recent-K+uniform-memory-M/timestamp-aware-memory-M"
-    )
+        policy_kind = match.group(2)
+        recent_capacity = int(match.group(1))
+        memory_capacity = int(match.group(3))
+    else:
+        match = re.fullmatch(r"(recent|uniform)-(\d+)", normalized)
+        if match:
+            if match.group(1) == "recent":
+                policy_kind, recent_capacity, memory_capacity = (
+                    "recent",
+                    int(match.group(2)),
+                    0,
+                )
+            else:
+                policy_kind, recent_capacity, memory_capacity = (
+                    "uniform",
+                    0,
+                    int(match.group(2)),
+                )
+        else:
+            raise ValueError(
+                f"Unsupported policy_id {policy_id!r}; expected recent-B, uniform-B, "
+                "or recent-K+uniform-memory-M/timestamp-aware-memory-M"
+            )
+    requested_capacity = recent_capacity + memory_capacity
+    if requested_capacity > budget:
+        raise ValueError(
+            f"policy {policy_id!r} requests {requested_capacity} frames, "
+            f"exceeding visual_budget {budget}"
+        )
+    return policy_kind, recent_capacity, memory_capacity
 
 
 def _select_policy(
@@ -133,11 +153,13 @@ def _select_semantic_policy(
     tuple[FrameRecord, ...],
     tuple[dict[str, float | int], ...],
     float,
+    float,
 ]:
     policy_kind, recent_capacity, memory_capacity = _policy_parts(policy_id, budget)
     if semantic_scorer is None:
         raise ValueError("semantic policy requires semantic_scorer")
 
+    sampling_started = time.perf_counter()
     ordered = tuple(sorted(frames, key=lambda frame: (frame.timestamp_s, frame.frame_id)))
     recent = recent_window(
         ordered,
@@ -155,6 +177,8 @@ def _select_semantic_policy(
         images_by_id=images_by_id,
         query=query,
     )
+    retrieval_finished = time.perf_counter()
+    retrieval_latency_ms = (retrieval_finished - retrieval_started) * 1000.0
     selection = select_semantic_history(
         history,
         scores=scores,
@@ -166,7 +190,6 @@ def _select_semantic_policy(
         diversity_weight=diversity_weight,
         tolerance_s=tolerance_s,
     )
-    retrieval_latency_ms = (time.perf_counter() - retrieval_started) * 1000.0
     selected = tuple(
         sorted((*selection.frames, *recent), key=lambda frame: (frame.timestamp_s, frame.frame_id))
     )
@@ -179,7 +202,11 @@ def _select_semantic_policy(
         }
         for item in selection.trace
     )
-    return selected, selection.frames, trace, retrieval_latency_ms
+    sampling_latency_ms = (
+        (retrieval_started - sampling_started)
+        + (time.perf_counter() - retrieval_finished)
+    ) * 1000.0
+    return selected, selection.frames, trace, retrieval_latency_ms, sampling_latency_ms
 
 
 def _frame_manifest(frames: Sequence[FrameRecord]) -> list[dict[str, float | int]]:
@@ -203,6 +230,7 @@ def evaluate_sample(
     profile_store: RuntimeProfileStore | None = None,
     semantic_scorer: SemanticFrameScorer | None = None,
 ) -> dict[str, Any]:
+    policy_kind, _, _ = _policy_parts(policy_id, config.experiment.visual_budget)
     total_started = time.perf_counter()
     query_time_s = sample.query_time_s
     tolerance_s = config.dataset.timestamp_tolerance_s
@@ -234,14 +262,13 @@ def evaluate_sample(
     frozen_memory = memory.snapshot()
     memory_latency_ms = (time.perf_counter() - memory_started) * 1000.0
 
-    policy_kind, _, _ = _policy_parts(policy_id, config.experiment.visual_budget)
-    sampling_started = time.perf_counter()
     if policy_kind in {"semantic", "semantic-diverse"}:
         (
             selected_frames,
             memory_frames,
             semantic_trace,
             retrieval_latency_ms,
+            sampling_latency_ms,
         ) = _select_semantic_policy(
             visible_frames,
             video_path=sample.video_path,
@@ -258,6 +285,7 @@ def evaluate_sample(
         )
         include_timestamps = False
     else:
+        sampling_started = time.perf_counter()
         selected_frames, memory_frames, include_timestamps = _select_policy(
             visible_frames,
             query_time_s=query_time_s,
@@ -267,7 +295,7 @@ def evaluate_sample(
         )
         semantic_trace = ()
         retrieval_latency_ms = 0.0
-    sampling_latency_ms = (time.perf_counter() - sampling_started) * 1000.0
+        sampling_latency_ms = (time.perf_counter() - sampling_started) * 1000.0
     if selected_frames and max(frame.timestamp_s for frame in selected_frames) > query_time_s + tolerance_s:
         raise ValueError("selected frame is after the causal query boundary")
     selected_images = tuple(images_by_id[frame.frame_id] for frame in selected_frames)
