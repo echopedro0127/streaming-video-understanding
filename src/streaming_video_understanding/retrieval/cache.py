@@ -84,12 +84,15 @@ class FrameFeatureCache:
         descriptor, temp_name = tempfile.mkstemp(
             prefix=f".{target.name}.", suffix=".tmp.npy", dir=target.parent
         )
-        os.close(descriptor)
         temp_path = Path(temp_name)
         try:
+            os.close(descriptor)
             np.save(temp_path, converted, allow_pickle=False)
             temp_path.replace(target)
         except BaseException:
-            temp_path.unlink(missing_ok=True)
+            try:
+                temp_path.unlink(missing_ok=True)
+            except BaseException:
+                pass
             raise
         return target

@@ -154,6 +154,42 @@ def test_store_cleans_temp_file_when_save_fails(tmp_path, monkeypatch):
     assert not any((tmp_path / "cache").rglob("*.*"))
 
 
+def test_store_cleans_temp_file_and_preserves_close_failure(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    real_close = cache_module.os.close
+
+    def failing_close(descriptor):
+        real_close(descriptor)
+        raise OSError("close failure")
+
+    monkeypatch.setattr(cache_module.os, "close", failing_close)
+
+    with pytest.raises(OSError, match="close failure"):
+        cache.store(tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0]))
+
+    assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+
+
+def test_store_cleanup_failure_does_not_mask_write_failure(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+
+    def failing_save(path, feature, *, allow_pickle):
+        raise OSError("write failure")
+
+    def failing_unlink(path, *, missing_ok):
+        raise PermissionError("cleanup failure")
+
+    monkeypatch.setattr(cache_module.np, "save", failing_save)
+    monkeypatch.setattr(cache_module.Path, "unlink", failing_unlink)
+
+    with pytest.raises(OSError, match="write failure"):
+        cache.store(tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0]))
+
+
 @pytest.mark.parametrize("frame_id", [True, False, 1.0, "1", None])
 def test_rejects_non_exact_integer_frame_ids(tmp_path, frame_id):
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
