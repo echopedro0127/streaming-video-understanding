@@ -1,16 +1,611 @@
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 import gc
 import hashlib
+import inspect
 import os
 from pathlib import Path
+import subprocess
+import sys
 import threading
+import types
 import weakref
 
 import numpy as np
 import pytest
+from PIL import Image
 
 from streaming_video_understanding.data.schema import FrameRecord
-from streaming_video_understanding.retrieval import FrameFeatureCache
+from streaming_video_understanding.retrieval import (
+    ClipFrameScorer,
+    FrameFeatureCache,
+    SemanticFrameScorer,
+    cosine_similarity_scores,
+)
+
+
+class _FakeTensor:
+    def __init__(self, value):
+        self.value = np.asarray(value)
+        self.moves = []
+
+    def to(self, *args, **kwargs):
+        self.moves.append((args, kwargs))
+        return self
+
+    def float(self):
+        self.value = self.value.astype(np.float32)
+        return self
+
+    def cpu(self):
+        return self
+
+    def numpy(self):
+        return self.value
+
+    def __getitem__(self, index):
+        return _FakeTensor(self.value[index])
+
+
+def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
+    state = types.SimpleNamespace(
+        cuda_available=cuda_available,
+        empty_cache_calls=0,
+        processor_model_ids=[],
+        model_loads=[],
+        model_moves=[],
+        eval_calls=0,
+        text_processor_calls=[],
+        image_batches=[],
+        text_model_calls=0,
+        image_model_calls=0,
+        text_feature=np.array([[1.0, 0.0]], dtype=np.float32),
+        image_oom=False,
+        text_oom=False,
+    )
+
+    class OutOfMemoryError(RuntimeError):
+        pass
+
+    torch_module = types.ModuleType("torch")
+    torch_module.float16 = object()
+    torch_module.float32 = object()
+    torch_module.cuda = types.SimpleNamespace(
+        is_available=lambda: state.cuda_available,
+        empty_cache=lambda: setattr(
+            state, "empty_cache_calls", state.empty_cache_calls + 1
+        ),
+        OutOfMemoryError=OutOfMemoryError,
+    )
+
+    @contextmanager
+    def inference_mode():
+        yield
+
+    torch_module.inference_mode = inference_mode
+
+    class FakeProcessor:
+        def __call__(
+            self, *, text=None, images=None, return_tensors=None, padding=None
+        ):
+            assert return_tensors == "pt"
+            if text is not None:
+                state.text_processor_calls.append(
+                    {"text": text, "padding": padding}
+                )
+                return {
+                    "input_ids": _FakeTensor([[1, 2]]),
+                    "attention_mask": _FakeTensor([[1, 1]]),
+                }
+            image_list = list(images)
+            state.image_batches.append(
+                [image.info["frame_id"] for image in image_list]
+            )
+            return {
+                "pixel_values": _FakeTensor(
+                    np.stack([image.info["feature"] for image in image_list])
+                )
+            }
+
+    class FakeAutoProcessor:
+        @classmethod
+        def from_pretrained(cls, model_id):
+            state.processor_model_ids.append(model_id)
+            return FakeProcessor()
+
+    class FakeModel:
+        def to(self, device):
+            state.model_moves.append(device)
+            return self
+
+        def eval(self):
+            state.eval_calls += 1
+            return self
+
+        def get_text_features(self, **inputs):
+            state.text_model_calls += 1
+            state.last_text_inputs = inputs
+            if state.text_oom:
+                raise OutOfMemoryError("fake text OOM")
+            return _FakeTensor(state.text_feature)
+
+        def get_image_features(self, *, pixel_values):
+            state.image_model_calls += 1
+            state.last_pixel_values = pixel_values
+            if state.image_oom:
+                raise OutOfMemoryError("fake image OOM")
+            return _FakeTensor(pixel_values.value)
+
+    class FakeCLIPModel:
+        @classmethod
+        def from_pretrained(cls, model_id, *, torch_dtype):
+            state.model_loads.append((model_id, torch_dtype))
+            return FakeModel()
+
+    transformers_module = types.ModuleType("transformers")
+    transformers_module.AutoProcessor = FakeAutoProcessor
+    transformers_module.CLIPModel = FakeCLIPModel
+    monkeypatch.setitem(sys.modules, "torch", torch_module)
+    monkeypatch.setitem(sys.modules, "transformers", transformers_module)
+    return state, torch_module
+
+
+def _image(frame_id, feature):
+    image = Image.new("RGB", (1, 1))
+    image.info["frame_id"] = frame_id
+    image.info["feature"] = np.asarray(feature, dtype=np.float32)
+    return image
+
+
+def test_semantic_frame_scorer_protocol_has_causal_only_interface():
+    parameters = inspect.signature(SemanticFrameScorer.score_frames).parameters
+
+    assert list(parameters) == [
+        "self",
+        "video_path",
+        "frames",
+        "images_by_id",
+        "query",
+    ]
+
+
+def test_importing_clip_does_not_import_torch_or_transformers():
+    script = """
+import builtins
+import sys
+
+real_import = builtins.__import__
+def guarded_import(name, *args, **kwargs):
+    if name.split('.')[0] in {'torch', 'transformers'}:
+        raise AssertionError(f'eager heavy import: {name}')
+    return real_import(name, *args, **kwargs)
+
+builtins.__import__ = guarded_import
+import streaming_video_understanding.retrieval.clip
+assert 'torch' not in sys.modules
+assert 'transformers' not in sys.modules
+"""
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = os.fspath(Path.cwd() / "src")
+
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path.cwd(),
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize(
+    ("device", "cuda_available", "resolved_device", "dtype_name"),
+    [
+        ("auto", False, "cpu", "float32"),
+        ("auto", True, "cuda", "float16"),
+        ("cpu", True, "cpu", "float32"),
+        ("cuda", True, "cuda", "float16"),
+    ],
+)
+def test_clip_constructor_resolves_device_dtype_and_initializes_model(
+    tmp_path,
+    monkeypatch,
+    device,
+    cuda_available,
+    resolved_device,
+    dtype_name,
+):
+    state, torch_module = _install_fake_clip_dependencies(
+        monkeypatch, cuda_available=cuda_available
+    )
+
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device=device,
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    assert state.processor_model_ids == ["fake/clip"]
+    assert state.model_loads == [
+        ("fake/clip", getattr(torch_module, dtype_name))
+    ]
+    assert state.model_moves == [resolved_device]
+    assert state.eval_calls == 1
+    assert isinstance(scorer._cache, FrameFeatureCache)
+
+
+def test_clip_constructor_rejects_unavailable_explicit_cuda(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(
+        monkeypatch, cuda_available=False
+    )
+
+    with pytest.raises(RuntimeError, match="CUDA.*not available"):
+        ClipFrameScorer(
+            model_id="fake/clip",
+            device="cuda",
+            cache_dir=tmp_path / "cache",
+            image_batch_size=2,
+        )
+
+    assert state.processor_model_ids == []
+    assert state.model_loads == []
+
+
+@pytest.mark.parametrize("model_id", ["", "   ", None, 1, False])
+def test_clip_constructor_rejects_invalid_model_id(
+    tmp_path, monkeypatch, model_id
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+
+    with pytest.raises((TypeError, ValueError), match="model_id"):
+        ClipFrameScorer(
+            model_id=model_id,
+            device="cpu",
+            cache_dir=tmp_path / "cache",
+            image_batch_size=2,
+        )
+
+    assert state.processor_model_ids == []
+
+
+@pytest.mark.parametrize("device", ["", "gpu", None, 1, False])
+def test_clip_constructor_rejects_invalid_device(tmp_path, monkeypatch, device):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+
+    with pytest.raises((TypeError, ValueError), match="device"):
+        ClipFrameScorer(
+            model_id="fake/clip",
+            device=device,
+            cache_dir=tmp_path / "cache",
+            image_batch_size=2,
+        )
+
+    assert state.processor_model_ids == []
+
+
+@pytest.mark.parametrize("image_batch_size", [0, -1, True, 1.0, "1", None])
+def test_clip_constructor_rejects_invalid_batch_size(
+    tmp_path, monkeypatch, image_batch_size
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+
+    with pytest.raises((TypeError, ValueError), match="image_batch_size"):
+        ClipFrameScorer(
+            model_id="fake/clip",
+            device="cpu",
+            cache_dir=tmp_path / "cache",
+            image_batch_size=image_batch_size,
+        )
+
+    assert state.processor_model_ids == []
+
+
+def test_clip_scorer_batches_cache_misses_and_reuses_cached_features(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    frames = tuple(
+        FrameRecord(frame_id, index / 2)
+        for index, frame_id in enumerate((9, 3, 7, 1, 5))
+    )
+    features = {
+        9: [1.0, 0.0],
+        3: [0.0, 1.0],
+        7: [-1.0, 0.0],
+        1: [1.0, 1.0],
+        5: [1.0, -1.0],
+    }
+    images = {
+        frame_id: _image(frame_id, feature)
+        for frame_id, feature in features.items()
+    }
+
+    first = scorer.score_frames(
+        video_path=tmp_path / "video.mp4",
+        frames=frames,
+        images_by_id=images,
+        query="  action  ",
+    )
+    second = scorer.score_frames(
+        video_path=tmp_path / "video.mp4",
+        frames=frames,
+        images_by_id=images,
+        query="action",
+    )
+
+    assert list(first) == [9, 3, 7, 1, 5]
+    assert first == second
+    assert first == pytest.approx(
+        {
+            9: 1.0,
+            3: 0.0,
+            7: -1.0,
+            1: 2**-0.5,
+            5: 2**-0.5,
+        }
+    )
+    assert state.image_batches == [[9, 3], [7, 1], [5]]
+    assert state.image_model_calls == 3
+    assert state.text_processor_calls == [
+        {"text": ["action"], "padding": True},
+        {"text": ["action"], "padding": True},
+    ]
+    assert state.text_model_calls == 2
+    assert all(
+        tensor.moves == [(("cpu",), {})]
+        for tensor in state.last_text_inputs.values()
+    )
+    assert state.last_pixel_values.moves == [(('cpu',), {})]
+
+
+def test_clip_scorer_encodes_only_uncached_frames_in_original_order(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=3,
+    )
+    video_path = tmp_path / "video.mp4"
+    frames = (
+        FrameRecord(8, 0.0),
+        FrameRecord(2, 1.0),
+        FrameRecord(6, 2.0),
+        FrameRecord(4, 3.0),
+    )
+    images = {
+        frame.frame_id: _image(frame.frame_id, [1.0, frame.frame_id])
+        for frame in frames
+    }
+    scorer._cache.store(video_path, frames[1], np.array([1.0, 2.0]))
+    scorer._cache.store(video_path, frames[3], np.array([1.0, 4.0]))
+
+    scores = scorer.score_frames(
+        video_path=video_path,
+        frames=frames,
+        images_by_id=images,
+        query="query",
+    )
+
+    assert list(scores) == [8, 2, 6, 4]
+    assert state.image_batches == [[8, 6]]
+
+
+@pytest.mark.parametrize("query", ["", "   ", None, 1, False])
+def test_clip_scorer_rejects_invalid_query(tmp_path, monkeypatch, query):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises((TypeError, ValueError), match="query"):
+        scorer.score_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=(FrameRecord(1, 0.0),),
+            images_by_id={1: _image(1, [1.0, 0.0])},
+            query=query,
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+def test_clip_scorer_rejects_missing_image_before_model_work(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises(ValueError, match="Missing image.*7"):
+        scorer.score_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=(FrameRecord(7, 0.0),),
+            images_by_id={},
+            query="query",
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+@pytest.mark.parametrize(
+    "frames",
+    [
+        (FrameRecord(1, 0.0), FrameRecord(1, 1.0)),
+        (FrameRecord(True, 0.0),),
+        (FrameRecord(1.0, 0.0),),
+    ],
+)
+def test_clip_scorer_rejects_duplicate_or_non_exact_frame_ids(
+    tmp_path, monkeypatch, frames
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises(ValueError, match="frame_id"):
+        scorer.score_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=frames,
+            images_by_id={frame.frame_id: _image(frame.frame_id, [1.0, 0.0]) for frame in frames},
+            query="query",
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+def test_clip_scorer_empty_frames_returns_without_model_work(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    scores = scorer.score_frames(
+        video_path=tmp_path / "video.mp4",
+        frames=(),
+        images_by_id={},
+        query="query",
+    )
+
+    assert scores == {}
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+@pytest.mark.parametrize("oom_stage", ["image", "text"])
+def test_clip_scorer_converts_cuda_oom_and_clears_cache(
+    tmp_path, monkeypatch, oom_stage
+):
+    state, _ = _install_fake_clip_dependencies(
+        monkeypatch, cuda_available=True
+    )
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cuda",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    frames = tuple(FrameRecord(frame_id, float(frame_id)) for frame_id in range(3))
+    images = {
+        frame.frame_id: _image(frame.frame_id, [1.0, frame.frame_id + 1.0])
+        for frame in frames
+    }
+    setattr(state, f"{oom_stage}_oom", True)
+
+    with pytest.raises(RuntimeError, match="3 frames"):
+        scorer.score_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=frames,
+            images_by_id=images,
+            query="query",
+        )
+
+    assert state.empty_cache_calls == 1
+
+
+def test_cosine_similarity_scores_exact_example():
+    scores = cosine_similarity_scores(
+        (10, 11, 12),
+        np.array([[1, 0], [0, 2], [-1, 0]]),
+        np.array([3, 0]),
+    )
+
+    assert scores == {10: 1.0, 11: 0.0, 12: -1.0}
+    assert all(type(score) is float for score in scores.values())
+
+
+@pytest.mark.parametrize(
+    ("frame_features", "query_feature", "match"),
+    [
+        (np.array([[1.0, 0.0]]), np.array([0.0, 0.0]), "query.*zero"),
+        (np.array([[1.0, 0.0], [0.0, 0.0]]), np.array([1.0, 0.0]), "frame.*zero"),
+    ],
+)
+def test_cosine_similarity_scores_rejects_zero_norms(
+    frame_features, query_feature, match
+):
+    with pytest.raises(ValueError, match=match):
+        cosine_similarity_scores(
+            tuple(range(len(frame_features))), frame_features, query_feature
+        )
+
+
+@pytest.mark.parametrize(
+    ("frame_ids", "frame_features", "query_feature", "match"),
+    [
+        ((1,), np.array([1.0, 2.0]), np.array([1.0, 2.0]), "two-dimensional"),
+        ((1,), np.array([[1.0, 2.0]]), np.array([[1.0, 2.0]]), "one-dimensional"),
+        ((1,), np.empty((1, 0)), np.array([]), "positive"),
+        ((1,), np.array([[1.0, 2.0]]), np.array([1.0]), "dimension"),
+        ((1, 2), np.array([[1.0, 2.0]]), np.array([1.0, 2.0]), "length"),
+        ((1, 1), np.array([[1.0], [2.0]]), np.array([1.0]), "unique"),
+        ((True,), np.array([[1.0]]), np.array([1.0]), "exact integers"),
+        ((1.0,), np.array([[1.0]]), np.array([1.0]), "exact integers"),
+        ((1,), np.array([[np.nan]]), np.array([1.0]), "finite"),
+        ((1,), np.array([[1.0]]), np.array([np.inf]), "finite"),
+        ((1,), np.array([["1"]]), np.array([1.0]), "numeric"),
+    ],
+)
+def test_cosine_similarity_scores_rejects_invalid_inputs(
+    frame_ids, frame_features, query_feature, match
+):
+    with pytest.raises(ValueError, match=match):
+        cosine_similarity_scores(frame_ids, frame_features, query_feature)
+
+
+def test_cosine_similarity_scores_handles_extreme_finite_vectors():
+    maximum = np.finfo(np.float64).max
+
+    scores = cosine_similarity_scores(
+        (3, 4),
+        np.array([[maximum, maximum], [maximum, -maximum]]),
+        np.array([maximum, maximum]),
+    )
+
+    assert np.isfinite(list(scores.values())).all()
+    assert scores[3] == pytest.approx(1.0)
+    assert scores[4] == pytest.approx(0.0, abs=1e-15)
+
+
+def test_cosine_similarity_scores_preserves_frame_id_order():
+    scores = cosine_similarity_scores(
+        (8, 2, 5),
+        np.eye(3),
+        np.array([1.0, 1.0, 1.0]),
+    )
+
+    assert list(scores) == [8, 2, 5]
 
 
 class _CloseFailingHandle:
