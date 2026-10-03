@@ -71,6 +71,40 @@ def test_equal_score_tie_returns_earliest_frames_without_diversity():
     assert [frame.frame_id for frame in result.frames] == [0, 1]
 
 
+def test_equal_score_tie_uses_timestamp_before_frame_id():
+    frames = (
+        FrameRecord(1, 10.0),
+        FrameRecord(9, 0.0),
+        FrameRecord(5, 5.0),
+    )
+
+    result = select_semantic_history(
+        frames,
+        scores={1: 1.0, 9: 1.0, 5: 1.0},
+        visible_until_s=10.0,
+        capacity=2,
+    )
+
+    assert [frame.frame_id for frame in result.frames] == [9, 5]
+
+
+def test_candidate_pool_boundary_tie_is_deterministic():
+    frames = tuple(FrameRecord(frame_id, 0.0) for frame_id in (40, 10, 30, 20))
+    arguments = {
+        "scores": {frame.frame_id: 1.0 for frame in frames},
+        "visible_until_s": 0.0,
+        "capacity": 2,
+        "diversity": True,
+        "candidate_multiplier": 1,
+    }
+
+    forward = select_semantic_history(frames, **arguments)
+    reversed_input = select_semantic_history(tuple(reversed(frames)), **arguments)
+
+    assert [frame.frame_id for frame in forward.frames] == [10, 20]
+    assert reversed_input == forward
+
+
 def test_equal_diversity_scores_normalize_relevance_to_one():
     frames = (FrameRecord(2, 10.0), FrameRecord(1, 1.0), FrameRecord(0, 0.0))
     result = select_semantic_history(
@@ -103,10 +137,55 @@ def test_score_must_be_finite_and_numeric(score):
         )
 
 
+def test_huge_integer_score_raises_clean_value_error():
+    with pytest.raises(ValueError, match="semantic score"):
+        select_semantic_history(
+            _frames(1),
+            scores={0: 10**400},
+            visible_until_s=0.0,
+            capacity=1,
+        )
+
+
+def test_extreme_finite_scores_produce_finite_diversity_objectives():
+    result = select_semantic_history(
+        _frames(3),
+        scores={0: 1e308, 1: 0.0, 2: -1e308},
+        visible_until_s=2.0,
+        capacity=3,
+        diversity=True,
+        candidate_multiplier=1,
+    )
+
+    assert len(result.trace) == 3
+    assert all(math.isfinite(item.objective_score) for item in result.trace)
+
+
 def test_future_frame_raises_instead_of_being_filtered():
     with pytest.raises(FutureFrameLeakageError):
         select_semantic_history(
             _frames(3), scores={0: 0.0, 1: 1.0, 2: 2.0}, visible_until_s=1.0, capacity=2
+        )
+
+
+@pytest.mark.parametrize(
+    "visible_until_s",
+    [float("nan"), float("inf"), float("-inf"), True, -1.0],
+)
+def test_rejects_invalid_visible_boundary_even_for_empty_input(visible_until_s):
+    with pytest.raises(ValueError, match="visible_until_s"):
+        select_semantic_history(
+            (), scores={}, visible_until_s=visible_until_s, capacity=0
+        )
+
+
+def test_visible_boundary_is_validated_before_frames():
+    with pytest.raises(ValueError, match="visible_until_s"):
+        select_semantic_history(
+            (FrameRecord(0, float("nan")),),
+            scores={},
+            visible_until_s=float("nan"),
+            capacity=0,
         )
 
 
@@ -130,9 +209,54 @@ def test_rejects_invalid_frame_timestamps(timestamp):
         )
 
 
+@pytest.mark.parametrize("frame_id", [True, 1.0])
+def test_rejects_non_exact_integer_frame_ids(frame_id):
+    with pytest.raises(ValueError, match="frame_id"):
+        select_semantic_history(
+            (FrameRecord(frame_id, 0.0),),
+            scores={},
+            visible_until_s=0.0,
+            capacity=0,
+        )
+
+
+def test_rejects_duplicate_frame_ids():
+    with pytest.raises(ValueError, match="duplicate frame_id"):
+        select_semantic_history(
+            (FrameRecord(1, 0.0), FrameRecord(1, 1.0)),
+            scores={},
+            visible_until_s=1.0,
+            capacity=0,
+        )
+
+
+@pytest.mark.parametrize("scores", [{True: 0.5}, {1.0: 0.5}])
+def test_rejects_score_keys_that_alias_an_integer_frame_id(scores):
+    with pytest.raises(ValueError, match="score key"):
+        select_semantic_history(
+            (FrameRecord(1, 0.0),),
+            scores=scores,
+            visible_until_s=0.0,
+            capacity=1,
+        )
+
+
+def test_rejects_invalid_extra_score_key():
+    with pytest.raises(ValueError, match="score key"):
+        select_semantic_history(
+            (FrameRecord(1, 0.0),),
+            scores={1: 0.5, 2.0: 0.4},
+            visible_until_s=0.0,
+            capacity=1,
+        )
+
+
 @pytest.mark.parametrize(
     ("overrides", "message"),
     [
+        ({"diversity": 0}, "diversity"),
+        ({"diversity": 1}, "diversity"),
+        ({"diversity": "false"}, "diversity"),
         ({"capacity": -1}, "capacity"),
         ({"candidate_multiplier": 0}, "candidate_multiplier"),
         ({"candidate_multiplier": -1}, "candidate_multiplier"),

@@ -24,16 +24,27 @@ class SemanticSelection:
 
 
 def _is_finite_number(value: object) -> bool:
-    return isinstance(value, Real) and not isinstance(value, bool) and math.isfinite(value)
+    if not isinstance(value, Real) or isinstance(value, bool):
+        return False
+    try:
+        return math.isfinite(float(value))
+    except (TypeError, ValueError, OverflowError):
+        return False
 
 
 def _validate_parameters(
+    visible_until_s: float,
     capacity: int,
+    diversity: bool,
     candidate_multiplier: int,
     cluster_window_s: float,
     diversity_weight: float,
     tolerance_s: float,
 ) -> None:
+    if not _is_finite_number(visible_until_s) or visible_until_s < 0:
+        raise ValueError("visible_until_s must be finite and non-negative")
+    if type(diversity) is not bool:
+        raise ValueError("diversity must be a bool")
     if not isinstance(capacity, int) or isinstance(capacity, bool) or capacity < 0:
         raise ValueError("capacity must be a non-negative integer")
     if (
@@ -59,7 +70,13 @@ def _causal_frames(
     visible_until_s: float,
     tolerance_s: float,
 ) -> tuple[FrameRecord, ...]:
+    frame_ids: set[int] = set()
     for frame in frames:
+        if type(frame.frame_id) is not int:
+            raise ValueError(f"frame_id must be an exact integer: {frame.frame_id!r}")
+        if frame.frame_id in frame_ids:
+            raise ValueError(f"duplicate frame_id: {frame.frame_id}")
+        frame_ids.add(frame.frame_id)
         if not _is_finite_number(frame.timestamp_s) or frame.timestamp_s < 0:
             raise ValueError(f"invalid frame timestamp: {frame.timestamp_s!r}")
 
@@ -73,6 +90,15 @@ def _causal_frames(
     return ordered
 
 
+def _validated_score_table(scores: Mapping[int, float]) -> dict[int, float]:
+    validated: dict[int, float] = {}
+    for frame_id, score in scores.items():
+        if type(frame_id) is not int:
+            raise ValueError(f"score key must be an exact integer: {frame_id!r}")
+        validated[frame_id] = score
+    return validated
+
+
 def _semantic_scores(
     frames: Sequence[FrameRecord], scores: Mapping[int, float]
 ) -> dict[int, float]:
@@ -81,11 +107,21 @@ def _semantic_scores(
         if frame.frame_id not in scores:
             raise ValueError(f"missing semantic score for frame {frame.frame_id}")
         score = scores[frame.frame_id]
-        if not _is_finite_number(score):
+        if not isinstance(score, Real) or isinstance(score, bool):
             raise ValueError(
                 f"semantic score for frame {frame.frame_id} must be finite and numeric"
             )
-        validated[frame.frame_id] = float(score)
+        try:
+            converted = float(score)
+        except (TypeError, ValueError, OverflowError) as exc:
+            raise ValueError(
+                f"semantic score for frame {frame.frame_id} must be finite and numeric"
+            ) from exc
+        if not math.isfinite(converted):
+            raise ValueError(
+                f"semantic score for frame {frame.frame_id} must be finite and numeric"
+            )
+        validated[frame.frame_id] = converted
     return validated
 
 
@@ -114,17 +150,20 @@ def select_semantic_history(
 ) -> SemanticSelection:
     """Select causal history frames by relevance, optionally penalizing redundancy."""
     _validate_parameters(
+        visible_until_s,
         capacity,
+        diversity,
         candidate_multiplier,
         cluster_window_s,
         diversity_weight,
         tolerance_s,
     )
     ordered = _causal_frames(frames, visible_until_s, tolerance_s)
+    score_table = _validated_score_table(scores)
     if capacity == 0 or not ordered:
         return SemanticSelection(frames=(), trace=())
 
-    semantic_scores = _semantic_scores(ordered, scores)
+    semantic_scores = _semantic_scores(ordered, score_table)
     ranked = sorted(
         ordered,
         key=lambda frame: (
@@ -157,11 +196,17 @@ def select_semantic_history(
     if minimum_score == maximum_score:
         relevance = {frame.frame_id: 1.0 for frame in pool}
     else:
-        score_range = maximum_score - minimum_score
-        relevance = {
-            frame.frame_id: (semantic_scores[frame.frame_id] - minimum_score) / score_range
-            for frame in pool
-        }
+        scale = max(abs(score) for score in pool_scores)
+        scaled_minimum = minimum_score / scale
+        scaled_range = maximum_score / scale - scaled_minimum
+        relevance = {}
+        for frame in pool:
+            normalized = (
+                semantic_scores[frame.frame_id] / scale - scaled_minimum
+            ) / scaled_range
+            normalized = min(1.0, max(0.0, normalized))
+            relevance[frame.frame_id] = normalized
+    assert all(math.isfinite(value) for value in relevance.values())
 
     remaining = list(pool)
     chosen: list[tuple[FrameRecord, float]] = []
@@ -179,6 +224,7 @@ def select_semantic_history(
                 default=0.0,
             )
             objective = relevance[candidate.frame_id] - diversity_weight * redundancy
+            assert math.isfinite(objective)
             evaluated.append((candidate, objective))
 
         selected, objective = min(
