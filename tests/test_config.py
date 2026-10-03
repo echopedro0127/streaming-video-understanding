@@ -1,3 +1,4 @@
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -76,3 +77,117 @@ def test_load_config_rejects_non_finite_runtime(tmp_path: Path):
 
     with pytest.raises(ValueError, match="sample_fps"):
         load_config(config_path)
+
+
+def test_load_config_uses_retrieval_defaults(tmp_path: Path):
+    config_path = tmp_path / "minimal.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.retrieval.model_id == "openai/clip-vit-base-patch32"
+    assert config.retrieval.device == "auto"
+    assert config.retrieval.cache_dir == ".cache/semantic_features"
+    assert config.retrieval.image_batch_size == 16
+    assert config.retrieval.candidate_multiplier == 4
+    assert config.retrieval.cluster_window_s == 3.0
+    assert config.retrieval.diversity_weight == 0.25
+
+
+def test_load_config_parses_retrieval_values_to_declared_types(tmp_path: Path):
+    config_path = tmp_path / "retrieval.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n"
+        "retrieval:\n"
+        "  model_id: custom/clip\n"
+        "  device: cuda\n"
+        "  cache_dir: custom-cache\n"
+        "  image_batch_size: '32'\n"
+        "  candidate_multiplier: '6'\n"
+        "  cluster_window_s: '2.5'\n"
+        "  diversity_weight: '0.5'\n",
+        encoding="utf-8",
+    )
+
+    config = load_config(config_path)
+
+    assert config.retrieval.model_id == "custom/clip"
+    assert config.retrieval.device == "cuda"
+    assert config.retrieval.cache_dir == "custom-cache"
+    assert config.retrieval.image_batch_size == 32
+    assert config.retrieval.candidate_multiplier == 6
+    assert config.retrieval.cluster_window_s == 2.5
+    assert config.retrieval.diversity_weight == 0.5
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("image_batch_size", 0),
+        ("candidate_multiplier", 0),
+        ("cluster_window_s", -1),
+        ("diversity_weight", -0.1),
+        ("diversity_weight", 1.1),
+    ],
+)
+def test_load_config_rejects_invalid_retrieval_values(
+    tmp_path: Path, field: str, value: float
+):
+    config_path = tmp_path / f"invalid-{field}.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n"
+        f"retrieval:\n  {field}: {value}\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=field):
+        load_config(config_path)
+
+
+@pytest.mark.parametrize(
+    ("field", "yaml_value"),
+    [
+        ("model_id", "''"),
+        ("device", "metal"),
+        ("cache_dir", "''"),
+        ("cluster_window_s", ".nan"),
+        ("diversity_weight", ".nan"),
+    ],
+)
+def test_load_config_rejects_other_invalid_retrieval_values(
+    tmp_path: Path, field: str, yaml_value: str
+):
+    config_path = tmp_path / f"invalid-{field}.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n"
+        f"retrieval:\n  {field}: {yaml_value}\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=field):
+        load_config(config_path)
+
+
+def test_configuration_id_includes_retrieval_config(tmp_path: Path):
+    config_path = tmp_path / "minimal.yaml"
+    config_path.write_text(
+        "dataset:\n  context_horizon_s: 60\n"
+        "experiment:\n  visual_budget: 8\n  seed: 7\n",
+        encoding="utf-8",
+    )
+    config = load_config(config_path)
+    changed_config = replace(
+        config,
+        retrieval=replace(config.retrieval, image_batch_size=32),
+    )
+
+    assert configuration_id(
+        config, policy_id="recent-8", backend="mock"
+    ) != configuration_id(changed_config, policy_id="recent-8", backend="mock")

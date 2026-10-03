@@ -39,11 +39,23 @@ class RuntimeConfig:
 
 
 @dataclass(frozen=True)
+class RetrievalConfig:
+    model_id: str = "openai/clip-vit-base-patch32"
+    device: str = "auto"
+    cache_dir: str = ".cache/semantic_features"
+    image_batch_size: int = 16
+    candidate_multiplier: int = 4
+    cluster_window_s: float = 3.0
+    diversity_weight: float = 0.25
+
+
+@dataclass(frozen=True)
 class ProjectConfig:
     dataset: DatasetConfig
     experiment: ExperimentConfig
     model: ModelConfig = ModelConfig()
     runtime: RuntimeConfig = RuntimeConfig()
+    retrieval: RetrievalConfig = RetrievalConfig()
 
 
 def _mapping(data: Any, name: str) -> dict[str, Any]:
@@ -64,6 +76,7 @@ def load_config(path: str | Path) -> ProjectConfig:
     experiment = _mapping(raw.get("experiment"), "experiment")
     model = _mapping(raw.get("model", {}), "model")
     runtime = _mapping(raw.get("runtime", {}), "runtime")
+    retrieval = _mapping(raw.get("retrieval", {}), "retrieval")
 
     try:
         context_horizon_s = float(dataset["context_horizon_s"])
@@ -80,6 +93,17 @@ def load_config(path: str | Path) -> ProjectConfig:
         max_new_tokens = int(model.get("max_new_tokens", 8))
         sample_fps = float(runtime.get("sample_fps", 1.0))
         batch_size = int(runtime.get("batch_size", 1))
+        retrieval_model_id = str(
+            retrieval.get("model_id", "openai/clip-vit-base-patch32")
+        ).strip()
+        retrieval_device = str(retrieval.get("device", "auto")).strip().lower()
+        retrieval_cache_dir = str(
+            retrieval.get("cache_dir", ".cache/semantic_features")
+        ).strip()
+        image_batch_size = int(retrieval.get("image_batch_size", 16))
+        candidate_multiplier = int(retrieval.get("candidate_multiplier", 4))
+        cluster_window_s = float(retrieval.get("cluster_window_s", 3.0))
+        diversity_weight = float(retrieval.get("diversity_weight", 0.25))
     except KeyError as exc:
         raise ValueError(f"Missing required configuration key: {exc.args[0]}") from exc
     except (TypeError, ValueError) as exc:
@@ -105,6 +129,20 @@ def load_config(path: str | Path) -> ProjectConfig:
         raise ValueError("runtime.sample_fps must be a finite positive number")
     if batch_size <= 0:
         raise ValueError("runtime.batch_size must be positive")
+    if not retrieval_model_id:
+        raise ValueError("retrieval.model_id must be non-empty")
+    if retrieval_device not in {"auto", "cpu", "cuda"}:
+        raise ValueError("retrieval.device must be auto, cpu, or cuda")
+    if not retrieval_cache_dir:
+        raise ValueError("retrieval.cache_dir must be non-empty")
+    if image_batch_size <= 0:
+        raise ValueError("retrieval.image_batch_size must be positive")
+    if candidate_multiplier <= 0:
+        raise ValueError("retrieval.candidate_multiplier must be positive")
+    if not math.isfinite(cluster_window_s) or cluster_window_s <= 0:
+        raise ValueError("retrieval.cluster_window_s must be a finite positive number")
+    if not math.isfinite(diversity_weight) or not 0 <= diversity_weight <= 1:
+        raise ValueError("retrieval.diversity_weight must be finite and within [0, 1]")
     if not isinstance(raw_policy_ids, (list, tuple)):
         raise ValueError("policy_ids must be a sequence")
     policy_ids = tuple(str(policy_id).strip() for policy_id in raw_policy_ids)
@@ -129,6 +167,15 @@ def load_config(path: str | Path) -> ProjectConfig:
             max_new_tokens=max_new_tokens,
         ),
         runtime=RuntimeConfig(sample_fps=sample_fps, batch_size=batch_size),
+        retrieval=RetrievalConfig(
+            model_id=retrieval_model_id,
+            device=retrieval_device,
+            cache_dir=retrieval_cache_dir,
+            image_batch_size=image_batch_size,
+            candidate_multiplier=candidate_multiplier,
+            cluster_window_s=cluster_window_s,
+            diversity_weight=diversity_weight,
+        ),
     )
 
 
@@ -139,6 +186,7 @@ def configuration_id(config: ProjectConfig, *, policy_id: str, backend: str) -> 
             "experiment": config.experiment.__dict__,
             "model": config.model.__dict__,
             "runtime": config.runtime.__dict__,
+            "retrieval": config.retrieval.__dict__,
         },
         "policy_id": policy_id,
         "backend": backend,
