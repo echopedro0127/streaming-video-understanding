@@ -95,6 +95,105 @@ python scripts/benchmark_runtime.py \
 
 运行 checked-in 主矩阵时使用 `--all-policies`，它会读取 `configs/main.yaml` 中的四个 policy IDs；不加该选项时默认只跑 `recent-B`，便于 smoke 和单策略调试。
 
+## Stage 1 Semantic Retrieval (experimental)
+
+Stage 1 adds two policy IDs: `recent-4+semantic-memory-4` and
+`recent-4+semantic-diverse-memory-4`. Both use a fixed 4+4 visual budget:
+four recent frames plus four semantic-memory frames. Semantic retrieval is an
+experiment; no accuracy gain has been proven yet.
+
+The scorer contract is Q-only: CLIP receives the sample question as its text
+query and scores visible history frames. It receives neither ground-truth
+answers nor option text. Stage 1 uses no GT/options in semantic retrieval;
+ground truth is only used by the evaluator for scoring.
+
+The extracted data used below is `data/streamingbench/real-time-1-50`; no
+larger extracted subset is claimed as available. Selected timestamps must be
+at or before the query timestamp.
+
+### Semantic cache
+
+The configured feature cache is `.cache/semantic_features`. The observed
+Hugging Face CLIP cache is
+`E:\NewApplication\CodeToRun\forCV\streaming-video-understanding\hf_cache\hub\models--openai--clip-vit-base-patch32`.
+The first semantic run downloads the model/processor and creates cache
+artifacts; later runs reuse them. The measured post-download footprint was
+approximately 1157.8 MiB (about 1.16 GB), including cache artifacts. This is
+a measured cache footprint, not a theoretical model-size claim; keep caches
+out of Git.
+
+### Semantic validation commands
+
+Full test suite:
+
+```bash
+python -m pytest -q
+```
+
+One-sample mock semantic smoke:
+
+```bash
+python scripts/run_eval.py \
+  --config configs/semantic-validation-1fps.yaml \
+  --data-root data/streamingbench/real-time-1-50 \
+  --annotations annotations.jsonl \
+  --backend mock \
+  --policy recent-4+semantic-diverse-memory-4 \
+  --limit 1 \
+  --output results/semantic-mock-smoke.jsonl \
+  --profile-output results/semantic-mock-smoke-profile.jsonl \
+  --overwrite
+```
+
+One-sample real SmolVLM semantic-diverse smoke:
+
+```bash
+python scripts/run_eval.py \
+  --config configs/semantic-validation-1fps.yaml \
+  --data-root data/streamingbench/real-time-1-50 \
+  --annotations annotations.jsonl \
+  --backend smolvlm \
+  --policy recent-4+semantic-diverse-memory-4 \
+  --limit 1 \
+  --output results/semantic-smolvlm-smoke.jsonl \
+  --profile-output results/semantic-smolvlm-smoke-profile.jsonl \
+  --overwrite
+```
+
+Full available-subset validation:
+
+```bash
+python scripts/run_eval.py \
+  --config configs/semantic-validation-1fps.yaml \
+  --data-root data/streamingbench/real-time-1-50 \
+  --annotations annotations.jsonl \
+  --backend smolvlm \
+  --all-policies \
+  --output results/semantic-validation-real-time-1-50.jsonl \
+  --profile-output results/semantic-validation-real-time-1-50-profile.jsonl \
+  --resume
+```
+
+The full controlled semantic accuracy result is pending; the last command is
+the procedure, not a reported accuracy result.
+
+### Task 8 smoke evidence
+
+- Full pytest after Task 7: **249 passed**.
+- Mock semantic-diverse smoke: `processed=1 skipped=0`; selected/input frames
+  `5` because `query_time=4.0` exposed only five 1fps frames; selected
+  timestamps `0..4 <= query_time`; semantic trace count `1`;
+  `retrieval_latency_ms=990.394 ms`. This is mock pipeline evidence, not
+  accuracy evidence.
+- Real SmolVLM semantic-diverse smoke on the same data:
+  `processed=1 skipped=0`, no OOM, `input_frames=5`, selected timestamps
+  `0..4`, semantic trace count `1`, `retrieval_ms=493.4114`,
+  `model_latency_ms=3433.9946`, record `latency_ms=4201.0253`, and
+  `peak_gpu_memory_mb=2877.4521`; profile `total_ms=4702.2538`.
+  Record latency and profile total are different accounting layers.
+- These one-sample checks do not establish semantic accuracy or an accuracy
+  improvement; full controlled semantic accuracy remains pending.
+
 ## Results
 
 Fixed-budget evaluation has been completed on 250 timestamped QA items from

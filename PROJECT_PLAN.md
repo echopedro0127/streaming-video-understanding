@@ -17,6 +17,9 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Core experiment | Complete | Four fixed-budget policies completed on 250 QA rows each; causal audit found 0 future-frame violations and summaries are saved under `results/` |
 | Failure analysis | Complete | 30 failure cases manually reviewed in `docs/FAILURE_ANALYSIS.md`; five representative contact sheets rendered; trade-off plots generated under `assets/figures/` |
 | Budget sensitivity | Complete | Four safe policies completed on the first 50 QA rows; 200/200 records passed the causal audit; 16-frame probe excluded after reaching the 6GB/context limit |
+| Task 1-7 implementation | Complete | Semantic policy IDs, CLIP scoring/cache, evaluator integration, profiling, and tests are implemented at current HEAD |
+| Task 8 smoke and documentation | Complete after this update | One-sample mock and real SmolVLM semantic-diverse smoke evidence is recorded below |
+| Full semantic accuracy validation | Pending | Controlled accuracy evaluation on available `real-time-1-50` data is not complete; no semantic accuracy number is reported |
 
 ## Research scope
 
@@ -92,6 +95,25 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 - Semantic memory policy using a separately pinned lightweight embedding model.
 - Qwen2.5-VL-3B-AWQ comparison.
 - Cosmos3-Nano hosted cross-model check on 30–50 identical selected-frame cases.
+
+## Task 8: Semantic stage status
+
+Task 1-7 implementation is complete. Task 8 smoke and documentation are
+complete after this update. Semantic retrieval remains an experiment with no
+proven accuracy gain.
+
+| Check | Current evidence |
+|---|---|
+| Full pytest after Task 7 | **249 passed** |
+| CLIP cache | `E:\NewApplication\CodeToRun\forCV\streaming-video-understanding\hf_cache\hub\models--openai--clip-vit-base-patch32`; approximately **1157.8 MiB** (about **1.16 GB**) measured after download, including cache artifacts |
+| Mock semantic-diverse smoke | `processed=1 skipped=0`; selected/input frames `5`; `query_time=4.0`; timestamps `0..4`; trace count `1`; `retrieval_latency_ms=990.394 ms`; mock pipeline evidence only |
+| Real SmolVLM semantic-diverse smoke | `processed=1 skipped=0`; no OOM; `input_frames=5`; timestamps `0..4`; trace count `1`; `retrieval_ms=493.4114`; `model_latency_ms=3433.9946`; record `latency_ms=4201.0253`; `peak_gpu_memory_mb=2877.4521`; profile `total_ms=4702.2538` |
+| Full semantic accuracy | **Pending**; available extracted data is `real-time-1-50`; no accuracy number is filled in |
+
+The five visible frames in the one-sample smoke are due to 1fps sampling at
+`query_time=4.0`, not a full eight-frame input. Record latency and profile
+total are different accounting layers. These smokes validate runtime and the
+causal pipeline only.
 
 ## Stop conditions
 
