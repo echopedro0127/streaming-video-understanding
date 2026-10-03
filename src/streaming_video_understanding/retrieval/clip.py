@@ -13,6 +13,57 @@ if TYPE_CHECKING:
     from PIL import Image
 
 
+def _feature_matrix(
+    output: object,
+    *,
+    torch: object,
+    output_name: str,
+    expected_batch_size: int,
+) -> np.ndarray:
+    if torch.is_tensor(output):
+        feature = output
+    elif hasattr(output, "pooler_output"):
+        feature = output.pooler_output
+        if not torch.is_tensor(feature):
+            raise RuntimeError(
+                f"CLIP {output_name} output has an invalid pooler_output"
+            )
+    elif isinstance(output, (tuple, list)):
+        candidates = [
+            value
+            for value in output
+            if torch.is_tensor(value) and getattr(value, "ndim", None) == 2
+        ]
+        if len(candidates) != 1:
+            raise RuntimeError(
+                f"CLIP {output_name} output does not contain one "
+                "unambiguous feature tensor"
+            )
+        feature = candidates[0]
+    else:
+        raise RuntimeError(
+            f"CLIP {output_name} output does not contain a feature tensor"
+        )
+
+    if getattr(feature, "ndim", None) != 2:
+        raise RuntimeError(
+            f"CLIP {output_name} output feature must have shape [batch, dim]"
+        )
+    converted = np.asarray(
+        feature.float().cpu().numpy(), dtype=np.float32
+    )
+    if (
+        converted.ndim != 2
+        or converted.shape[0] != expected_batch_size
+        or converted.shape[1] <= 0
+    ):
+        raise RuntimeError(
+            f"CLIP {output_name} output feature must have shape "
+            f"[{expected_batch_size}, dim] with a positive dimension"
+        )
+    return converted
+
+
 class ClipFrameScorer:
     def __init__(
         self,
@@ -72,28 +123,34 @@ class ClipFrameScorer:
             text=[query], return_tensors="pt", padding=True
         )
         device_inputs = {
-            name: value.to(self._device) if hasattr(value, "to") else value
-            for name, value in inputs.items()
+            name: inputs[name].to(self._device)
+            if hasattr(inputs[name], "to")
+            else inputs[name]
+            for name in ("input_ids", "attention_mask", "position_ids")
+            if name in inputs
         }
         with self._torch.inference_mode():
-            feature = self._model.get_text_features(**device_inputs)
-        return np.asarray(feature[0].float().cpu().numpy(), dtype=np.float32)
+            output = self._model.get_text_features(**device_inputs)
+        return _feature_matrix(
+            output,
+            torch=self._torch,
+            output_name="text",
+            expected_batch_size=1,
+        )[0]
 
     def _encode_images(self, images: Sequence[Image.Image]) -> np.ndarray:
         inputs = self._processor(images=list(images), return_tensors="pt")
         pixel_values = inputs["pixel_values"].to(self._device)
         with self._torch.inference_mode():
-            features = self._model.get_image_features(
+            output = self._model.get_image_features(
                 pixel_values=pixel_values
             )
-        converted = np.asarray(
-            features.float().cpu().numpy(), dtype=np.float32
+        return _feature_matrix(
+            output,
+            torch=self._torch,
+            output_name="image",
+            expected_batch_size=len(images),
         )
-        if converted.ndim != 2 or converted.shape[0] != len(images):
-            raise ValueError(
-                "CLIP image features must be a matrix with one row per image"
-            )
-        return converted
 
     def score_frames(
         self,

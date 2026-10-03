@@ -46,6 +46,19 @@ class _FakeTensor:
     def __getitem__(self, index):
         return _FakeTensor(self.value[index])
 
+    @property
+    def ndim(self):
+        return self.value.ndim
+
+
+class _FakeBatchEncoding(dict):
+    pass
+
+
+class _FakeModelOutput:
+    def __init__(self, pooler_output):
+        self.pooler_output = pooler_output
+
 
 def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
     state = types.SimpleNamespace(
@@ -60,6 +73,8 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
         text_model_calls=0,
         image_model_calls=0,
         text_feature=np.array([[1.0, 0.0]], dtype=np.float32),
+        text_output_style="raw",
+        image_output_style="raw",
         image_oom=False,
         text_oom=False,
     )
@@ -70,6 +85,7 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
     torch_module = types.ModuleType("torch")
     torch_module.float16 = object()
     torch_module.float32 = object()
+    torch_module.is_tensor = lambda value: isinstance(value, _FakeTensor)
     torch_module.cuda = types.SimpleNamespace(
         is_available=lambda: state.cuda_available,
         empty_cache=lambda: setattr(
@@ -93,19 +109,22 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
                 state.text_processor_calls.append(
                     {"text": text, "padding": padding}
                 )
-                return {
+                return _FakeBatchEncoding({
                     "input_ids": _FakeTensor([[1, 2]]),
                     "attention_mask": _FakeTensor([[1, 1]]),
-                }
+                    "position_ids": _FakeTensor([[0, 1]]),
+                    "unexpected_text_key": _FakeTensor([[99]]),
+                })
             image_list = list(images)
             state.image_batches.append(
                 [image.info["frame_id"] for image in image_list]
             )
-            return {
+            return _FakeBatchEncoding({
                 "pixel_values": _FakeTensor(
                     np.stack([image.info["feature"] for image in image_list])
-                )
-            }
+                ),
+                "unexpected_image_key": _FakeTensor([[99]]),
+            })
 
     class FakeAutoProcessor:
         @classmethod
@@ -127,14 +146,31 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
             state.last_text_inputs = inputs
             if state.text_oom:
                 raise OutOfMemoryError("fake text OOM")
-            return _FakeTensor(state.text_feature)
+            return wrap_output(
+                state.text_output_style, _FakeTensor(state.text_feature)
+            )
 
         def get_image_features(self, *, pixel_values):
             state.image_model_calls += 1
             state.last_pixel_values = pixel_values
             if state.image_oom:
                 raise OutOfMemoryError("fake image OOM")
-            return _FakeTensor(pixel_values.value)
+            return wrap_output(
+                state.image_output_style, _FakeTensor(pixel_values.value)
+            )
+
+    def wrap_output(style, tensor):
+        if style == "raw":
+            return tensor
+        if style == "pooler":
+            return _FakeModelOutput(tensor)
+        if style == "tuple":
+            return (_FakeTensor(np.zeros((tensor.value.shape[0], 1, 3))), tensor)
+        if style == "ambiguous_tuple":
+            return (tensor, _FakeTensor(tensor.value + 1.0))
+        if style == "malformed":
+            return types.SimpleNamespace(last_hidden_state=tensor)
+        raise AssertionError(f"unsupported fake output style: {style}")
 
     class FakeCLIPModel:
         @classmethod
@@ -367,6 +403,125 @@ def test_clip_scorer_batches_cache_misses_and_reuses_cached_features(
         for tensor in state.last_text_inputs.values()
     )
     assert state.last_pixel_values.moves == [(('cpu',), {})]
+
+
+def test_clip_scorer_extracts_pooler_outputs_and_filters_processor_keys(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    state.text_output_style = "pooler"
+    state.image_output_style = "pooler"
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    frames = (FrameRecord(4, 0.0), FrameRecord(2, 1.0))
+    images = {
+        4: _image(4, [1.0, 0.0]),
+        2: _image(2, [0.0, 1.0]),
+    }
+
+    scores = scorer.score_frames(
+        video_path=tmp_path / "video.mp4",
+        frames=frames,
+        images_by_id=images,
+        query="query",
+    )
+
+    assert scores == {4: 1.0, 2: 0.0}
+    assert set(state.last_text_inputs) == {
+        "input_ids",
+        "attention_mask",
+        "position_ids",
+    }
+    assert state.last_pixel_values.value.shape == (2, 2)
+
+
+def test_clip_scorer_supports_unambiguous_tuple_outputs(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    state.text_output_style = "tuple"
+    state.image_output_style = "tuple"
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=1,
+    )
+
+    scores = scorer.score_frames(
+        video_path=tmp_path / "video.mp4",
+        frames=(FrameRecord(5, 0.0),),
+        images_by_id={5: _image(5, [1.0, 0.0])},
+        query="query",
+    )
+
+    assert scores == {5: 1.0}
+
+
+def test_clip_scorer_cache_hit_uses_pooler_text_without_image_encoding(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    state.text_output_style = "pooler"
+    state.image_output_style = "malformed"
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=1,
+    )
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(6, 0.0)
+    scorer._cache.store(video_path, frame, np.array([1.0, 0.0]))
+
+    scores = scorer.score_frames(
+        video_path=video_path,
+        frames=(frame,),
+        images_by_id={6: _image(6, [0.0, 1.0])},
+        query="query",
+    )
+
+    assert scores == {6: 1.0}
+    assert state.image_model_calls == 0
+    assert state.text_model_calls == 1
+
+
+@pytest.mark.parametrize(
+    ("stage", "style"),
+    [
+        ("image", "malformed"),
+        ("image", "ambiguous_tuple"),
+        ("text", "malformed"),
+        ("text", "ambiguous_tuple"),
+    ],
+)
+def test_clip_scorer_rejects_invalid_or_ambiguous_model_outputs(
+    tmp_path, monkeypatch, stage, style
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    setattr(state, f"{stage}_output_style", style)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=1,
+    )
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(7, 0.0)
+    if stage == "text":
+        scorer._cache.store(video_path, frame, np.array([1.0, 0.0]))
+
+    with pytest.raises(RuntimeError, match=rf"CLIP {stage} output"):
+        scorer.score_frames(
+            video_path=video_path,
+            frames=(frame,),
+            images_by_id={7: _image(7, [1.0, 0.0])},
+            query="query",
+        )
 
 
 def test_clip_scorer_encodes_only_uncached_frames_in_original_order(
