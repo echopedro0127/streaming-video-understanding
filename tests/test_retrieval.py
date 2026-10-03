@@ -8,6 +8,33 @@ from streaming_video_understanding.data.schema import FrameRecord
 from streaming_video_understanding.retrieval import FrameFeatureCache
 
 
+class _CloseFailingHandle:
+    def __init__(self, handle, *, fail_before_close):
+        self._handle = handle
+        self._fail_before_close = fail_before_close
+
+    def __getattr__(self, name):
+        return getattr(self._handle, name)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+    def close(self):
+        if self._fail_before_close:
+            raise OSError("close failure before release")
+        self._handle.close()
+        raise OSError("close failure after release")
+
+    def cleanup(self):
+        try:
+            self._handle.close()
+        except OSError:
+            pass
+
+
 def test_missing_store_and_load_round_trip_as_float32(tmp_path):
     cache = FrameFeatureCache(tmp_path / "cache", model_id=" model/example ")
     video_path = tmp_path / "video.mp4"
@@ -188,6 +215,75 @@ def test_store_closes_owned_handle_before_cleaning_save_failure(tmp_path, monkey
 
     assert captured["handle"].closed
     assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+
+
+def test_store_preserves_save_failure_when_close_also_fails(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    real_fdopen = cache_module.os.fdopen
+    captured = {}
+
+    def wrapping_fdopen(descriptor, mode):
+        handle = _CloseFailingHandle(
+            real_fdopen(descriptor, mode), fail_before_close=False
+        )
+        captured.update(descriptor=descriptor, handle=handle)
+        return handle
+
+    def failing_save(handle, feature, *, allow_pickle):
+        raise OSError("write failure")
+
+    monkeypatch.setattr(cache_module.os, "fdopen", wrapping_fdopen)
+    monkeypatch.setattr(cache_module.np, "save", failing_save)
+
+    try:
+        with pytest.raises(OSError, match="write failure"):
+            cache.store(
+                tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
+            )
+
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
+        assert captured["handle"].closed
+        assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+    finally:
+        if "handle" in captured:
+            captured["handle"].cleanup()
+        for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
+            temp_path.unlink()
+
+
+def test_store_surfaces_close_failure_after_successful_save(tmp_path, monkeypatch):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    real_fdopen = cache_module.os.fdopen
+    captured = {}
+
+    def wrapping_fdopen(descriptor, mode):
+        handle = _CloseFailingHandle(
+            real_fdopen(descriptor, mode), fail_before_close=True
+        )
+        captured.update(descriptor=descriptor, handle=handle)
+        return handle
+
+    monkeypatch.setattr(cache_module.os, "fdopen", wrapping_fdopen)
+
+    try:
+        with pytest.raises(OSError, match="close failure before release"):
+            cache.store(
+                tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
+            )
+
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
+        assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+    finally:
+        if "handle" in captured:
+            captured["handle"].cleanup()
+        for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
+            temp_path.unlink()
 
 
 def test_store_closes_handle_before_cleaning_replace_failure(tmp_path, monkeypatch):

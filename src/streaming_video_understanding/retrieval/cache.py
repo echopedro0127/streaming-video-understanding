@@ -95,8 +95,9 @@ class FrameFeatureCache:
             temp_path = Path(temp_name)
             handle = os.fdopen(descriptor, "wb")
             descriptor_owned = False
-            with handle:
-                np.save(handle, converted, allow_pickle=False)
+            np.save(handle, converted, allow_pickle=False)
+            handle.close()
+            handle = None
             temp_path.replace(target)
         except BaseException:
             if descriptor_owned:
@@ -108,7 +109,10 @@ class FrameFeatureCache:
                 try:
                     handle.close()
                 except BaseException:
-                    pass
+                    try:
+                        _REAL_OS_CLOSE(descriptor)
+                    except BaseException:
+                        pass
             try:
                 if temp_path is None:
                     os.unlink(temp_name)
