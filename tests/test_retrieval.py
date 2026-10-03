@@ -1,8 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor
+import gc
 import hashlib
 import os
 from pathlib import Path
 import threading
+import weakref
 
 import numpy as np
 import pytest
@@ -11,11 +13,10 @@ from streaming_video_understanding.data.schema import FrameRecord
 from streaming_video_understanding.retrieval import FrameFeatureCache
 
 
-class _DescriptorReuseCloseFailingHandle:
-    def __init__(self, handle, replacement_path):
+class _CloseFailingHandle:
+    def __init__(self, handle, *, fail_before_close):
         self._handle = handle
-        self._replacement_path = replacement_path
-        self.replacement = None
+        self._fail_before_close = fail_before_close
 
     def __getattr__(self, name):
         return getattr(self._handle, name)
@@ -27,20 +28,12 @@ class _DescriptorReuseCloseFailingHandle:
         self.close()
 
     def close(self):
-        if self.replacement is not None:
-            raise AssertionError("cache retried close after ownership was released")
-        descriptor = self._handle.fileno()
+        if self._fail_before_close:
+            raise OSError("wrapper close failure before release")
         self._handle.close()
-        self.replacement = open(self._replacement_path, "wb", buffering=0)
-        assert self.replacement.fileno() == descriptor
-        raise OSError("close failure after descriptor reuse")
+        raise OSError("wrapper close failure after release")
 
     def cleanup(self):
-        if self.replacement is not None:
-            try:
-                self.replacement.close()
-            except OSError:
-                pass
         try:
             self._handle.close()
         except OSError:
@@ -247,15 +240,74 @@ def test_video_path_case_is_normalized_on_windows(tmp_path):
     )
 
 
+@pytest.mark.skipif(
+    os.name != "nt", reason="Windows extended paths are platform-specific"
+)
+def test_windows_drive_aliases_share_video_key_and_target_lock(tmp_path):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    normal_video = tmp_path / "video.mp4"
+    extended_video = Path("\\\\?\\" + os.fspath(normal_video))
+    frame = FrameRecord(1, 0.5)
+    normal_target = cache._target(normal_video, frame)
+    extended_target = cache._target(extended_video, frame)
+
+    assert normal_target == extended_target
+    normal_lock = cache_module._target_lock(normal_target)
+    extended_lock = cache_module._target_lock(
+        Path("\\\\?\\" + os.fspath(normal_target))
+    )
+    assert normal_lock is extended_lock
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows UNC paths are platform-specific")
+def test_windows_unc_aliases_share_video_key_and_target_lock(tmp_path):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    normal_video = Path(r"\\server\share\folder\video.mp4")
+    extended_video = Path(r"\\?\UNC\server\share\folder\video.mp4")
+    frame = FrameRecord(1, 0.5)
+
+    assert cache._target(normal_video, frame) == cache._target(extended_video, frame)
+    normal_lock = cache_module._target_lock(
+        Path(r"\\server\share\folder\entry.npy")
+    )
+    extended_lock = cache_module._target_lock(
+        Path(r"\\?\UNC\server\share\folder\entry.npy")
+    )
+    assert normal_lock is extended_lock
+
+
+def test_target_lock_registry_reclaims_unreferenced_locks(tmp_path):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    target = tmp_path / "cache" / "entry.npy"
+    previous_keys = set(cache_module._TARGET_LOCKS)
+    lock = cache_module._target_lock(target)
+    new_keys = set(cache_module._TARGET_LOCKS) - previous_keys
+    assert len(new_keys) == 1
+    key = new_keys.pop()
+    lock_reference = weakref.ref(lock)
+
+    del lock
+    gc.collect()
+
+    assert lock_reference() is None
+    assert key not in cache_module._TARGET_LOCKS
+
+
 def test_store_closes_raw_descriptor_when_fdopen_fails(tmp_path, monkeypatch):
     import streaming_video_understanding.retrieval.cache as cache_module
 
     cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
     captured = {}
 
-    def failing_fdopen(descriptor, mode):
+    def failing_fdopen(descriptor, mode, *, closefd):
         captured["descriptor"] = descriptor
         assert mode == "wb"
+        assert closefd is False
         raise OSError("fdopen failure")
 
     monkeypatch.setattr(cache_module.os, "fdopen", failing_fdopen)
@@ -300,7 +352,7 @@ def test_store_closes_owned_handle_before_cleaning_save_failure(tmp_path, monkey
     assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
 
 
-def test_store_preserves_save_failure_when_close_reuses_descriptor(
+def test_store_preserves_save_failure_when_wrapper_close_also_fails(
     tmp_path, monkeypatch
 ):
     import streaming_video_understanding.retrieval.cache as cache_module
@@ -309,11 +361,13 @@ def test_store_preserves_save_failure_when_close_reuses_descriptor(
     real_fdopen = cache_module.os.fdopen
     captured = {}
 
-    def wrapping_fdopen(descriptor, mode):
-        handle = _DescriptorReuseCloseFailingHandle(
-            real_fdopen(descriptor, mode), tmp_path / "unrelated-write-failure.bin"
+    def wrapping_fdopen(descriptor, mode, *, closefd):
+        assert closefd is False
+        handle = _CloseFailingHandle(
+            real_fdopen(descriptor, mode, closefd=closefd),
+            fail_before_close=True,
         )
-        captured["handle"] = handle
+        captured.update(descriptor=descriptor, handle=handle)
         return handle
 
     def failing_save(handle, feature, *, allow_pickle):
@@ -328,7 +382,8 @@ def test_store_preserves_save_failure_when_close_reuses_descriptor(
                 tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
             )
 
-        assert captured["handle"].replacement.write(b"still writable") == 14
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
         assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
     finally:
         if "handle" in captured:
@@ -337,7 +392,7 @@ def test_store_preserves_save_failure_when_close_reuses_descriptor(
             temp_path.unlink()
 
 
-def test_store_does_not_close_reused_descriptor_after_close_failure(
+def test_store_close_failure_before_wrapper_release_closes_raw_descriptor(
     tmp_path, monkeypatch
 ):
     import streaming_video_understanding.retrieval.cache as cache_module
@@ -346,26 +401,67 @@ def test_store_does_not_close_reused_descriptor_after_close_failure(
     real_fdopen = cache_module.os.fdopen
     captured = {}
 
-    def wrapping_fdopen(descriptor, mode):
-        handle = _DescriptorReuseCloseFailingHandle(
-            real_fdopen(descriptor, mode), tmp_path / "unrelated-close-failure.bin"
+    def wrapping_fdopen(descriptor, mode, *, closefd):
+        assert closefd is False
+        handle = _CloseFailingHandle(
+            real_fdopen(descriptor, mode, closefd=closefd),
+            fail_before_close=True,
         )
-        captured["handle"] = handle
+        captured.update(descriptor=descriptor, handle=handle)
         return handle
 
     monkeypatch.setattr(cache_module.os, "fdopen", wrapping_fdopen)
 
     try:
-        with pytest.raises(OSError, match="close failure after descriptor reuse"):
+        with pytest.raises(OSError, match="wrapper close failure before release"):
             cache.store(
                 tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
             )
 
-        assert captured["handle"].replacement.write(b"still writable") == 14
+        with pytest.raises(OSError):
+            cache_module.os.fstat(captured["descriptor"])
         assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
     finally:
         if "handle" in captured:
             captured["handle"].cleanup()
+        for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
+            temp_path.unlink()
+
+
+def test_store_does_not_reclose_descriptor_reused_after_raw_close(
+    tmp_path, monkeypatch
+):
+    import streaming_video_understanding.retrieval.cache as cache_module
+
+    cache = FrameFeatureCache(tmp_path / "cache", model_id="model")
+    real_close = cache_module._REAL_OS_CLOSE
+    captured = {}
+
+    def close_and_reuse(descriptor):
+        if "replacement" in captured:
+            raise AssertionError("raw descriptor was closed more than once")
+        real_close(descriptor)
+        replacement = open(tmp_path / "unrelated.bin", "wb", buffering=0)
+        assert replacement.fileno() == descriptor
+        captured["replacement"] = replacement
+
+    def failing_replace(path, target):
+        raise OSError("replace failure")
+
+    monkeypatch.setattr(cache_module, "_REAL_OS_CLOSE", close_and_reuse)
+    monkeypatch.setattr(cache_module.Path, "replace", failing_replace)
+
+    try:
+        with pytest.raises(OSError, match="replace failure"):
+            cache.store(
+                tmp_path / "video.mp4", FrameRecord(0, 0.0), np.array([1.0])
+            )
+
+        assert captured["replacement"].write(b"still writable") == 14
+        assert not any((tmp_path / "cache").rglob("*.tmp.npy"))
+    finally:
+        if "replacement" in captured:
+            captured["replacement"].close()
         for temp_path in (tmp_path / "cache").rglob("*.tmp.npy"):
             temp_path.unlink()
 
