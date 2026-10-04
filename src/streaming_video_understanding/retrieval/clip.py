@@ -13,6 +13,34 @@ if TYPE_CHECKING:
     from PIL import Image
 
 
+def _normalized_text(value: object, *, name: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError(f"{name} must be a non-empty string")
+    normalized = value.strip()
+    if not normalized:
+        raise ValueError(f"{name} must be a non-empty string")
+    return normalized
+
+
+def _normalized_options(options: object) -> tuple[str, ...]:
+    if not isinstance(options, Sequence) or isinstance(options, (str, bytes)):
+        raise TypeError("options must be a non-empty sequence of strings")
+    if not options:
+        raise ValueError("options must be a non-empty sequence")
+    if len(options) < 2:
+        raise ValueError("options must include at least 2 options")
+
+    normalized: list[str] = []
+    for option in options:
+        if not isinstance(option, str):
+            raise TypeError("options must contain non-empty strings")
+        normalized_option = option.strip()
+        if not normalized_option:
+            raise ValueError("options must contain non-empty strings")
+        normalized.append(normalized_option)
+    return tuple(normalized)
+
+
 def _feature_matrix(
     output: object,
     *,
@@ -60,6 +88,10 @@ def _feature_matrix(
         raise RuntimeError(
             f"CLIP {output_name} output feature must have shape "
             f"[{expected_batch_size}, dim] with a positive dimension"
+        )
+    if not np.isfinite(converted).all():
+        raise RuntimeError(
+            f"CLIP {output_name} output feature must contain only finite values"
         )
     return converted
 
@@ -118,9 +150,18 @@ class ClipFrameScorer:
             cache_dir, model_id=normalized_model_id
         )
 
-    def _encode_text(self, query: str) -> np.ndarray:
+    def _encode_texts(self, queries: Sequence[str]) -> np.ndarray:
+        query_list = tuple(queries)
+        if not query_list:
+            raise ValueError("queries must be a non-empty sequence")
+        if any(
+            not isinstance(query, str) or not query.strip()
+            for query in query_list
+        ):
+            raise ValueError("queries must contain non-empty strings")
+
         inputs = self._processor(
-            text=[query], return_tensors="pt", padding=True
+            text=list(query_list), return_tensors="pt", padding=True
         )
         device_inputs = {
             name: inputs[name].to(self._device)
@@ -135,8 +176,11 @@ class ClipFrameScorer:
             output,
             torch=self._torch,
             output_name="text",
-            expected_batch_size=1,
-        )[0]
+            expected_batch_size=len(query_list),
+        )
+
+    def _encode_text(self, query: str) -> np.ndarray:
+        return self._encode_texts((query,))[0]
 
     def _encode_images(self, images: Sequence[Image.Image]) -> np.ndarray:
         inputs = self._processor(images=list(images), return_tensors="pt")
@@ -152,20 +196,11 @@ class ClipFrameScorer:
             expected_batch_size=len(images),
         )
 
-    def score_frames(
+    def _validate_frames(
         self,
-        *,
-        video_path: Path,
         frames: Sequence[FrameRecord],
         images_by_id: Mapping[int, Image.Image],
-        query: str,
-    ) -> dict[int, float]:
-        if not isinstance(query, str):
-            raise TypeError("query must be a non-empty string")
-        normalized_query = query.strip()
-        if not normalized_query:
-            raise ValueError("query must be a non-empty string")
-
+    ) -> tuple[tuple[FrameRecord, ...], tuple[int, ...]]:
         ordered_frames = tuple(frames)
         frame_ids = tuple(frame.frame_id for frame in ordered_frames)
         if any(type(frame_id) is not int for frame_id in frame_ids):
@@ -175,9 +210,15 @@ class ClipFrameScorer:
         for frame_id in frame_ids:
             if frame_id not in images_by_id:
                 raise ValueError(f"Missing image for frame_id {frame_id}")
-        if not ordered_frames:
-            return {}
+        return ordered_frames, frame_ids
 
+    def _load_frame_features(
+        self,
+        *,
+        video_path: Path,
+        ordered_frames: tuple[FrameRecord, ...],
+        images_by_id: Mapping[int, Image.Image],
+    ) -> np.ndarray:
         features: list[np.ndarray | None] = [None] * len(ordered_frames)
         misses: list[tuple[int, FrameRecord]] = []
         for index, frame in enumerate(ordered_frames):
@@ -199,12 +240,11 @@ class ClipFrameScorer:
                 ):
                     self._cache.store(video_path, frame, feature)
                     features[index] = feature
-            query_feature = self._encode_text(normalized_query)
         except self._torch.cuda.OutOfMemoryError as exc:
             if self._torch.cuda.is_available():
                 self._torch.cuda.empty_cache()
             raise RuntimeError(
-                f"CLIP scoring ran out of memory for {len(ordered_frames)} frames"
+                f"CLIP scoring OOM for {len(ordered_frames)} frames"
             ) from exc
 
         ordered_features = [
@@ -215,9 +255,98 @@ class ClipFrameScorer:
         dimensions = {feature.shape for feature in ordered_features}
         if len(dimensions) != 1:
             raise ValueError("frame feature dimensions must match")
-        frame_feature_matrix = np.stack(ordered_features)
+        return np.stack(ordered_features)
+
+    def _score_option_features(
+        self,
+        *,
+        frame_ids: tuple[int, ...],
+        frame_features: np.ndarray,
+        text_features: np.ndarray,
+    ) -> dict[int, tuple[float, ...]]:
+        scores_by_option = [
+            cosine_similarity_scores(frame_ids, frame_features, feature)
+            for feature in text_features
+        ]
+        return {
+            frame_id: tuple(
+                scores[frame_id] for scores in scores_by_option
+            )
+            for frame_id in frame_ids
+        }
+
+    def score_frames(
+        self,
+        *,
+        video_path: Path,
+        frames: Sequence[FrameRecord],
+        images_by_id: Mapping[int, Image.Image],
+        query: str,
+    ) -> dict[int, float]:
+        normalized_query = _normalized_text(query, name="query")
+        ordered_frames, frame_ids = self._validate_frames(
+            frames, images_by_id
+        )
+        if not ordered_frames:
+            return {}
+
+        frame_feature_matrix = self._load_frame_features(
+            video_path=video_path,
+            ordered_frames=ordered_frames,
+            images_by_id=images_by_id,
+        )
+        try:
+            query_feature = self._encode_text(normalized_query)
+        except self._torch.cuda.OutOfMemoryError as exc:
+            if self._torch.cuda.is_available():
+                self._torch.cuda.empty_cache()
+            raise RuntimeError(
+                f"CLIP scoring OOM for {len(ordered_frames)} frames"
+            ) from exc
+
         return cosine_similarity_scores(
             frame_ids, frame_feature_matrix, query_feature
+        )
+
+    def score_option_frames(
+        self,
+        *,
+        video_path: Path,
+        frames: Sequence[FrameRecord],
+        images_by_id: Mapping[int, Image.Image],
+        question: str,
+        options: Sequence[str],
+    ) -> dict[int, tuple[float, ...]]:
+        normalized_question = _normalized_text(question, name="question")
+        normalized_options = _normalized_options(options)
+        ordered_frames, frame_ids = self._validate_frames(
+            frames, images_by_id
+        )
+        if not ordered_frames:
+            return {}
+
+        frame_feature_matrix = self._load_frame_features(
+            video_path=video_path,
+            ordered_frames=ordered_frames,
+            images_by_id=images_by_id,
+        )
+        queries = tuple(
+            f"Question: {normalized_question}\nCandidate answer: {option}"
+            for option in normalized_options
+        )
+        try:
+            text_features = self._encode_texts(queries)
+        except self._torch.cuda.OutOfMemoryError as exc:
+            if self._torch.cuda.is_available():
+                self._torch.cuda.empty_cache()
+            raise RuntimeError(
+                f"CLIP scoring OOM for {len(ordered_frames)} frames"
+            ) from exc
+
+        return self._score_option_features(
+            frame_ids=frame_ids,
+            frame_features=frame_feature_matrix,
+            text_features=text_features,
         )
 
 

@@ -109,10 +109,17 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
                 state.text_processor_calls.append(
                     {"text": text, "padding": padding}
                 )
+                batch_size = len(text)
                 return _FakeBatchEncoding({
-                    "input_ids": _FakeTensor([[1, 2]]),
-                    "attention_mask": _FakeTensor([[1, 1]]),
-                    "position_ids": _FakeTensor([[0, 1]]),
+                    "input_ids": _FakeTensor(
+                        np.tile([[1, 2]], (batch_size, 1))
+                    ),
+                    "attention_mask": _FakeTensor(
+                        np.tile([[1, 1]], (batch_size, 1))
+                    ),
+                    "position_ids": _FakeTensor(
+                        np.tile([[0, 1]], (batch_size, 1))
+                    ),
                     "unexpected_text_key": _FakeTensor([[99]]),
                 })
             image_list = list(images)
@@ -146,8 +153,16 @@ def _install_fake_clip_dependencies(monkeypatch, *, cuda_available=False):
             state.last_text_inputs = inputs
             if state.text_oom:
                 raise OutOfMemoryError("fake text OOM")
+            batch_size = inputs["input_ids"].value.shape[0]
+            feature = state.text_feature
+            if feature.shape[0] == 1 and batch_size != 1:
+                feature = np.repeat(feature, batch_size, axis=0)
+            elif feature.shape[0] != batch_size:
+                raise AssertionError(
+                    f"fake text feature batch mismatch: {feature.shape[0]} != {batch_size}"
+                )
             return wrap_output(
-                state.text_output_style, _FakeTensor(state.text_feature)
+                state.text_output_style, _FakeTensor(feature)
             )
 
         def get_image_features(self, *, pixel_values):
@@ -684,6 +699,207 @@ def test_clip_scorer_converts_cuda_oom_and_clears_cache(
             frames=frames,
             images_by_id=images,
             query="query",
+        )
+
+    assert state.empty_cache_calls == 1
+
+
+def test_clip_scorer_scores_option_hypotheses_in_order_and_reuses_image_cache(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    state.text_feature = np.array(
+        [[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]], dtype=np.float32
+    )
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    video_path = tmp_path / "video.mp4"
+    frames = (FrameRecord(3, 0.0),)
+
+    first = scorer.score_option_frames(
+        video_path=video_path,
+        frames=frames,
+        images_by_id={3: _image(3, [1.0, 0.0])},
+        question="Which object is visible?",
+        options=("cat", "dog", "bird"),
+    )
+    second = scorer.score_option_frames(
+        video_path=video_path,
+        frames=frames,
+        images_by_id={3: _image(3, [0.0, 1.0])},
+        question="Which object is visible?",
+        options=("cat", "dog", "bird"),
+    )
+
+    assert first == second == {3: (1.0, 0.0, -1.0)}
+    assert state.text_processor_calls == [
+        {
+            "text": [
+                "Question: Which object is visible?\nCandidate answer: cat",
+                "Question: Which object is visible?\nCandidate answer: dog",
+                "Question: Which object is visible?\nCandidate answer: bird",
+            ],
+            "padding": True,
+        },
+        {
+            "text": [
+                "Question: Which object is visible?\nCandidate answer: cat",
+                "Question: Which object is visible?\nCandidate answer: dog",
+                "Question: Which object is visible?\nCandidate answer: bird",
+            ],
+            "padding": True,
+        },
+    ]
+    assert state.last_text_inputs["input_ids"].value.shape == (3, 2)
+    assert state.image_batches == [[3]]
+    assert state.image_model_calls == 1
+    assert state.text_model_calls == 2
+
+
+@pytest.mark.parametrize("question", ["", "   ", None, 1, False])
+def test_clip_scorer_rejects_invalid_option_question(
+    tmp_path, monkeypatch, question
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises((TypeError, ValueError), match="question"):
+        scorer.score_option_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=(FrameRecord(1, 0.0),),
+            images_by_id={1: _image(1, [1.0, 0.0])},
+            question=question,
+            options=("cat", "dog"),
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        None,
+        "cat",
+        (),
+        [],
+        ("cat",),
+        ("", "dog"),
+        ("cat", "   "),
+        ("cat", 1),
+    ],
+)
+def test_clip_scorer_rejects_invalid_option_sequences(
+    tmp_path, monkeypatch, options
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises((TypeError, ValueError), match="options"):
+        scorer.score_option_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=(FrameRecord(1, 0.0),),
+            images_by_id={1: _image(1, [1.0, 0.0])},
+            question="Which object is visible?",
+            options=options,
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+def test_clip_scorer_option_scoring_rejects_missing_image_before_model_work(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+
+    with pytest.raises(ValueError, match="Missing image.*7"):
+        scorer.score_option_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=(FrameRecord(7, 0.0),),
+            images_by_id={},
+            question="Which object is visible?",
+            options=("cat", "dog"),
+        )
+
+    assert state.image_batches == []
+    assert state.text_processor_calls == []
+
+
+def test_clip_scorer_option_scoring_rejects_malformed_text_output(
+    tmp_path, monkeypatch
+):
+    state, _ = _install_fake_clip_dependencies(monkeypatch)
+    state.text_output_style = "malformed"
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cpu",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    video_path = tmp_path / "video.mp4"
+    frame = FrameRecord(7, 0.0)
+    scorer._cache.store(video_path, frame, np.array([1.0, 0.0]))
+
+    with pytest.raises(RuntimeError, match="CLIP text output"):
+        scorer.score_option_frames(
+            video_path=video_path,
+            frames=(frame,),
+            images_by_id={7: _image(7, [1.0, 0.0])},
+            question="Which object is visible?",
+            options=("cat", "dog"),
+        )
+
+    assert state.image_model_calls == 0
+
+
+@pytest.mark.parametrize("oom_stage", ["image", "text"])
+def test_clip_scorer_option_scoring_converts_cuda_oom_and_clears_cache(
+    tmp_path, monkeypatch, oom_stage
+):
+    state, _ = _install_fake_clip_dependencies(
+        monkeypatch, cuda_available=True
+    )
+    scorer = ClipFrameScorer(
+        model_id="fake/clip",
+        device="cuda",
+        cache_dir=tmp_path / "cache",
+        image_batch_size=2,
+    )
+    frames = (FrameRecord(3, 0.0), FrameRecord(5, 1.0))
+    images = {
+        frame.frame_id: _image(frame.frame_id, [1.0, frame.frame_id])
+        for frame in frames
+    }
+    setattr(state, f"{oom_stage}_oom", True)
+
+    with pytest.raises(RuntimeError, match="CLIP scoring OOM"):
+        scorer.score_option_frames(
+            video_path=tmp_path / "video.mp4",
+            frames=frames,
+            images_by_id=images,
+            question="Which object is visible?",
+            options=("cat", "dog"),
         )
 
     assert state.empty_cache_calls == 1
