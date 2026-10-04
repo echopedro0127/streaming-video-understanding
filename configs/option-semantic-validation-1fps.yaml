@@ -1,0 +1,32 @@
+dataset:
+  name: StreamingBench
+  subset: real-time-1-100
+  context_horizon_s: 60.0
+  timestamp_tolerance_s: 1.0e-6
+
+experiment:
+  seed: 42
+  visual_budget: 8
+  recent_capacity: 4
+  memory_capacity: 4
+  policy_ids:
+    - recent-4+option-semantic-memory-4
+    - recent-4+option-semantic-diverse-memory-4
+
+model:
+  backend: smolvlm
+  model_id: HuggingFaceTB/SmolVLM2-500M-Video-Instruct
+  max_new_tokens: 8
+
+runtime:
+  sample_fps: 1.0
+  batch_size: 1
+
+retrieval:
+  model_id: openai/clip-vit-base-patch32
+  device: auto
+  cache_dir: .cache/semantic_features
+  image_batch_size: 16
+  candidate_multiplier: 4
+  cluster_window_s: 3.0
+  diversity_weight: 0.25

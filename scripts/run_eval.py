@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -25,8 +26,17 @@ from streaming_video_understanding.utils.config import configuration_id
 from streaming_video_understanding.utils.seed import set_seed
 
 
+_SEMANTIC_POLICY_PATTERN = re.compile(
+    r"^recent-\d+\+(?:option-)?semantic(?:-diverse)?-memory-\d+$",
+    re.IGNORECASE,
+)
+
+
 def _requires_semantic_scorer(policy_ids: tuple[str, ...]) -> bool:
-    return any("+semantic" in policy_id.lower() for policy_id in policy_ids)
+    return any(
+        _SEMANTIC_POLICY_PATTERN.fullmatch(policy_id.strip())
+        for policy_id in policy_ids
+    )
 
 
 class SyntheticFrameReader:
