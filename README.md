@@ -174,8 +174,35 @@ python scripts/run_eval.py \
   --resume
 ```
 
-The full controlled semantic accuracy result is pending; the last command is
-the procedure, not a reported accuracy result.
+The full controlled semantic accuracy result for the available 250-QA
+`real-time-1-50` subset is reported below. The 100-video/500-QA expansion
+remains pending because current annotations cover only 1-50.
+
+### Semantic validation results
+
+The completed run contains 5 policies × 250 QA = 1,250 records. It used one
+process with a shared feature cache. All policies had `runtime_failed=0`,
+`causal_violations=0`, `budget_violations=0`, average input frames of `7.944`,
+and peak GPU memory of `3834.389648 MB`.
+
+| Policy | Correct / 250 | Accuracy | P50 latency (s) | P95 latency (s) | Retrieval mean (ms) |
+|---|---:|---:|---:|---:|---:|
+| recent-8 | 163 | 65.2% | 22.381 | 59.668 | 0 |
+| uniform-8 | 157 | 62.8% | 21.910 | 59.005 | 0 |
+| recent-4+uniform-memory-4 | 160 | 64.0% | 21.862 | 58.799 | 0 |
+| recent-4+semantic-memory-4 | 159 | 63.6% | 21.922 | 59.710 | 774.724 |
+| recent-4+semantic-diverse-memory-4 | 157 | 62.8% | 21.929 | 58.401 | 47.460 |
+
+`semantic_selection_trace` was non-empty for 248/250 records for each semantic
+policy; the two missing traces had no historical frames at the query point.
+All selected timestamps were causal. Recent-8 remains best at 65.2%:
+semantic-memory is -1.6 percentage points and semantic-diverse is -2.4 points
+relative to Recent-8. This result does not show an accuracy improvement.
+
+Retrieval latency is cache- and execution-order-sensitive, not an isolated
+cold-start comparison: semantic-memory ran first and includes cache
+population, while semantic-diverse mostly read the warm shared cache. Summary
+files are available as ignored local artifacts under `results/`.
 
 ### Task 8 smoke evidence
 
@@ -192,7 +219,7 @@ the procedure, not a reported accuracy result.
   `peak_gpu_memory_mb=2877.4521`; profile `total_ms=4702.2538`.
   Record latency and profile total are different accounting layers.
 - These one-sample checks do not establish semantic accuracy or an accuracy
-  improvement; full controlled semantic accuracy remains pending.
+  improvement; the full controlled semantic accuracy is reported above.
 
 ## Results
 

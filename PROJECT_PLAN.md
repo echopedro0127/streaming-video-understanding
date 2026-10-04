@@ -19,7 +19,7 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Budget sensitivity | Complete | Four safe policies completed on the first 50 QA rows; 200/200 records passed the causal audit; 16-frame probe excluded after reaching the 6GB/context limit |
 | Task 1-7 implementation | Complete | Semantic policy IDs, CLIP scoring/cache, evaluator integration, profiling, and tests are implemented at current HEAD |
 | Task 8 smoke and documentation | Complete after this update | One-sample mock and real SmolVLM semantic-diverse smoke evidence is recorded below |
-| Full semantic accuracy validation | Pending | Controlled accuracy evaluation on available `real-time-1-50` data is not complete; no semantic accuracy number is reported |
+| Full semantic accuracy validation | Complete for available 250 QA; 100-video expansion pending | 5 policies × 250 QA = 1,250 records; `runtime_failed=0`; causal and budget violations are both 0; current annotations cover only `real-time-1-50`, so the 100-video/500-QA expansion remains pending |
 
 ## Research scope
 
@@ -108,7 +108,33 @@ proven accuracy gain.
 | CLIP cache | `E:\NewApplication\CodeToRun\forCV\streaming-video-understanding\hf_cache\hub\models--openai--clip-vit-base-patch32`; approximately **1157.8 MiB** (about **1.16 GB**) measured after download, including cache artifacts |
 | Mock semantic-diverse smoke | `processed=1 skipped=0`; selected/input frames `5`; `query_time=4.0`; timestamps `0..4`; trace count `1`; `retrieval_latency_ms=990.394 ms`; mock pipeline evidence only |
 | Real SmolVLM semantic-diverse smoke | `processed=1 skipped=0`; no OOM; `input_frames=5`; timestamps `0..4`; trace count `1`; `retrieval_ms=493.4114`; `model_latency_ms=3433.9946`; record `latency_ms=4201.0253`; `peak_gpu_memory_mb=2877.4521`; profile `total_ms=4702.2538` |
-| Full semantic accuracy | **Pending**; available extracted data is `real-time-1-50`; no accuracy number is filled in |
+| Full semantic accuracy | **Complete for available 250 QA**; 5 policies × 250 QA = 1,250 records; 100-video/500-QA expansion remains pending because annotations cover only `real-time-1-50` |
+
+### Available 250-QA semantic validation
+
+The completed run used one process with a shared feature cache. All policies had
+`runtime_failed=0`, `causal_violations=0`, `budget_violations=0`, average input
+frames `7.944`, and peak GPU memory `3834.389648 MB`.
+
+| Policy | Correct / 250 | Accuracy | P50 latency (ms) | P95 latency (ms) | Retrieval mean (ms) |
+|---|---:|---:|---:|---:|---:|
+| recent-8 | 163 | 65.2% | 22380.957 | 59667.738 | 0 |
+| uniform-8 | 157 | 62.8% | 21910.201 | 59004.514 | 0 |
+| recent-4+uniform-memory-4 | 160 | 64.0% | 21861.579 | 58798.954 | 0 |
+| recent-4+semantic-memory-4 | 159 | 63.6% | 21922.348 | 59710.063 | 774.724 |
+| recent-4+semantic-diverse-memory-4 | 157 | 62.8% | 21928.612 | 58401.495 | 47.460 |
+
+`semantic_selection_trace` was non-empty for 248/250 records for each semantic
+policy; the two missing traces had no historical frames at the query point.
+All selected timestamps were causal. Recent-8 remains best at 65.2%:
+semantic-memory is -1.6 percentage points and semantic-diverse is -2.4 points
+relative to Recent-8. No accuracy improvement is claimed.
+
+Retrieval latency is cache- and execution-order-sensitive, not an isolated
+cold-start comparison: semantic-memory ran before semantic-diverse and includes
+cache population, while semantic-diverse mostly read the warm shared cache.
+Generated summary files under `results/semantic-validation-real-time-1-50-summary.json`
+and the per-policy summary JSON files are ignored local artifacts.
 
 The five visible frames in the one-sample smoke are due to 1fps sampling at
 `query_time=4.0`, not a full eight-frame input. Record latency and profile
