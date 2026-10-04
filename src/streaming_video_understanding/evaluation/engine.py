@@ -9,7 +9,8 @@ from typing import Any
 from ..data.schema import FrameRecord, StreamingSample
 from ..models.base import ModelBackend, ModelRequest
 from ..models.prompt import build_prompt
-from ..retrieval.base import SemanticFrameScorer
+from ..retrieval.base import OptionAwareFrameScorer, SemanticFrameScorer
+from ..retrieval.option import OptionScoreItem, aggregate_option_scores
 from ..streaming.buffer import CausalFrameBuffer
 from ..streaming.memory import BoundedTemporalMemory
 from ..streaming.sampler import (
@@ -50,7 +51,8 @@ def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
     if normalized in {"uniform", "uniform-history"}:
         return "uniform", 0, budget
     match = re.fullmatch(
-        r"recent-(\d+)\+(uniform|timestamp-aware|semantic|semantic-diverse)-memory-(\d+)",
+        r"recent-(\d+)\+(uniform|timestamp-aware|semantic|semantic-diverse|"
+        r"option-semantic|option-semantic-diverse)-memory-(\d+)",
         normalized,
     )
     if match:
@@ -75,7 +77,9 @@ def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
         else:
             raise ValueError(
                 f"Unsupported policy_id {policy_id!r}; expected recent-B, uniform-B, "
-                "or recent-K+uniform-memory-M/timestamp-aware-memory-M"
+                "or recent-K+uniform-memory-M/timestamp-aware-memory-M/"
+                "semantic-memory-M/semantic-diverse-memory-M/"
+                "option-semantic-memory-M/option-semantic-diverse-memory-M"
             )
     requested_capacity = recent_capacity + memory_capacity
     if requested_capacity > budget:
@@ -209,6 +213,93 @@ def _select_semantic_policy(
     return selected, selection.frames, trace, retrieval_latency_ms, sampling_latency_ms
 
 
+def _select_option_semantic_policy(
+    frames: Sequence[FrameRecord],
+    *,
+    video_path: Path,
+    images_by_id: Mapping[int, Any],
+    query: str,
+    options: Sequence[str],
+    query_time_s: float,
+    budget: int,
+    policy_id: str,
+    tolerance_s: float,
+    semantic_scorer: OptionAwareFrameScorer | None,
+    candidate_multiplier: int,
+    cluster_window_s: float,
+    diversity_weight: float,
+) -> tuple[
+    tuple[FrameRecord, ...],
+    tuple[FrameRecord, ...],
+    tuple[dict[str, Any], ...],
+    float,
+    float,
+]:
+    policy_kind, recent_capacity, memory_capacity = _policy_parts(policy_id, budget)
+    score_option_frames = getattr(semantic_scorer, "score_option_frames", None)
+    if not callable(score_option_frames):
+        raise ValueError(
+            "option-semantic policy requires a scorer with score_option_frames"
+        )
+
+    sampling_started = time.perf_counter()
+    ordered = tuple(sorted(frames, key=lambda frame: (frame.timestamp_s, frame.frame_id)))
+    recent = recent_window(
+        ordered,
+        visible_until_s=query_time_s,
+        capacity=recent_capacity,
+        tolerance_s=tolerance_s,
+    )
+    recent_ids = {frame.frame_id for frame in recent}
+    history = tuple(frame for frame in ordered if frame.frame_id not in recent_ids)
+
+    retrieval_started = time.perf_counter()
+    scores_by_frame = score_option_frames(
+        video_path=video_path,
+        frames=history,
+        images_by_id=images_by_id,
+        question=query,
+        options=options,
+    )
+    retrieval_finished = time.perf_counter()
+    retrieval_latency_ms = (retrieval_finished - retrieval_started) * 1000.0
+    option_scores: dict[int, OptionScoreItem] = aggregate_option_scores(
+        scores_by_frame,
+        expected_options=len(options),
+    )
+    selection = select_semantic_history(
+        history,
+        scores={frame_id: item.semantic_score for frame_id, item in option_scores.items()},
+        visible_until_s=query_time_s,
+        capacity=memory_capacity,
+        diversity=policy_kind == "option-semantic-diverse",
+        candidate_multiplier=candidate_multiplier,
+        cluster_window_s=cluster_window_s,
+        diversity_weight=diversity_weight,
+        tolerance_s=tolerance_s,
+    )
+    selected = tuple(
+        sorted((*selection.frames, *recent), key=lambda frame: (frame.timestamp_s, frame.frame_id))
+    )
+    trace = tuple(
+        {
+            "frame_id": item.frame_id,
+            "timestamp_s": item.timestamp_s,
+            "semantic_score": item.semantic_score,
+            "objective_score": item.objective_score,
+            "option_scores": list(option_scores[item.frame_id].option_scores),
+            "best_option_index": option_scores[item.frame_id].best_option_index,
+            "option_margin": option_scores[item.frame_id].option_margin,
+        }
+        for item in selection.trace
+    )
+    sampling_latency_ms = (
+        (retrieval_started - sampling_started)
+        + (time.perf_counter() - retrieval_finished)
+    ) * 1000.0
+    return selected, selection.frames, trace, retrieval_latency_ms, sampling_latency_ms
+
+
 def _frame_manifest(frames: Sequence[FrameRecord]) -> list[dict[str, float | int]]:
     return [
         {"frame_id": frame.frame_id, "timestamp_s": frame.timestamp_s}
@@ -228,7 +319,7 @@ def evaluate_sample(
     config_id: str | None = None,
     record_metadata: Mapping[str, Any] | None = None,
     profile_store: RuntimeProfileStore | None = None,
-    semantic_scorer: SemanticFrameScorer | None = None,
+    semantic_scorer: SemanticFrameScorer | OptionAwareFrameScorer | None = None,
 ) -> dict[str, Any]:
     policy_kind, _, _ = _policy_parts(policy_id, config.experiment.visual_budget)
     total_started = time.perf_counter()
@@ -262,7 +353,30 @@ def evaluate_sample(
     frozen_memory = memory.snapshot()
     memory_latency_ms = (time.perf_counter() - memory_started) * 1000.0
 
-    if policy_kind in {"semantic", "semantic-diverse"}:
+    if policy_kind in {"option-semantic", "option-semantic-diverse"}:
+        (
+            selected_frames,
+            memory_frames,
+            semantic_trace,
+            retrieval_latency_ms,
+            sampling_latency_ms,
+        ) = _select_option_semantic_policy(
+            visible_frames,
+            video_path=sample.video_path,
+            images_by_id=images_by_id,
+            query=sample.question,
+            options=sample.options,
+            query_time_s=query_time_s,
+            budget=config.experiment.visual_budget,
+            policy_id=policy_id,
+            tolerance_s=tolerance_s,
+            semantic_scorer=semantic_scorer,
+            candidate_multiplier=config.retrieval.candidate_multiplier,
+            cluster_window_s=config.retrieval.cluster_window_s,
+            diversity_weight=config.retrieval.diversity_weight,
+        )
+        include_timestamps = False
+    elif policy_kind in {"semantic", "semantic-diverse"}:
         (
             selected_frames,
             memory_frames,
@@ -355,7 +469,12 @@ def evaluate_sample(
         "sample_fps": config.runtime.sample_fps,
         "retrieval_latency_ms": retrieval_latency_ms,
     }
-    if policy_kind in {"semantic", "semantic-diverse"}:
+    if policy_kind in {
+        "semantic",
+        "semantic-diverse",
+        "option-semantic",
+        "option-semantic-diverse",
+    }:
         record["semantic_selection_trace"] = [dict(item) for item in semantic_trace]
     if record_metadata:
         record.update(dict(record_metadata))
