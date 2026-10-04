@@ -17,7 +17,11 @@ SEMANTIC_POLICY_ORDER = (
     "recent-4+semantic-memory-4",
     "recent-4+semantic-diverse-memory-4",
 )
-DISPLAY_POLICY_ORDER = POLICY_ORDER + SEMANTIC_POLICY_ORDER
+OPTION_SEMANTIC_POLICY_ORDER = (
+    "recent-4+option-semantic-memory-4",
+    "recent-4+option-semantic-diverse-memory-4",
+)
+DISPLAY_POLICY_ORDER = POLICY_ORDER + SEMANTIC_POLICY_ORDER + OPTION_SEMANTIC_POLICY_ORDER
 
 POLICY_LABELS = {
     "recent-8": "Recent-8",
@@ -26,6 +30,10 @@ POLICY_LABELS = {
     "recent-4+timestamp-aware-memory-4": "Recent-4 + Timestamp-aware-Memory-4",
     "recent-4+semantic-memory-4": "Recent-4 + Semantic-Memory-4",
     "recent-4+semantic-diverse-memory-4": "Recent-4 + Semantic-Diverse-Memory-4",
+    "recent-4+option-semantic-memory-4": "Recent-4 + Option-Semantic-Memory-4",
+    "recent-4+option-semantic-diverse-memory-4": (
+        "Recent-4 + Option-Semantic-Diverse-Memory-4"
+    ),
 }
 
 _REQUIRED_FIELDS = (

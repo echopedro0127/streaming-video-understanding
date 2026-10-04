@@ -10,6 +10,8 @@ from streaming_video_understanding.analysis.failures import (
     write_failure_review,
 )
 from streaming_video_understanding.analysis.summaries import (
+    DISPLAY_POLICY_ORDER,
+    OPTION_SEMANTIC_POLICY_ORDER,
     POLICY_LABELS,
     build_comparison_rows,
     normalize_summary,
@@ -73,6 +75,23 @@ def test_policy_labels_include_semantic_memory_methods() -> None:
     )
 
 
+def test_option_semantic_policy_order_and_labels() -> None:
+    assert OPTION_SEMANTIC_POLICY_ORDER == (
+        "recent-4+option-semantic-memory-4",
+        "recent-4+option-semantic-diverse-memory-4",
+    )
+    assert POLICY_LABELS["recent-4+option-semantic-memory-4"] == (
+        "Recent-4 + Option-Semantic-Memory-4"
+    )
+    assert POLICY_LABELS["recent-4+option-semantic-diverse-memory-4"] == (
+        "Recent-4 + Option-Semantic-Diverse-Memory-4"
+    )
+
+
+def test_display_policy_order_appends_option_semantic_methods() -> None:
+    assert DISPLAY_POLICY_ORDER[-2:] == OPTION_SEMANTIC_POLICY_ORDER
+
+
 def test_ordered_summary_rows_put_semantic_methods_after_fixed_methods() -> None:
     policy_ids = [
         "recent-8",
@@ -81,6 +100,8 @@ def test_ordered_summary_rows_put_semantic_methods_after_fixed_methods() -> None
         "recent-4+timestamp-aware-memory-4",
         "recent-4+semantic-memory-4",
         "recent-4+semantic-diverse-memory-4",
+        "recent-4+option-semantic-memory-4",
+        "recent-4+option-semantic-diverse-memory-4",
     ]
 
     rows = ordered_summary_rows([_summary(policy_id) for policy_id in reversed(policy_ids)])
