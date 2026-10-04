@@ -204,6 +204,55 @@ cold-start comparison: semantic-memory ran first and includes cache
 population, while semantic-diverse mostly read the warm shared cache. Summary
 files are available as ignored local artifacts under `results/`.
 
+## Stage 1B Option-Aware Semantic Retrieval
+
+Stage 1B keeps the same causal protocol and fixed visual budget, but scores
+each historical frame against four ordered hypotheses:
+`Question: ... Candidate answer: ...`. The scorer receives the question and
+the four candidate options, never the ground-truth answer. For each frame, the
+evaluator records all four CLIP scores, the best option index, and the top-1 /
+top-2 margin. The two added policy IDs are
+`recent-4+option-semantic-memory-4` and
+`recent-4+option-semantic-diverse-memory-4`.
+
+The validation command was:
+
+```bash
+python scripts/run_eval.py \
+  --config configs/option-semantic-validation-1fps.yaml \
+  --data-root data/streamingbench/real-time-1-50 \
+  --annotations annotations.jsonl \
+  --backend smolvlm \
+  --all-policies \
+  --output results/option-semantic-validation-real-time-1-50.jsonl \
+  --profile-output results/option-semantic-validation-real-time-1-50-profile.jsonl \
+  --cache-decoded-frames \
+  --resume
+```
+
+The completed run contains **500 records = 250 QA × 2 option-aware
+policies**, still from the available 50-video / 250-QA `real-time-1-50`
+subset. It is not the pending 100-video / 500-QA expansion.
+
+| Policy | Correct / 250 | Accuracy | P50 latency (s) | P95 latency (s) | Retrieval mean (ms) | Peak GPU (MB) |
+|---|---:|---:|---:|---:|---:|---:|
+| recent-4+option-semantic-memory-4 | 164 | 65.6% | 22.577 | 68.136 | 78.465 | 3834.4 |
+| recent-4+option-semantic-diverse-memory-4 | 164 | 65.6% | 22.679 | 69.330 | 55.419 | 3834.4 |
+
+Both policies averaged `7.944` input frames and passed the full audit:
+`runtime_failed=0`, `causal_violations=0`, `budget_violations=0`, and
+`option_schema_violations=0`. Against the paired Recent-8 records, the
+option-semantic policy helped/hurt/unchanged on `10/9/231` QA items and the
+option-semantic-diverse policy on `12/11/227` items. Both are `+0.4` percentage
+points over Recent-8 on this subset; this is a measured local result, not a
+claim of general improvement. Against Q-only semantic memory, the respective
+paired counts were `8/3/239` and `9/4/237`, or `+2.0` percentage points.
+
+Retrieval latency is sensitive to shared feature-cache state and policy
+execution order. The first policy includes more cache work; the second mostly
+reads warm cached image features. Therefore the retrieval timings should be
+reported with this caveat rather than treated as a clean cold-start ranking.
+
 ### Task 8 smoke evidence
 
 - Full pytest after Task 7: **249 passed**.

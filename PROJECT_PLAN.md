@@ -18,6 +18,7 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Failure analysis | Complete | 30 failure cases manually reviewed in `docs/FAILURE_ANALYSIS.md`; five representative contact sheets rendered; trade-off plots generated under `assets/figures/` |
 | Budget sensitivity | Complete | Four safe policies completed on the first 50 QA rows; 200/200 records passed the causal audit; 16-frame probe excluded after reaching the 6GB/context limit |
 | Task 1-7 implementation | Complete | Semantic policy IDs, CLIP scoring/cache, evaluator integration, profiling, and tests are implemented at current HEAD |
+| Option-aware retrieval validation | Complete for available 250 QA; 100-video expansion pending | 2 policies × 250 QA = 500 records; `runtime_failed=0`; causal, budget, and option-schema violations are all 0. This is 250 QA evaluated under two policies, not the pending 500-QA expansion |
 | Task 8 smoke and documentation | Complete after this update | One-sample mock and real SmolVLM semantic-diverse smoke evidence is recorded below |
 | Full semantic accuracy validation | Complete for available 250 QA; 100-video expansion pending | 5 policies × 250 QA = 1,250 records; `runtime_failed=0`; causal and budget violations are both 0; current annotations cover only `real-time-1-50`, so the 100-video/500-QA expansion remains pending |
 
@@ -34,6 +35,7 @@ Main causal context: the 60 seconds preceding the dataset query timestamp. The p
 | Group | Configurations | Purpose |
 |---|---|---|
 | Main fixed budget | Recent-8, Uniform-8, Recent-4 + Memory-4, Recent-4 + Timestamp-aware-Memory-4 | Controlled comparison with exactly 8 input frames |
+| Option-aware ablation | Recent-4 + Option-Semantic-Memory-4, Recent-4 + Option-Semantic-Diverse-Memory-4 | Four candidate-answer hypotheses per historical frame under the same 4+4 budget |
 | Budget sensitivity | B=4: Recent-4 vs Recent-2 + Timestamp-aware-Memory-2; B=8: Recent-8 vs Recent-4 + Timestamp-aware-Memory-4 | Safe context-size trade-off on a 50-QA split |
 | Runtime | One sample per call, CUDA synchronization, resume enabled | Latency and OOM-safe profiling |
 
@@ -140,6 +142,33 @@ The five visible frames in the one-sample smoke are due to 1fps sampling at
 `query_time=4.0`, not a full eight-frame input. Record latency and profile
 total are different accounting layers. These smokes validate runtime and the
 causal pipeline only.
+
+### Option-aware retrieval validation
+
+The option-aware run used the same available `real-time-1-50` subset and added
+two policies under the same 4+4 visual budget. Each historical frame was scored
+against the question plus each of four candidate answers; the ground-truth
+answer was never passed to retrieval.
+
+| Policy | Correct / 250 | Accuracy | P50 latency (ms) | P95 latency (ms) | Retrieval mean (ms) |
+|---|---:|---:|---:|---:|---:|
+| recent-4+option-semantic-memory-4 | 164 | 65.6% | 22576.610 | 68135.936 | 78.465 |
+| recent-4+option-semantic-diverse-memory-4 | 164 | 65.6% | 22679.149 | 69329.830 | 55.419 |
+
+The run completed `500` records (`250 QA × 2 policies`) with
+`runtime_failed=0`, `causal_violations=0`, `budget_violations=0`, and
+`option_schema_violations=0`. Average input frames were `7.944` and peak GPU
+memory was `3834.390 MB`. Against Recent-8, the paired helped/hurt/unchanged
+counts were `10/9/231` for option-semantic and `12/11/227` for
+option-semantic-diverse; both measured `+0.4` percentage points. Against
+Q-only semantic memory, the counts were `8/3/239` and `9/4/237`, respectively,
+or `+2.0` percentage points. These are subset results, not a generalization
+claim.
+
+Retrieval latency is affected by shared image-feature-cache warm-up and policy
+execution order. The first option-aware policy includes more cache work, while
+the second mostly reads warm features; the timing values should be interpreted
+with this caveat.
 
 ## Stop conditions
 
