@@ -5,6 +5,7 @@ import json
 import pytest
 
 from streaming_video_understanding.analysis.pairs import (
+    PairAnalysisResult,
     analyze_pair_records,
     representative_rows,
     write_pair_artifacts,
@@ -321,6 +322,189 @@ def test_write_pair_artifacts_serializes_json_csv_and_group_jsonl(tmp_path) -> N
     assert json.loads(paths["summary_json"].read_text(encoding="utf-8"))["n_pairs"] == 4
     assert paths["helped_jsonl"].read_text(encoding="utf-8").count("\n") == 1
     assert paths["hurt_jsonl"].read_text(encoding="utf-8").count("\n") == 1
+    assert paths["csv"].name == "paired-paired.csv"
+    assert paths["summary_json"].name == "paired-summary.json"
+    assert paths["helped_jsonl"].name == "paired-helped.jsonl"
+    assert paths["hurt_jsonl"].name == "paired-hurt.jsonl"
     header = paths["csv"].read_text(encoding="utf-8").splitlines()[0].split(",")
-    assert "recent_recent_timestamps" in header
-    assert "option_semantic_trace" in header
+    assert {
+        "options",
+        "recent_frame_ids",
+        "option_memory_frame_ids",
+        "recent_frame_temporal_distances",
+        "option_memory_frame_temporal_distances",
+        "memory_semantic_scores",
+        "option_margins",
+        "option_semantic_trace",
+    } <= set(header)
+
+
+def test_memory_semantic_scores_merge_trace_scores_by_frame_id() -> None:
+    recent, option = _paired_records()
+    option[0]["memory_snapshot"] = [{"frame_id": 3, "timestamp_s": 3.0}]
+
+    row = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).rows[0]
+
+    assert row["memory_semantic_scores"] == row["memory_scores"]
+    assert row["memory_semantic_scores"][0]["frame_id"] == 3
+    assert row["memory_semantic_scores"][0]["semantic_score"] == pytest.approx(0.82)
+    assert row["memory_semantic_scores"][0]["objective_score"] == pytest.approx(0.74)
+    assert set(row["memory_semantic_scores"][0]) == {
+        "frame_id",
+        "timestamp_s",
+        "score",
+        "semantic_score",
+        "objective_score",
+    }
+
+
+def test_pair_artifacts_reject_unexpected_csv_fields(tmp_path) -> None:
+    recent, option = _paired_records()
+    result = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+    malformed = PairAnalysisResult(
+        rows=[{**result.rows[0], "unexpected_field": "must not be discarded"}],
+        summary=result.summary,
+    )
+
+    with pytest.raises(ValueError, match="not in fieldnames"):
+        write_pair_artifacts(malformed, tmp_path / "paired")
+
+
+@pytest.mark.parametrize(
+    ("container", "field"),
+    [
+        ("trace", "semantic_score"),
+        ("trace", "objective_score"),
+        ("snapshot", "score"),
+    ],
+)
+def test_pair_analysis_rejects_non_finite_score_values(
+    container: str, field: str
+) -> None:
+    recent, option = _paired_records()
+    if container == "trace":
+        trace = option[0]["semantic_selection_trace"]
+        assert isinstance(trace, list)
+        trace[0][field] = float("nan")
+    else:
+        snapshot = option[0]["memory_snapshot"]
+        assert isinstance(snapshot, list)
+        snapshot[0][field] = float("inf")
+
+    with pytest.raises(ValueError, match="finite"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+def test_pair_artifacts_reject_non_finite_json_values(tmp_path) -> None:
+    recent, option = _paired_records()
+    result = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+    malformed = PairAnalysisResult(
+        rows=result.rows,
+        summary={**result.summary, "non_finite": float("nan")},
+    )
+
+    with pytest.raises(ValueError, match="out of range|finite"):
+        write_pair_artifacts(malformed, tmp_path / "paired")
+
+
+def test_pair_analysis_rejects_numeric_frame_scalars_and_non_mapping_trace_entries() -> None:
+    recent, option = _paired_records()
+    recent[0]["selected_recent_frames"] = [8.0]
+
+    with pytest.raises(ValueError, match="frame object"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+    recent, option = _paired_records()
+    option[0]["semantic_selection_trace"] = [3.0]
+
+    with pytest.raises(ValueError, match="frame object"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    ("record_kind", "field"),
+    [
+        ("recent", "selected_recent_frames"),
+        ("option", "memory_snapshot"),
+        ("option", "semantic_selection_trace"),
+    ],
+)
+def test_pair_analysis_rejects_duplicate_frame_ids_in_manifests(
+    record_kind: str, field: str
+) -> None:
+    recent, option = _paired_records()
+    record = recent[0] if record_kind == "recent" else option[0]
+    frames = record[field]
+    assert isinstance(frames, list)
+    frames.append(dict(frames[0]))
+
+    with pytest.raises(ValueError, match="duplicate"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        ["first", "second", "third"],
+        ["first", "second", "third", "fourth", "fifth"],
+        {"A": "first", "B": "second", "D": "fourth"},
+        {"A": "first", "B": "second", "C": "third", "D": "fourth", "E": "fifth"},
+    ],
+)
+def test_pair_analysis_rejects_non_exact_explicit_options(bad_options) -> None:
+    recent, option = _paired_records()
+    recent[0]["options"] = bad_options
+    option[0]["options"] = bad_options
+
+    with pytest.raises(ValueError, match="options"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    "prompt",
+    [
+        "Question: q\nOptions:\nA. one\nA. duplicate\nB. two\nC. three\nD. four",
+        "Question: q\nOptions:\nA. one\nB. two\nD. four",
+    ],
+)
+def test_pair_analysis_rejects_duplicate_or_sparse_prompt_options(prompt: str) -> None:
+    recent, option = _paired_records()
+    recent[0].pop("options", None)
+    option[0].pop("options", None)
+    recent[0]["timestamp_prompt"] = prompt
+    option[0]["timestamp_prompt"] = prompt
+
+    with pytest.raises(ValueError, match="options"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+def test_pair_analysis_requires_boolean_correct_field() -> None:
+    recent, option = _paired_records()
+    recent[0]["correct"] = "false"
+
+    with pytest.raises(ValueError, match="correct"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+def test_pair_analysis_h2_excludes_unavailable_rows_and_h3_exposes_counts() -> None:
+    recent, option = _paired_records()
+    option[0].pop("semantic_selection_trace")
+    option[0].pop("memory_snapshot")
+
+    summary = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).summary
+
+    assert summary["h2_retrieval_top_option_match_rate"] == pytest.approx(1 / 3)
+    assert summary["h2_retrieval_top_option_match_count"] == 1
+    assert summary["h2_retrieval_top_option_match_evaluated_count"] == 3
+    assert summary["h2_retrieval_top_option_match_count_by_group"] == {
+        "both_correct": 0,
+        "memory_helped": 1,
+        "memory_hurt": 0,
+        "both_wrong": 0,
+    }
+    assert summary["h3_temporal_keyword_counts_by_group"] == {
+        "both_correct": 1,
+        "memory_helped": 1,
+        "memory_hurt": 1,
+        "both_wrong": 1,
+    }

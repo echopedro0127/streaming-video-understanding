@@ -53,7 +53,11 @@ def _finite_number(value: Any, field: str) -> float:
 
 def _jsonable(value: Any) -> Any:
     """Convert ordinary record values to deterministic JSON-compatible values."""
-    if value is None or isinstance(value, (str, int, float, bool)):
+    if value is None or isinstance(value, (str, int, bool)):
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("JSON numeric values must be finite")
         return value
     if isinstance(value, Mapping):
         return {str(key): _jsonable(item) for key, item in value.items()}
@@ -126,29 +130,28 @@ def _prompt_options(prompt: Any) -> tuple[str, ...] | None:
     for line in prompt.splitlines():
         match = _OPTION_LINE_RE.match(line)
         if match is not None:
+            if match.group(1) in parsed:
+                raise ValueError(f"options contain duplicate label {match.group(1)}")
             parsed[match.group(1)] = match.group(2).strip()
     if not parsed:
         return None
-    letters = "ABCD"
-    if not all(letter in parsed for letter in letters if letter <= max(parsed)):
-        return None
-    return tuple(parsed[letter] for letter in letters if letter in parsed)
+    letters = set("ABCD")
+    if set(parsed) != letters:
+        raise ValueError("options prompt must contain exactly one A-D entry for each label")
+    return tuple(parsed[letter] for letter in "ABCD")
 
 
 def _record_options(record: Mapping[str, Any]) -> tuple[str, ...] | None:
     if "options" in record and record.get("options") is not None:
         options = record.get("options")
         if isinstance(options, Mapping):
-            values = []
-            for letter in "ABCD":
-                if letter not in options:
-                    break
-                values.append(str(options[letter]))
-            if values:
-                return tuple(values)
-            raise ValueError("options mapping must use A-D keys")
+            if set(options) != set("ABCD"):
+                raise ValueError("options mapping must contain exactly A-D keys")
+            return tuple(str(options[letter]) for letter in "ABCD")
         if isinstance(options, (str, bytes)) or not isinstance(options, Sequence):
             raise ValueError("options must be a sequence")
+        if len(options) != 4:
+            raise ValueError("options must contain exactly four ordered entries")
         return tuple(str(option) for option in options)
     return _prompt_options(record.get("timestamp_prompt"))
 
@@ -161,20 +164,26 @@ def _frame_items(value: Any, field: str) -> list[dict[str, Any]]:
     if not isinstance(value, Sequence):
         raise ValueError(f"{field} must be a list of frame objects")
     items: list[dict[str, Any]] = []
+    frame_ids: set[Any] = set()
     for index, raw_frame in enumerate(value):
-        if isinstance(raw_frame, Mapping):
-            if "frame_id" not in raw_frame:
-                raise ValueError(f"{field}[{index}] requires frame_id")
-            if "timestamp_s" not in raw_frame:
-                raise ValueError(f"{field}[{index}] requires timestamp_s")
-            timestamp_s = _finite_number(raw_frame["timestamp_s"], f"{field}.timestamp_s")
-            frame_id = raw_frame["frame_id"]
-            item = dict(raw_frame)
-            item["frame_id"] = frame_id
-            item["timestamp_s"] = timestamp_s
-        else:
-            timestamp_s = _finite_number(raw_frame, f"{field}.timestamp_s")
-            item = {"frame_id": index, "timestamp_s": timestamp_s}
+        if not isinstance(raw_frame, Mapping):
+            raise ValueError(f"{field}[{index}] must be a frame object mapping")
+        if "frame_id" not in raw_frame:
+            raise ValueError(f"{field}[{index}] requires frame_id")
+        if "timestamp_s" not in raw_frame:
+            raise ValueError(f"{field}[{index}] requires timestamp_s")
+        timestamp_s = _finite_number(raw_frame["timestamp_s"], f"{field}.timestamp_s")
+        frame_id = raw_frame["frame_id"]
+        try:
+            duplicate = frame_id in frame_ids
+        except TypeError as exc:
+            raise ValueError(f"{field}[{index}].frame_id must be hashable") from exc
+        if duplicate:
+            raise ValueError(f"{field} contains duplicate frame_id {frame_id!r}")
+        frame_ids.add(frame_id)
+        item = dict(raw_frame)
+        item["frame_id"] = frame_id
+        item["timestamp_s"] = timestamp_s
         items.append(item)
     return sorted(items, key=lambda item: (float(item["timestamp_s"]), str(item["frame_id"])))
 
@@ -235,20 +244,24 @@ def _temporal_distances(timestamps: Sequence[float], query_time_s: float) -> lis
 
 def _traces(record: Mapping[str, Any]) -> list[dict[str, Any]]:
     raw_trace = record.get("semantic_selection_trace")
+    trace_field = "semantic_selection_trace"
     if raw_trace is None:
         raw_trace = record.get("option_semantic_trace")
+        trace_field = "option_semantic_trace"
     if raw_trace is None:
         return []
-    if isinstance(raw_trace, (str, bytes)) or not isinstance(raw_trace, Sequence):
-        raise ValueError("option semantic trace must be a list")
-    trace = [dict(item) for item in raw_trace if isinstance(item, Mapping)]
-    return sorted(
-        trace,
-        key=lambda item: (
-            float(item.get("timestamp_s", 0.0)),
-            str(item.get("frame_id", "")),
-        ),
-    )
+    trace = _frame_items(raw_trace, trace_field)
+    for item in trace:
+        for score_field in ("score", "semantic_score", "objective_score", "option_margin"):
+            if score_field in item:
+                _finite_number(item[score_field], f"{trace_field}.{score_field}")
+        if "option_scores" in item:
+            scores = item["option_scores"]
+            if isinstance(scores, (str, bytes)) or not isinstance(scores, Sequence):
+                raise ValueError(f"{trace_field}.option_scores must be a sequence")
+            for score in scores:
+                _finite_number(score, f"{trace_field}.option_scores")
+    return trace
 
 
 def _option_diagnostics(trace: Sequence[Mapping[str, Any]]) -> tuple[
@@ -289,15 +302,27 @@ def _option_diagnostics(trace: Sequence[Mapping[str, Any]]) -> tuple[
     return per_frame, [{"frame_id": item.get("frame_id"), "score": item.get("semantic_score")} for item in trace if "semantic_score" in item], option_margin, retrieval_top_option
 
 
-def _memory_scores(record: Mapping[str, Any]) -> list[dict[str, Any]]:
+def _memory_scores(
+    record: Mapping[str, Any], trace: Sequence[Mapping[str, Any]]
+) -> list[dict[str, Any]]:
     snapshot = _frame_items(record.get("memory_snapshot"), "memory_snapshot")
-    result = []
+    if not snapshot:
+        snapshot = [dict(item) for item in trace]
+    trace_by_frame_id = {item["frame_id"]: item for item in trace}
+    result: list[dict[str, Any]] = []
     for item in snapshot:
-        scores = {
-            key: _jsonable(item[key])
-            for key in ("frame_id", "timestamp_s", "score", "semantic_score", "objective_score")
-            if key in item
+        trace_item = trace_by_frame_id.get(item["frame_id"], {})
+        scores: dict[str, Any] = {
+            "frame_id": item["frame_id"],
+            "timestamp_s": item["timestamp_s"],
         }
+        for score_field in ("score", "semantic_score", "objective_score"):
+            source = item if score_field in item else trace_item
+            scores[score_field] = (
+                _finite_number(source[score_field], f"memory.{score_field}")
+                if score_field in source
+                else None
+            )
         result.append(scores)
     return result
 
@@ -333,8 +358,10 @@ def _metadata_check(
 
 
 def _is_correct(record: Mapping[str, Any], ground_truth: Any) -> bool:
-    if "correct" in record and record["correct"] is not None:
-        return bool(record["correct"])
+    if "correct" in record:
+        if not isinstance(record["correct"], bool):
+            raise ValueError("correct must be boolean when supplied")
+        return record["correct"]
     return record.get("prediction") == ground_truth
 
 
@@ -358,6 +385,13 @@ def _group_rates(rows: Sequence[Mapping[str, Any]], predicate) -> dict[str, floa
             else 0.0
         )
     return rates
+
+
+def _group_counts(rows: Sequence[Mapping[str, Any]], predicate) -> dict[str, int]:
+    return {
+        group: sum(bool(predicate(row)) for row in rows if row["group"] == group)
+        for group in _GROUPS
+    }
 
 
 def _make_row(
@@ -385,10 +419,8 @@ def _make_row(
     group = _classify(recent_correct, option_correct)
 
     trace = _traces(option)
-    per_frame_option_scores, trace_memory_scores, option_margin, retrieval_top_option = _option_diagnostics(trace)
-    memory_scores = _memory_scores(option)
-    if not memory_scores:
-        memory_scores = trace_memory_scores
+    per_frame_option_scores, _, option_margin, retrieval_top_option = _option_diagnostics(trace)
+    memory_scores = _memory_scores(option, trace)
     keywords = _temporal_keywords(question)
     lost_recent = [
         frame_id
@@ -427,6 +459,7 @@ def _make_row(
         "option_memory_frame_distances_s": _temporal_distances(option_memory_timestamps, query_time_s),
         "option_semantic_trace": _jsonable(trace),
         "memory_scores": _jsonable(memory_scores),
+        "memory_semantic_scores": _jsonable(memory_scores),
         "per_frame_option_scores": _jsonable(per_frame_option_scores),
         "option_scores_by_frame": _jsonable(per_frame_option_scores),
         "option_margin": option_margin,
@@ -514,6 +547,25 @@ def analyze_pair_records(
     option_accuracy = sum(bool(row["option_correct"]) for row in rows) / n_pairs if n_pairs else 0.0
     net_gain = group_counts["memory_helped"] - group_counts["memory_hurt"]
     accuracy_delta = option_accuracy - recent_accuracy
+    h2_match_count_by_group = _group_counts(
+        rows, lambda row: row["h2_retrieval_top_option_match"] is True
+    )
+    h2_evaluated_count_by_group = _group_counts(
+        rows, lambda row: row["h2_retrieval_top_option_match"] is not None
+    )
+    h2_match_rate_by_group = {
+        group: (
+            h2_match_count_by_group[group] / h2_evaluated_count_by_group[group]
+            if h2_evaluated_count_by_group[group]
+            else 0.0
+        )
+        for group in _GROUPS
+    }
+    h2_match_count = sum(h2_match_count_by_group.values())
+    h2_evaluated_count = sum(h2_evaluated_count_by_group.values())
+    h3_keyword_count_by_group = _group_counts(
+        rows, lambda row: row["temporal_keyword_present"] is True
+    )
     summary: dict[str, Any] = {
         "n_pairs": n_pairs,
         "group_counts": group_counts,
@@ -535,14 +587,17 @@ def analyze_pair_records(
         "h1_recent_frame_loss_rate_by_group": _group_rates(
             rows, lambda row: row["h1_recent_frame_loss_proxy"]
         ),
-        "h2_retrieval_top_option_match_rate_by_group": _group_rates(
-            rows, lambda row: row["h2_retrieval_top_option_match"] is True
-        ),
+        "h2_retrieval_top_option_match_count_by_group": h2_match_count_by_group,
+        "h2_retrieval_top_option_match_evaluated_count_by_group": h2_evaluated_count_by_group,
+        "h2_retrieval_top_option_match_rate_by_group": h2_match_rate_by_group,
+        "h2_retrieval_top_option_match_count": h2_match_count,
+        "h2_retrieval_top_option_match_evaluated_count": h2_evaluated_count,
         "h2_retrieval_top_option_match_rate": (
-            sum(row["h2_retrieval_top_option_match"] is True for row in rows) / n_pairs
-            if n_pairs
+            h2_match_count / h2_evaluated_count
+            if h2_evaluated_count
             else 0.0
         ),
+        "h3_temporal_keyword_counts_by_group": h3_keyword_count_by_group,
         "h3_temporal_keyword_rates_by_group": _group_rates(
             rows, lambda row: row["temporal_keyword_present"]
         ),
@@ -578,7 +633,13 @@ def representative_rows(
             str(row.get("sample_id", "")),
             int(row.get("video_index", 0)),
             str(row.get("video_id", "")),
-            json.dumps(row, sort_keys=True, ensure_ascii=False, separators=(",", ":")),
+            json.dumps(
+                row,
+                sort_keys=True,
+                ensure_ascii=False,
+                separators=(",", ":"),
+                allow_nan=False,
+            ),
         )
     )
     return candidates[:limit]
@@ -588,7 +649,13 @@ def _artifact_value(value: Any) -> str | int | float | bool:
     if value is None:
         return ""
     if isinstance(value, (list, dict)):
-        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        return json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
     return value
 
 
@@ -599,6 +666,9 @@ _CSV_FIELDS = (
     "question",
     "ground_truth",
     "query_time_s",
+    "options",
+    "recent_policy",
+    "option_policy",
     "recent_prediction",
     "option_prediction",
     "recent_correct",
@@ -615,14 +685,25 @@ _CSV_FIELDS = (
     "recent_frame_temporal_distances",
     "option_recent_frame_temporal_distances",
     "option_memory_frame_temporal_distances",
+    "recent_frame_distances_s",
+    "option_recent_frame_distances_s",
+    "option_memory_frame_distances_s",
     "option_semantic_trace",
     "memory_scores",
+    "memory_semantic_scores",
     "per_frame_option_scores",
+    "option_scores_by_frame",
     "option_margin",
+    "option_margins",
     "retrieval_top_option",
     "h1_recent_frame_loss_proxy",
+    "h1_recent_frame_loss_count",
+    "h1_recent_frame_loss_rate",
     "h2_retrieval_top_option_match",
+    "temporal_keywords",
+    "temporal_keyword_count",
     "temporal_keyword_present",
+    "h4_both_wrong_option_wrong",
 )
 
 
@@ -639,26 +720,44 @@ def write_pair_artifacts(
     prefix = Path(output_prefix)
     prefix.parent.mkdir(parents=True, exist_ok=True)
     paths = {
-        "csv": Path(f"{prefix}.csv"),
+        "csv": Path(f"{prefix}-paired.csv"),
         "summary_json": Path(f"{prefix}-summary.json"),
         "helped_jsonl": Path(f"{prefix}-helped.jsonl"),
         "hurt_jsonl": Path(f"{prefix}-hurt.jsonl"),
     }
     rows = [_jsonable(dict(row)) for row in result.rows]
     with paths["csv"].open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(_CSV_FIELDS), extrasaction="ignore")
+        writer = csv.DictWriter(handle, fieldnames=list(_CSV_FIELDS), extrasaction="raise")
         writer.writeheader()
         for row in rows:
-            writer.writerow({field: _artifact_value(row.get(field)) for field in _CSV_FIELDS})
+            missing = [field for field in _CSV_FIELDS if field not in row]
+            if missing:
+                raise ValueError(f"CSV row is missing required fields: {missing}")
+            writer.writerow({key: _artifact_value(value) for key, value in row.items()})
     paths["summary_json"].write_text(
-        json.dumps(_jsonable(result.summary), ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+        json.dumps(
+            _jsonable(result.summary),
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=2,
+            allow_nan=False,
+        )
+        + "\n",
         encoding="utf-8",
     )
     for key, group in (("helped_jsonl", "memory_helped"), ("hurt_jsonl", "memory_hurt")):
         selected = representative_rows(rows, group, limit=representative_limit)
         with paths[key].open("w", encoding="utf-8") as handle:
             for row in selected:
-                handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+                handle.write(
+                    json.dumps(
+                        row,
+                        ensure_ascii=False,
+                        sort_keys=True,
+                        allow_nan=False,
+                    )
+                    + "\n"
+                )
     return paths
 
 
