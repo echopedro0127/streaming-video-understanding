@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import importlib.util
 import json
+from pathlib import Path
+import sys
 
 import pytest
 
@@ -14,6 +17,16 @@ from streaming_video_understanding.analysis.pairs import (
 
 RECENT_POLICY = "recent-8"
 OPTION_POLICY = "recent-4+option-semantic-memory-4"
+
+
+def _load_pair_analysis_cli():
+    script_path = Path(__file__).parents[1] / "scripts" / "analyze_policy_pairs.py"
+    spec = importlib.util.spec_from_file_location("analyze_policy_pairs_cli", script_path)
+    if spec is None or spec.loader is None:
+        raise AssertionError(f"could not load CLI module from {script_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _timestamp_prompt(question: str, options: tuple[str, ...]) -> str:
@@ -620,3 +633,60 @@ def test_pair_analysis_accuracy_delta_uses_correct_counts_directly() -> None:
     summary = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).summary
 
     assert summary["accuracy_delta"] == (1 - 3) / 3
+
+
+def test_pair_analysis_cli_main_writes_expected_artifacts_from_jsonl(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    recent, option = _paired_records()
+    recent_input = tmp_path / "inputs" / "recent.jsonl"
+    option_input = tmp_path / "inputs" / "option.jsonl"
+    recent_input.parent.mkdir()
+    recent_input.write_text(
+        "".join(json.dumps(record) + "\n" for record in recent), encoding="utf-8"
+    )
+    option_input.write_text(
+        "".join(json.dumps(record) + "\n" for record in option), encoding="utf-8"
+    )
+    output_dir = tmp_path / "new" / "analysis"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "analyze_policy_pairs.py",
+            "--recent-input",
+            str(recent_input),
+            "--recent-policy",
+            RECENT_POLICY,
+            "--option-input",
+            str(option_input),
+            "--option-policy",
+            OPTION_POLICY,
+            "--output-dir",
+            str(output_dir),
+            "--output-prefix",
+            "contract",
+            "--video-min",
+            "1",
+            "--video-max",
+            "4",
+            "--representative-limit",
+            "1",
+        ],
+    )
+
+    cli = _load_pair_analysis_cli()
+    assert cli.main() == 0
+
+    captured = capsys.readouterr()
+    summary_path = output_dir / "contract-summary.json"
+    assert "paired=4" in captured.out
+    assert str(summary_path) in captured.out
+    assert sorted(path.name for path in output_dir.iterdir()) == [
+        "contract-helped.jsonl",
+        "contract-hurt.jsonl",
+        "contract-paired.csv",
+        "contract-summary.json",
+    ]
+    assert json.loads(summary_path.read_text(encoding="utf-8"))["n_pairs"] == 4
