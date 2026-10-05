@@ -163,10 +163,12 @@ def _frame_items(value: Any, field: str) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
     for index, raw_frame in enumerate(value):
         if isinstance(raw_frame, Mapping):
+            if "frame_id" not in raw_frame:
+                raise ValueError(f"{field}[{index}] requires frame_id")
             if "timestamp_s" not in raw_frame:
-                continue
+                raise ValueError(f"{field}[{index}] requires timestamp_s")
             timestamp_s = _finite_number(raw_frame["timestamp_s"], f"{field}.timestamp_s")
-            frame_id = raw_frame.get("frame_id", index)
+            frame_id = raw_frame["frame_id"]
             item = dict(raw_frame)
             item["frame_id"] = frame_id
             item["timestamp_s"] = timestamp_s
@@ -305,10 +307,6 @@ def _temporal_keywords(question: Any) -> list[str]:
     return [keyword for keyword in _TEMPORAL_KEYWORDS if re.search(rf"\b{re.escape(keyword)}\b", text)]
 
 
-def _has_timestamp(timestamps: Sequence[float], timestamp: float) -> bool:
-    return any(abs(current - timestamp) <= _TIMESTAMP_TOLERANCE_S for current in timestamps)
-
-
 def _metadata_check(
     recent: Mapping[str, Any], option: Mapping[str, Any]
 ) -> tuple[str, str, float, tuple[str, ...] | None]:
@@ -379,6 +377,9 @@ def _make_row(
     recent_timestamps = _timestamps(recent_frames)
     option_recent_timestamps = _timestamps(option_recent_frames)
     option_memory_timestamps = _timestamps(option_memory_frames)
+    recent_frame_ids = [frame["frame_id"] for frame in recent_frames]
+    option_recent_frame_ids = [frame["frame_id"] for frame in option_recent_frames]
+    option_memory_frame_ids = [frame["frame_id"] for frame in option_memory_frames]
     recent_correct = _is_correct(recent, ground_truth)
     option_correct = _is_correct(option, ground_truth)
     group = _classify(recent_correct, option_correct)
@@ -390,9 +391,9 @@ def _make_row(
         memory_scores = trace_memory_scores
     keywords = _temporal_keywords(question)
     lost_recent = [
-        timestamp
-        for timestamp in recent_timestamps
-        if not _has_timestamp(option_recent_timestamps, timestamp)
+        frame_id
+        for frame_id in recent_frame_ids
+        if frame_id not in option_recent_frame_ids
     ]
     prediction = option.get("prediction")
     row: dict[str, Any] = {
@@ -410,6 +411,10 @@ def _make_row(
         "recent_correct": recent_correct,
         "option_correct": option_correct,
         "group": group,
+        "recent_frame_ids": recent_frame_ids,
+        "recent_recent_frame_ids": list(recent_frame_ids),
+        "option_recent_frame_ids": option_recent_frame_ids,
+        "option_memory_frame_ids": option_memory_frame_ids,
         "recent_timestamps": recent_timestamps,
         "recent_recent_timestamps": list(recent_timestamps),
         "option_recent_timestamps": option_recent_timestamps,
@@ -496,6 +501,11 @@ def analyze_pair_records(
 
     n_pairs = len(rows)
     group_counts = {group: sum(row["group"] == group for row in rows) for group in _GROUPS}
+    both_wrong_count = group_counts["both_wrong"]
+    option_wrong_count = group_counts["memory_hurt"] + both_wrong_count
+    h4_both_wrong_option_wrong_count = sum(
+        row["h4_both_wrong_option_wrong"] for row in rows
+    )
     group_percentages = {
         group: (100.0 * group_counts[group] / n_pairs if n_pairs else 0.0)
         for group in _GROUPS
@@ -536,12 +546,14 @@ def analyze_pair_records(
         "h3_temporal_keyword_rates_by_group": _group_rates(
             rows, lambda row: row["temporal_keyword_present"]
         ),
-        "h4_both_wrong_option_wrong_count": sum(
-            row["h4_both_wrong_option_wrong"] for row in rows
-        ),
+        "both_wrong_count": both_wrong_count,
+        "option_wrong_count": option_wrong_count,
+        "h4_both_wrong_count": both_wrong_count,
+        "h4_option_wrong_count": option_wrong_count,
+        "h4_both_wrong_option_wrong_count": h4_both_wrong_option_wrong_count,
         "h4_both_wrong_option_wrong_rate": (
-            sum(row["h4_both_wrong_option_wrong"] for row in rows) / group_counts["both_wrong"]
-            if group_counts["both_wrong"]
+            h4_both_wrong_option_wrong_count / option_wrong_count
+            if option_wrong_count
             else 0.0
         ),
     }
@@ -592,6 +604,10 @@ _CSV_FIELDS = (
     "recent_correct",
     "option_correct",
     "group",
+    "recent_frame_ids",
+    "recent_recent_frame_ids",
+    "option_recent_frame_ids",
+    "option_memory_frame_ids",
     "recent_timestamps",
     "recent_recent_timestamps",
     "option_recent_timestamps",

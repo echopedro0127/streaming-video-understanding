@@ -116,6 +116,10 @@ def test_analyze_pair_records_classifies_all_four_outcomes_and_exposes_diagnosti
     assert result.summary["accuracy_delta_check"] is True
 
     row = result.rows[1]
+    assert row["recent_frame_ids"] == [8, 9]
+    assert row["recent_recent_frame_ids"] == row["recent_frame_ids"]
+    assert row["option_recent_frame_ids"] == [8, 9]
+    assert row["option_memory_frame_ids"] == [3]
     assert row["recent_timestamps"] == [8.0, 9.0]
     assert row["recent_recent_timestamps"] == row["recent_timestamps"]
     assert row["option_recent_timestamps"] == [8.0, 9.0]
@@ -145,6 +149,114 @@ def test_pair_analysis_is_order_independent_and_sorted_by_sample_id() -> None:
         "question-3",
         "question-4",
     ]
+
+
+def test_pair_analysis_filters_exact_policies_and_inclusive_video_index_range() -> None:
+    recent, option = _paired_records()
+    recent.append(_record(99, f"{RECENT_POLICY}-suffix", "A"))
+    option.append(_record(99, f"{OPTION_POLICY}-suffix", "A"))
+
+    result = analyze_pair_records(
+        recent,
+        option,
+        RECENT_POLICY,
+        OPTION_POLICY,
+        min_video_index=2,
+        max_video_index=3,
+    )
+
+    assert [row["sample_id"] for row in result.rows] == ["question-2", "question-3"]
+    assert result.summary["n_pairs"] == 2
+
+
+def test_h4_rate_uses_option_wrong_denominator_and_exposes_counts() -> None:
+    recent, option = _paired_records()
+
+    result = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+    assert result.summary["both_wrong_count"] == 1
+    assert result.summary["option_wrong_count"] == 2
+    assert result.summary["h4_both_wrong_count"] == 1
+    assert result.summary["h4_option_wrong_count"] == 2
+    assert result.summary["h4_both_wrong_option_wrong_count"] == 1
+    assert result.summary["h4_both_wrong_option_wrong_rate"] == pytest.approx(0.5)
+
+
+@pytest.mark.parametrize(
+    ("record_kind", "field", "missing_key"),
+    [
+        ("recent", "selected_frames", "frame_id"),
+        ("recent", "selected_recent_frames", "timestamp_s"),
+        ("option", "selected_memory_frames", "frame_id"),
+        ("option", "memory_snapshot", "timestamp_s"),
+        ("option", "semantic_selection_trace", "timestamp_s"),
+    ],
+)
+def test_pair_analysis_rejects_frame_mappings_missing_required_keys(
+    record_kind: str, field: str, missing_key: str
+) -> None:
+    recent, option = _paired_records()
+    record = recent[0] if record_kind == "recent" else option[0]
+    frames = record[field]
+    assert isinstance(frames, list)
+    malformed = dict(frames[0])
+    del malformed[missing_key]
+    frames[0] = malformed
+
+    with pytest.raises(ValueError, match=field):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    ("record_kind", "field"),
+    [
+        ("recent", "timestamps_s"),
+        ("option", "memory_snapshot"),
+        ("option", "semantic_selection_trace"),
+    ],
+)
+def test_pair_analysis_rejects_future_trace_and_timestamp_values(
+    record_kind: str, field: str
+) -> None:
+    recent, option = _paired_records()
+    record = recent[0] if record_kind == "recent" else option[0]
+    future_timestamp = float(record["query_time_s"]) + 0.1
+    if field == "timestamps_s":
+        record[field] = [future_timestamp]
+    else:
+        frames = record[field]
+        assert isinstance(frames, list)
+        frames[0] = dict(frames[0])
+        frames[0]["timestamp_s"] = future_timestamp
+
+    with pytest.raises(ValueError, match="future frame"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+def test_h1_recent_frame_loss_uses_ids_when_timestamps_overlap() -> None:
+    recent, option = _paired_records()
+    baseline_recent = [
+        {"frame_id": 100, "timestamp_s": 8.0},
+        {"frame_id": 101, "timestamp_s": 9.0},
+    ]
+    option_recent = [
+        {"frame_id": 200, "timestamp_s": 8.0},
+        {"frame_id": 201, "timestamp_s": 9.0},
+    ]
+    recent[0]["selected_recent_frames"] = baseline_recent
+    recent[0]["selected_frames"] = baseline_recent
+    recent[0]["timestamps_s"] = [8.0, 9.0]
+    option[0]["selected_recent_frames"] = option_recent
+    option[0]["selected_frames"] = option_recent + option[0]["selected_memory_frames"]
+    option[0]["timestamps_s"] = [8.0, 9.0, 3.0]
+
+    row = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).rows[0]
+
+    assert row["recent_frame_ids"] == [100, 101]
+    assert row["option_recent_frame_ids"] == [200, 201]
+    assert row["recent_timestamps"] == row["option_recent_timestamps"]
+    assert row["h1_recent_frame_loss_proxy"] is True
+    assert row["h1_recent_frame_loss_count"] == 2
 
 
 @pytest.mark.parametrize(
