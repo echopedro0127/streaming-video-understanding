@@ -10,8 +10,10 @@ from streaming_video_understanding.analysis.failures import (
     write_failure_review,
 )
 from streaming_video_understanding.analysis.summaries import (
+    ALLOCATION_ABLATION_POLICY_ORDER,
     DISPLAY_POLICY_ORDER,
     OPTION_SEMANTIC_POLICY_ORDER,
+    POLICY_ORDER,
     POLICY_LABELS,
     build_comparison_rows,
     normalize_summary,
@@ -88,8 +90,17 @@ def test_option_semantic_policy_order_and_labels() -> None:
     )
 
 
+def test_6plus2_policy_has_display_label_but_not_fixed_baseline_order() -> None:
+    policy_id = "recent-6+option-semantic-memory-2"
+
+    assert POLICY_LABELS[policy_id] == "Recent-6 + Option-Semantic-Memory-2"
+    assert policy_id not in POLICY_ORDER
+    assert DISPLAY_POLICY_ORDER[-1] == policy_id
+
+
 def test_display_policy_order_appends_option_semantic_methods() -> None:
-    assert DISPLAY_POLICY_ORDER[-2:] == OPTION_SEMANTIC_POLICY_ORDER
+    assert DISPLAY_POLICY_ORDER[-3:-1] == OPTION_SEMANTIC_POLICY_ORDER
+    assert DISPLAY_POLICY_ORDER[-1:] == ALLOCATION_ABLATION_POLICY_ORDER
 
 
 def test_ordered_summary_rows_put_semantic_methods_after_fixed_methods() -> None:

@@ -3,6 +3,7 @@ import types
 from pathlib import Path
 
 import pytest
+import yaml
 
 from scripts.run_eval import _requires_semantic_scorer
 from streaming_video_understanding.utils.config import load_config
@@ -43,6 +44,25 @@ def test_option_semantic_validation_config_declares_expected_experiment():
     assert config.experiment.policy_ids == (
         "recent-4+option-semantic-memory-4",
         "recent-4+option-semantic-diverse-memory-4",
+    )
+
+
+def test_option_semantic_6plus2_config_keeps_runtime_and_scorer_contract():
+    baseline = load_config(Path("configs/option-semantic-validation-1fps.yaml"))
+    config = load_config(Path("configs/option-semantic-6plus2-1fps.yaml"))
+    raw_experiment = yaml.safe_load(
+        Path("configs/option-semantic-6plus2-1fps.yaml").read_text(encoding="utf-8")
+    )["experiment"]
+
+    assert config.dataset == baseline.dataset
+    assert config.model == baseline.model
+    assert config.runtime == baseline.runtime
+    assert config.retrieval == baseline.retrieval
+    assert config.experiment.visual_budget == 8
+    assert raw_experiment["recent_capacity"] == 6
+    assert raw_experiment["memory_capacity"] == 2
+    assert config.experiment.policy_ids == (
+        "recent-6+option-semantic-memory-2",
     )
 
 

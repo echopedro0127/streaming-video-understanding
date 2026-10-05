@@ -82,6 +82,67 @@ def test_failure_store_persists_failed_samples(tmp_path: Path):
     assert record["correct"] is False
 
 
+def test_evaluate_sample_releases_query_images_after_inference():
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class TrackingImage:
+        def __init__(self):
+            self.closed = False
+
+        def close(self):
+            self.closed = True
+
+    class Reader:
+        def __init__(self):
+            self.images = [TrackingImage() for _ in range(3)]
+            self.released = None
+
+        def read_until(self, video_path, end_time_s):
+            return iter(
+                (image, FrameRecord(index, float(index)))
+                for index, image in enumerate(self.images)
+            )
+
+        def release_query_images(self, video_path, images):
+            self.released = tuple(images)
+            for image in images:
+                image.close()
+
+    reader = Reader()
+    evaluate_sample(
+        StreamingSample(
+            sample_id="cleanup-sample",
+            video_id="cleanup-video",
+            video_path=Path("video.mp4"),
+            question="What is visible?",
+            options=("cat", "dog", "ball", "car"),
+            answer="A",
+            query_time_s=2.0,
+            task_type="Object Recognition",
+            temporal_clue_type="Prior",
+        ),
+        config=ProjectConfig(
+            dataset=DatasetConfig(context_horizon_s=60.0),
+            experiment=ExperimentConfig(visual_budget=2, seed=7),
+        ),
+        frame_reader=reader,
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-2",
+    )
+
+    assert reader.released is not None
+    assert len(reader.released) == 3
+    assert all(image.closed for image in reader.images)
+
+
 def test_evaluator_rejects_future_frame_before_backend_call():
     from PIL import Image
 
@@ -347,6 +408,89 @@ def test_evaluator_option_semantic_policy_scores_ordered_history_and_serializes_
         assert item["option_margin"] == pytest.approx(0.1)
 
 
+def test_evaluator_recent_6_option_memory_2_respects_budget_causality_and_trace_determinism():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.models.mock import MockVLMBackend
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class StaticReader:
+        def read_until(self, video_path: Path, end_time_s: float):
+            return tuple(
+                (Image.new("RGB", (8, 8)), FrameRecord(index, float(index)))
+                for index in range(10)
+            )
+
+    class RecordingOptionScorer:
+        def __init__(self):
+            self.calls = []
+
+        def score_option_frames(self, **kwargs):
+            self.calls.append(kwargs)
+            return {
+                frame.frame_id: (float(frame.frame_id), 0.0, 0.0, 0.0)
+                for frame in kwargs["frames"]
+            }
+
+    sample = StreamingSample(
+        sample_id="option-semantic-6plus2",
+        video_id="video-6plus2",
+        video_path=Path("video.mp4"),
+        question="What happened before the person sat down?",
+        options=("walked", "opened a door", "picked up a cup", "waved"),
+        answer="opened a door",
+        query_time_s=9.0,
+        task_type="Temporal Reasoning",
+        temporal_clue_type="Prior",
+    )
+    config = ProjectConfig(
+        dataset=DatasetConfig(context_horizon_s=60.0),
+        experiment=ExperimentConfig(visual_budget=8, seed=7),
+    )
+
+    first_scorer = RecordingOptionScorer()
+    first = evaluate_sample(
+        sample,
+        config=config,
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-6+option-semantic-memory-2",
+        semantic_scorer=first_scorer,
+    )
+    second_scorer = RecordingOptionScorer()
+    second = evaluate_sample(
+        sample,
+        config=config,
+        frame_reader=StaticReader(),
+        backend=MockVLMBackend(answer="A"),
+        output_store=None,
+        policy_id="recent-6+option-semantic-memory-2",
+        semantic_scorer=second_scorer,
+    )
+
+    assert len(first["selected_frames"]) <= 8
+    assert len(first["selected_recent_frames"]) <= 6
+    assert len(first["selected_memory_frames"]) <= 2
+    assert all(
+        frame["timestamp_s"] <= sample.query_time_s + 1e-6
+        for frame in first["selected_frames"]
+    )
+    assert len(first_scorer.calls) == 1
+    call = first_scorer.calls[0]
+    assert call["question"] == sample.question
+    assert call["options"] == sample.options
+    assert "answer" not in call
+    assert "ground_truth" not in call
+    assert first["semantic_selection_trace"] == second["semantic_selection_trace"]
+
+
 def test_evaluator_option_semantic_diversity_only_enables_diverse_selector(monkeypatch):
     from PIL import Image
 
@@ -536,6 +680,16 @@ def test_policy_parts_preserves_existing_policy_ids_and_kinds(policy_id, expecte
     from streaming_video_understanding.evaluation.engine import _policy_parts
 
     assert _policy_parts(policy_id, budget=8) == expected
+
+
+def test_policy_parts_accepts_recent_6_plus_option_memory_2():
+    from streaming_video_understanding.evaluation.engine import _policy_parts
+
+    assert _policy_parts("recent-6+option-semantic-memory-2", budget=8) == (
+        "option-semantic",
+        6,
+        2,
+    )
 
 
 def test_evaluator_semantic_selection_does_not_depend_on_answer():
