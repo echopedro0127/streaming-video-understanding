@@ -691,21 +691,25 @@ def test_pair_analysis_accuracy_delta_uses_correct_counts_directly() -> None:
 
 
 @pytest.mark.parametrize(
-    ("content", "match"),
+    ("content", "match", "line_number"),
     [
-        ("not-json\n", r"malformed JSON.*line 1"),
-        ("{}\n[]\n", r"expected a JSON object.*line 2"),
+        ("not-json\n", r"malformed JSON", 1),
+        ("{}\n[]\n", r"expected a JSON object", 2),
     ],
 )
 def test_pair_analysis_cli_rejects_malformed_jsonl_and_non_object_lines(
-    tmp_path: Path, content: str, match: str
+    tmp_path: Path, content: str, match: str, line_number: int
 ) -> None:
     cli = _load_pair_analysis_cli()
     input_path = tmp_path / "invalid.jsonl"
     input_path.write_text(content, encoding="utf-8")
 
-    with pytest.raises(ValueError, match=match):
+    with pytest.raises(ValueError, match=match) as exc_info:
         cli._load_jsonl(input_path)
+
+    error_message = str(exc_info.value)
+    assert str(input_path) in error_message
+    assert f"line {line_number}" in error_message
 
 
 def test_pair_analysis_cli_rejects_inverted_video_range(
@@ -840,6 +844,8 @@ def test_pair_analysis_cli_rejects_existing_output_without_overwrite(
     recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
     output_dir = tmp_path / "analysis"
     output_dir.mkdir()
+    sentinel_path = output_dir / "do-not-touch.txt"
+    sentinel_path.write_text("keep this sentinel", encoding="utf-8")
     summary_path = output_dir / "contract-summary.json"
     summary_path.write_text("keep this artifact", encoding="utf-8")
     monkeypatch.setattr(
@@ -862,7 +868,11 @@ def test_pair_analysis_cli_rejects_existing_output_without_overwrite(
     assert exc_info.value.code == 2
     assert "refusing to overwrite existing output artifact" in capsys.readouterr().err
     assert summary_path.read_text(encoding="utf-8") == "keep this artifact"
-    assert sorted(path.name for path in output_dir.iterdir()) == ["contract-summary.json"]
+    assert sentinel_path.read_text(encoding="utf-8") == "keep this sentinel"
+    assert sorted(path.name for path in output_dir.iterdir()) == [
+        "contract-summary.json",
+        "do-not-touch.txt",
+    ]
 
 
 def test_pair_analysis_cli_overwrite_replaces_existing_artifacts(
@@ -871,6 +881,9 @@ def test_pair_analysis_cli_overwrite_replaces_existing_artifacts(
     recent, option = _paired_records()
     recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
     output_dir = tmp_path / "analysis"
+    output_dir.mkdir()
+    sentinel_path = output_dir / "do-not-touch.txt"
+    sentinel_path.write_text("keep this sentinel", encoding="utf-8")
     cli = _load_pair_analysis_cli()
     arguments = _cli_argv(
         recent_input,
@@ -889,6 +902,7 @@ def test_pair_analysis_cli_overwrite_replaces_existing_artifacts(
     assert cli.main() == 0
 
     assert json.loads(summary_path.read_text(encoding="utf-8"))["n_pairs"] == 4
+    assert sentinel_path.read_text(encoding="utf-8") == "keep this sentinel"
 
 
 def test_pair_analysis_cli_main_writes_expected_artifacts_from_jsonl(
