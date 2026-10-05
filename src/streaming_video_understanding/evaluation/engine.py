@@ -331,8 +331,25 @@ def evaluate_sample(
                 query_images.append(image)
                 yield image, frame
 
+    def release_query_images() -> None:
+        release = getattr(frame_reader, "release_query_images", None)
+        if callable(release):
+            release(sample.video_path, tuple(query_images))
+            return
+        for image in query_images:
+            close = getattr(image, "close", None)
+            if close is not None:
+                close()
+        gc.collect()
+        try:
+            import torch
+        except ImportError:
+            torch = None
+        if torch is not None and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     try:
-        return _evaluate_sample(
+        result = _evaluate_sample(
             sample,
             config=config,
             frame_reader=TrackingReader(),
@@ -345,22 +362,16 @@ def evaluate_sample(
             profile_store=profile_store,
             semantic_scorer=semantic_scorer,
         )
-    finally:
-        release = getattr(frame_reader, "release_query_images", None)
-        if callable(release):
-            release(sample.video_path, tuple(query_images))
-        else:
-            for image in query_images:
-                close = getattr(image, "close", None)
-                if close is not None:
-                    close()
-            gc.collect()
-            try:
-                import torch
-            except ImportError:
-                torch = None
-            if torch is not None and torch.cuda.is_available():
-                torch.cuda.empty_cache()
+    except BaseException as primary_error:
+        try:
+            release_query_images()
+        except BaseException as cleanup_error:
+            primary_error.add_note(
+                f"query image cleanup failed: {cleanup_error!r}"
+            )
+        raise
+    release_query_images()
+    return result
 
 
 def _evaluate_sample(

@@ -143,6 +143,50 @@ def test_evaluate_sample_releases_query_images_after_inference():
     assert all(image.closed for image in reader.images)
 
 
+def test_evaluate_sample_preserves_inference_error_when_cleanup_fails():
+    from streaming_video_understanding.data.schema import FrameRecord, StreamingSample
+    from streaming_video_understanding.evaluation.engine import evaluate_sample
+    from streaming_video_understanding.utils.config import (
+        DatasetConfig,
+        ExperimentConfig,
+        ProjectConfig,
+    )
+
+    class Reader:
+        def read_until(self, video_path, end_time_s):
+            return ((object(), FrameRecord(0, 0.0)),)
+
+        def release_query_images(self, video_path, images):
+            raise RuntimeError("cleanup failed")
+
+    class FailingBackend:
+        def infer(self, request):
+            raise RuntimeError("inference failed")
+
+    with pytest.raises(RuntimeError, match="inference failed"):
+        evaluate_sample(
+            StreamingSample(
+                sample_id="cleanup-error-sample",
+                video_id="cleanup-error-video",
+                video_path=Path("video.mp4"),
+                question="What is visible?",
+                options=("cat", "dog", "ball", "car"),
+                answer="A",
+                query_time_s=0.0,
+                task_type="Object Recognition",
+                temporal_clue_type="Prior",
+            ),
+            config=ProjectConfig(
+                dataset=DatasetConfig(context_horizon_s=60.0),
+                experiment=ExperimentConfig(visual_budget=1, seed=7),
+            ),
+            frame_reader=Reader(),
+            backend=FailingBackend(),
+            output_store=None,
+            policy_id="recent-1",
+        )
+
+
 def test_evaluator_rejects_future_frame_before_backend_call():
     from PIL import Image
 

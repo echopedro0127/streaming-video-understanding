@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 import json
+import gc
 import shutil
 import subprocess
 from collections.abc import Iterator, Sequence
@@ -174,26 +175,37 @@ class CachedFrameReader:
         reader: Any,
         *,
         max_cache_frames: int = 128,
+        max_cache_bytes: int = 64 * 1024 * 1024,
         timestamp_tolerance_s: float = 1e-6,
     ) -> None:
         if max_cache_frames < 0:
             raise ValueError("max_cache_frames must be non-negative")
+        if max_cache_bytes <= 0:
+            raise ValueError("max_cache_bytes must be positive")
         if not math.isfinite(timestamp_tolerance_s) or timestamp_tolerance_s < 0:
             raise ValueError("timestamp_tolerance_s must be finite and non-negative")
         self.reader = reader
         self.max_cache_frames = max_cache_frames
+        self.max_cache_bytes = max_cache_bytes
         self.timestamp_tolerance_s = timestamp_tolerance_s
         self._cached_path: Path | None = None
         self._cached_end_time_s: float | None = None
         self._cached_frames: tuple[tuple[Image.Image, FrameRecord], ...] = ()
+        self._uncacheable_paths: set[Path] = set()
 
     def read_until(
         self, video_path: str | Path, end_time_s: float
     ) -> Iterator[tuple[Image.Image, FrameRecord]]:
         path = Path(video_path).resolve()
+        if path in self._uncacheable_paths:
+            yield from self._read_filtered(path, end_time_s)
+            return
+        if self.max_cache_frames == 0:
+            self._uncacheable_paths.add(path)
+            yield from self._read_filtered(path, end_time_s)
+            return
         cache_hit = (
-            self.max_cache_frames > 0
-            and self._cached_path == path
+            self._cached_path == path
             and self._cached_end_time_s is not None
             and abs(self._cached_end_time_s - end_time_s) <= self.timestamp_tolerance_s
         )
@@ -201,13 +213,63 @@ class CachedFrameReader:
             yield from self._cached_frames
             return
 
-        decoded = tuple(self.reader.read_until(video_path, end_time_s))
-        if self.max_cache_frames > 0 and len(decoded) <= self.max_cache_frames:
-            self._cached_path = path
-            self._cached_end_time_s = float(end_time_s)
-            self._cached_frames = decoded
-        else:
-            self._cached_path = None
-            self._cached_end_time_s = None
-            self._cached_frames = ()
+        self._clear_cache()
+        frames: list[tuple[Image.Image, FrameRecord]] = []
+        cached_bytes = 0
+        exceeded = False
+        for image, frame in self.reader.read_until(video_path, end_time_s):
+            frames.append((image, frame))
+            cached_bytes += int(getattr(image, "nbytes", 0))
+            if len(frames) > self.max_cache_frames or cached_bytes > self.max_cache_bytes:
+                exceeded = True
+                break
+        if exceeded:
+            self._close_images(frames)
+            self._uncacheable_paths.add(path)
+            yield from self._read_filtered(path, end_time_s)
+            return
+
+        decoded = tuple(frames)
+        self._cached_path = path
+        self._cached_end_time_s = float(end_time_s)
+        self._cached_frames = decoded
         yield from decoded
+
+    def _read_filtered(
+        self, video_path: str | Path, end_time_s: float
+    ) -> Iterator[tuple[Image.Image, FrameRecord]]:
+        yield from self.reader.read_until(video_path, end_time_s)
+
+    def release_query_images(self, video_path: str | Path, images: Sequence[Any]) -> None:
+        """Release per-query images when this video cannot be cached safely."""
+        path = Path(video_path).resolve()
+        if path in self._uncacheable_paths:
+            self._close_images(tuple((image, FrameRecord(-1, 0.0)) for image in images))
+            gc.collect()
+        self._empty_cuda_cache()
+
+    @staticmethod
+    def _close_images(frames: Sequence[tuple[Any, FrameRecord]]) -> None:
+        for image, _ in frames:
+            close = getattr(image, "close", None)
+            if close is not None:
+                close()
+
+    def _clear_cache(self) -> None:
+        self._close_images(self._cached_frames)
+        self._cached_path = None
+        self._cached_end_time_s = None
+        self._cached_frames = ()
+
+    @staticmethod
+    def _empty_cuda_cache() -> None:
+        try:
+            import torch
+        except ImportError:
+            return
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
+    @property
+    def cached_video_paths(self) -> tuple[Path, ...]:
+        return (self._cached_path,) if self._cached_path is not None else ()
