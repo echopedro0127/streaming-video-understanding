@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import time
+import gc
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -308,6 +309,61 @@ def _frame_manifest(frames: Sequence[FrameRecord]) -> list[dict[str, float | int
 
 
 def evaluate_sample(
+    sample: StreamingSample,
+    *,
+    config: ProjectConfig,
+    frame_reader: Any,
+    backend: ModelBackend,
+    output_store: ResumeStore | None,
+    policy_id: str = "recent",
+    failure_store: FailureStore | None = None,
+    config_id: str | None = None,
+    record_metadata: Mapping[str, Any] | None = None,
+    profile_store: RuntimeProfileStore | None = None,
+    semantic_scorer: SemanticFrameScorer | OptionAwareFrameScorer | None = None,
+) -> dict[str, Any]:
+    """Evaluate one sample and release decoded images even on failure."""
+    query_images: list[Any] = []
+
+    class TrackingReader:
+        def read_until(self, video_path: str | Path, end_time_s: float):
+            for image, frame in frame_reader.read_until(video_path, end_time_s=end_time_s):
+                query_images.append(image)
+                yield image, frame
+
+    try:
+        return _evaluate_sample(
+            sample,
+            config=config,
+            frame_reader=TrackingReader(),
+            backend=backend,
+            output_store=output_store,
+            policy_id=policy_id,
+            failure_store=failure_store,
+            config_id=config_id,
+            record_metadata=record_metadata,
+            profile_store=profile_store,
+            semantic_scorer=semantic_scorer,
+        )
+    finally:
+        release = getattr(frame_reader, "release_query_images", None)
+        if callable(release):
+            release(sample.video_path, tuple(query_images))
+        else:
+            for image in query_images:
+                close = getattr(image, "close", None)
+                if close is not None:
+                    close()
+            gc.collect()
+            try:
+                import torch
+            except ImportError:
+                torch = None
+            if torch is not None and torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+
+def _evaluate_sample(
     sample: StreamingSample,
     *,
     config: ProjectConfig,
