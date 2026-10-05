@@ -99,6 +99,61 @@ def _paired_records() -> tuple[list[dict[str, object]], list[dict[str, object]]]
     return recent, option
 
 
+def _write_cli_inputs(
+    tmp_path: Path,
+    recent: list[dict[str, object]],
+    option: list[dict[str, object]],
+) -> tuple[Path, Path]:
+    input_dir = tmp_path / "inputs"
+    input_dir.mkdir()
+    recent_input = input_dir / "recent.jsonl"
+    option_input = input_dir / "option.jsonl"
+    recent_input.write_text(
+        "".join(json.dumps(record) + "\n" for record in recent), encoding="utf-8"
+    )
+    option_input.write_text(
+        "".join(json.dumps(record) + "\n" for record in option), encoding="utf-8"
+    )
+    return recent_input, option_input
+
+
+def _cli_argv(
+    recent_input: Path,
+    option_input: Path,
+    output_dir: Path,
+    *,
+    output_prefix: str = "contract",
+    video_min: int | None = None,
+    video_max: int | None = None,
+    representative_limit: int | None = None,
+    overwrite: bool = False,
+) -> list[str]:
+    args = [
+        "analyze_policy_pairs.py",
+        "--recent-input",
+        str(recent_input),
+        "--recent-policy",
+        RECENT_POLICY,
+        "--option-input",
+        str(option_input),
+        "--option-policy",
+        OPTION_POLICY,
+        "--output-dir",
+        str(output_dir),
+        "--output-prefix",
+        output_prefix,
+    ]
+    if video_min is not None:
+        args.extend(["--video-min", str(video_min)])
+    if video_max is not None:
+        args.extend(["--video-max", str(video_max)])
+    if representative_limit is not None:
+        args.extend(["--representative-limit", str(representative_limit)])
+    if overwrite:
+        args.append("--overwrite")
+    return args
+
+
 def test_analyze_pair_records_classifies_all_four_outcomes_and_exposes_diagnostics() -> None:
     recent, option = _paired_records()
 
@@ -633,6 +688,207 @@ def test_pair_analysis_accuracy_delta_uses_correct_counts_directly() -> None:
     summary = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).summary
 
     assert summary["accuracy_delta"] == (1 - 3) / 3
+
+
+@pytest.mark.parametrize(
+    ("content", "match"),
+    [
+        ("not-json\n", r"malformed JSON.*line 1"),
+        ("{}\n[]\n", r"expected a JSON object.*line 2"),
+    ],
+)
+def test_pair_analysis_cli_rejects_malformed_jsonl_and_non_object_lines(
+    tmp_path: Path, content: str, match: str
+) -> None:
+    cli = _load_pair_analysis_cli()
+    input_path = tmp_path / "invalid.jsonl"
+    input_path.write_text(content, encoding="utf-8")
+
+    with pytest.raises(ValueError, match=match):
+        cli._load_jsonl(input_path)
+
+
+def test_pair_analysis_cli_rejects_inverted_video_range(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            tmp_path / "recent.jsonl",
+            tmp_path / "option.jsonl",
+            tmp_path / "analysis",
+            video_min=4,
+            video_max=1,
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    with pytest.raises(SystemExit) as exc_info:
+        cli.main()
+
+    assert exc_info.value.code == 2
+    assert "--video-min cannot exceed --video-max" in capsys.readouterr().err
+
+
+def test_pair_analysis_cli_rejects_negative_representative_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            tmp_path / "recent.jsonl",
+            tmp_path / "option.jsonl",
+            tmp_path / "analysis",
+            representative_limit=-1,
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    with pytest.raises(SystemExit) as exc_info:
+        cli.main()
+
+    assert exc_info.value.code == 2
+    assert "--representative-limit must be non-negative" in capsys.readouterr().err
+
+
+def test_pair_analysis_cli_allows_zero_representative_limit_and_optional_range(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    recent, option = _paired_records()
+    recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
+    output_dir = tmp_path / "analysis"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            recent_input,
+            option_input,
+            output_dir,
+            output_prefix="zero-limit",
+            representative_limit=0,
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    assert cli.main() == 0
+
+    assert (output_dir / "zero-limit-helped.jsonl").read_text(encoding="utf-8") == ""
+    assert (output_dir / "zero-limit-hurt.jsonl").read_text(encoding="utf-8") == ""
+
+
+def test_pair_analysis_cli_uses_default_representative_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    recent = [_record(index, RECENT_POLICY, "B") for index in range(1, 26)]
+    option = [_record(index, OPTION_POLICY, "A") for index in range(1, 26)]
+    recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
+    output_dir = tmp_path / "analysis"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            recent_input,
+            option_input,
+            output_dir,
+            output_prefix="default-limit",
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    assert cli.main() == 0
+
+    helped = output_dir / "default-limit-helped.jsonl"
+    assert helped.read_text(encoding="utf-8").count("\n") == 20
+
+
+@pytest.mark.parametrize(
+    "unsafe_prefix",
+    ["../escape", r"..\escape", ".", "..", "nested/name", r"nested\name", r"C:\absolute"],
+)
+def test_pair_analysis_cli_rejects_unsafe_output_prefix(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    unsafe_prefix: str,
+) -> None:
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            tmp_path / "recent.jsonl",
+            tmp_path / "option.jsonl",
+            tmp_path / "analysis",
+            output_prefix=unsafe_prefix,
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    with pytest.raises(SystemExit) as exc_info:
+        cli.main()
+
+    assert exc_info.value.code == 2
+    assert "--output-prefix must be a safe single filename component" in capsys.readouterr().err
+    assert not (tmp_path / "analysis").exists()
+
+
+def test_pair_analysis_cli_rejects_existing_output_without_overwrite(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    recent, option = _paired_records()
+    recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
+    output_dir = tmp_path / "analysis"
+    output_dir.mkdir()
+    summary_path = output_dir / "contract-summary.json"
+    summary_path.write_text("keep this artifact", encoding="utf-8")
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        _cli_argv(
+            recent_input,
+            option_input,
+            output_dir,
+            video_min=1,
+            video_max=4,
+            representative_limit=1,
+        ),
+    )
+
+    cli = _load_pair_analysis_cli()
+    with pytest.raises(SystemExit) as exc_info:
+        cli.main()
+
+    assert exc_info.value.code == 2
+    assert "refusing to overwrite existing output artifact" in capsys.readouterr().err
+    assert summary_path.read_text(encoding="utf-8") == "keep this artifact"
+    assert sorted(path.name for path in output_dir.iterdir()) == ["contract-summary.json"]
+
+
+def test_pair_analysis_cli_overwrite_replaces_existing_artifacts(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    recent, option = _paired_records()
+    recent_input, option_input = _write_cli_inputs(tmp_path, recent, option)
+    output_dir = tmp_path / "analysis"
+    cli = _load_pair_analysis_cli()
+    arguments = _cli_argv(
+        recent_input,
+        option_input,
+        output_dir,
+        video_min=1,
+        video_max=4,
+        representative_limit=1,
+    )
+    monkeypatch.setattr(sys, "argv", arguments)
+    assert cli.main() == 0
+
+    summary_path = output_dir / "contract-summary.json"
+    summary_path.write_text("stale artifact", encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", [*arguments, "--overwrite"])
+    assert cli.main() == 0
+
+    assert json.loads(summary_path.read_text(encoding="utf-8"))["n_pairs"] == 4
 
 
 def test_pair_analysis_cli_main_writes_expected_artifacts_from_jsonl(
