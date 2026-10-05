@@ -508,3 +508,115 @@ def test_pair_analysis_h2_excludes_unavailable_rows_and_h3_exposes_counts() -> N
         "memory_hurt": 1,
         "both_wrong": 1,
     }
+
+
+def test_pair_rows_and_csv_include_canonical_timestamp_distance_fields(tmp_path) -> None:
+    recent, option = _paired_records()
+
+    result = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+    row = result.rows[0]
+
+    assert row["recent_timestamp_distances_s"] == [2.0, 1.0]
+    assert row["option_memory_timestamp_distances_s"] == [7.0]
+    assert row["recent_timestamp_distances_s"] == row["recent_frame_distances_s"]
+    assert row["option_memory_timestamp_distances_s"] == row["option_memory_frame_distances_s"]
+
+    paths = write_pair_artifacts(result, tmp_path / "paired")
+    header = paths["csv"].read_text(encoding="utf-8").splitlines()[0].split(",")
+    assert "recent_timestamp_distances_s" in header
+    assert "option_memory_timestamp_distances_s" in header
+
+
+@pytest.mark.parametrize("frame_id", [None, "8", 8.0, True])
+def test_pair_analysis_rejects_non_exact_integer_frame_ids(frame_id) -> None:
+    recent, option = _paired_records()
+    frames = recent[0]["selected_recent_frames"]
+    assert isinstance(frames, list)
+    frames[0]["frame_id"] = frame_id
+
+    with pytest.raises(ValueError, match="frame_id"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    "bad_options",
+    [
+        ["first", "", "third", "fourth"],
+        ["first", "   ", "third", "fourth"],
+        ["first", 2, "third", "fourth"],
+    ],
+)
+def test_pair_analysis_rejects_empty_or_non_string_options(bad_options) -> None:
+    recent, option = _paired_records()
+    recent[0]["options"] = bad_options
+    option[0]["options"] = bad_options
+
+    with pytest.raises(ValueError, match="options"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    "prompt",
+    [
+        "Question: q\nOptions:\nA) one\nB. two\nC. three\nD. four",
+        "Question: q\nOptions:\nA. \nB. two\nC. three\nD. four",
+        "Question: q\nOptions:\nA. one\nB. two\nC. three\nD. four\nE. extra",
+    ],
+)
+def test_pair_analysis_requires_canonical_non_empty_prompt_options(prompt: str) -> None:
+    recent, option = _paired_records()
+    recent[0].pop("options", None)
+    option[0].pop("options", None)
+    recent[0]["timestamp_prompt"] = prompt
+    option[0]["timestamp_prompt"] = prompt
+
+    with pytest.raises(ValueError, match="options"):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("option_scores", [0.8, 0.2, 0.1]),
+        ("option_scores", [0.8, float("nan"), 0.1, 0.05]),
+        ("best_option_index", True),
+        ("best_option_index", 4),
+        ("best_option_index", -1),
+        ("best_option_index", 1.0),
+        ("option_margin", "not numeric"),
+        ("option_margin", float("inf")),
+    ],
+)
+def test_pair_analysis_rejects_invalid_option_trace_fields(field: str, value) -> None:
+    recent, option = _paired_records()
+    trace = option[0]["semantic_selection_trace"]
+    assert isinstance(trace, list)
+    trace[0][field] = value
+
+    with pytest.raises(ValueError, match=field):
+        analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY)
+
+
+def test_pair_analysis_option_margins_include_derived_scores_and_match_aggregate() -> None:
+    recent, option = _paired_records()
+    trace = option[0]["semantic_selection_trace"]
+    assert isinstance(trace, list)
+    trace[0].pop("option_margin")
+
+    row = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).rows[0]
+
+    assert row["option_margins"] == [pytest.approx(0.6)]
+    assert row["option_margin"] == max(row["option_margins"])
+
+
+def test_pair_analysis_accuracy_delta_uses_correct_counts_directly() -> None:
+    recent = [_record(index, RECENT_POLICY, "A") for index in range(1, 4)]
+    option_predictions = ("B", "A", "B")
+    option = [
+        _record(index, OPTION_POLICY, prediction)
+        for index, prediction in enumerate(option_predictions, 1)
+    ]
+
+    summary = analyze_pair_records(recent, option, RECENT_POLICY, OPTION_POLICY).summary
+
+    assert summary["accuracy_delta"] == (1 - 3) / 3

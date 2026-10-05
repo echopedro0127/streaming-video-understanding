@@ -15,7 +15,8 @@ from typing import Any
 
 _TIMESTAMP_TOLERANCE_S = 1e-6
 _VIDEO_INDEX_RE = re.compile(r"(?:^|_)sample_(\d+)$")
-_OPTION_LINE_RE = re.compile(r"^\s*([A-D])\s*[.):\]-]\s*(.*?)\s*$")
+_OPTION_LINE_RE = re.compile(r"^\s*([A-D])\s*\.\s*(.*?)\s*$")
+_OPTION_LABEL_RE = re.compile(r"^\s*([A-Z])\s*[.):\]-]")
 _TEMPORAL_KEYWORDS = (
     "before",
     "after",
@@ -125,20 +126,34 @@ def _filtered_records(
 
 def _prompt_options(prompt: Any) -> tuple[str, ...] | None:
     if not isinstance(prompt, str):
-        return None
+        raise ValueError("timestamp_prompt must be a string")
     parsed: dict[str, str] = {}
     for line in prompt.splitlines():
         match = _OPTION_LINE_RE.match(line)
         if match is not None:
+            text = match.group(2).strip()
+            if not text:
+                raise ValueError("options prompt entries must have non-empty text")
             if match.group(1) in parsed:
                 raise ValueError(f"options contain duplicate label {match.group(1)}")
-            parsed[match.group(1)] = match.group(2).strip()
-    if not parsed:
-        return None
+            parsed[match.group(1)] = text
+            continue
+        malformed = _OPTION_LABEL_RE.match(line)
+        if malformed is not None:
+            raise ValueError("options prompt must use exact A., B., C., D. labels")
     letters = set("ABCD")
     if set(parsed) != letters:
         raise ValueError("options prompt must contain exactly one A-D entry for each label")
     return tuple(parsed[letter] for letter in "ABCD")
+
+
+def _validate_options(values: Sequence[Any]) -> tuple[str, ...]:
+    validated: list[str] = []
+    for index, value in enumerate(values):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"options[{index}] must be a non-empty string")
+        validated.append(value)
+    return tuple(validated)
 
 
 def _record_options(record: Mapping[str, Any]) -> tuple[str, ...] | None:
@@ -147,13 +162,15 @@ def _record_options(record: Mapping[str, Any]) -> tuple[str, ...] | None:
         if isinstance(options, Mapping):
             if set(options) != set("ABCD"):
                 raise ValueError("options mapping must contain exactly A-D keys")
-            return tuple(str(options[letter]) for letter in "ABCD")
+            return _validate_options([options[letter] for letter in "ABCD"])
         if isinstance(options, (str, bytes)) or not isinstance(options, Sequence):
             raise ValueError("options must be a sequence")
         if len(options) != 4:
             raise ValueError("options must contain exactly four ordered entries")
-        return tuple(str(option) for option in options)
-    return _prompt_options(record.get("timestamp_prompt"))
+        return _validate_options(options)
+    if "timestamp_prompt" not in record or record.get("timestamp_prompt") is None:
+        return None
+    return _prompt_options(record["timestamp_prompt"])
 
 
 def _frame_items(value: Any, field: str) -> list[dict[str, Any]]:
@@ -174,6 +191,8 @@ def _frame_items(value: Any, field: str) -> list[dict[str, Any]]:
             raise ValueError(f"{field}[{index}] requires timestamp_s")
         timestamp_s = _finite_number(raw_frame["timestamp_s"], f"{field}.timestamp_s")
         frame_id = raw_frame["frame_id"]
+        if type(frame_id) is not int:
+            raise ValueError(f"{field}[{index}].frame_id must be an exact integer")
         try:
             duplicate = frame_id in frame_ids
         except TypeError as exc:
@@ -259,13 +278,19 @@ def _traces(record: Mapping[str, Any]) -> list[dict[str, Any]]:
             scores = item["option_scores"]
             if isinstance(scores, (str, bytes)) or not isinstance(scores, Sequence):
                 raise ValueError(f"{trace_field}.option_scores must be a sequence")
+            if len(scores) != 4:
+                raise ValueError(f"{trace_field}.option_scores must contain exactly four values")
             for score in scores:
                 _finite_number(score, f"{trace_field}.option_scores")
+        if "best_option_index" in item:
+            best_index = item["best_option_index"]
+            if type(best_index) is not int or not 0 <= best_index < 4:
+                raise ValueError(f"{trace_field}.best_option_index must be an integer in 0..3")
     return trace
 
 
 def _option_diagnostics(trace: Sequence[Mapping[str, Any]]) -> tuple[
-    list[dict[str, Any]], list[dict[str, Any]], float | None, str | None
+    list[dict[str, Any]], list[dict[str, Any]], float | None, str | None, list[float]
 ]:
     per_frame: list[dict[str, Any]] = []
     margins: list[float] = []
@@ -277,7 +302,7 @@ def _option_diagnostics(trace: Sequence[Mapping[str, Any]]) -> tuple[
             per_frame.append({"frame_id": item.get("frame_id", index), "scores": scores})
         if "option_margin" in item:
             margins.append(_finite_number(item["option_margin"], "option_margin"))
-        elif scores and len(scores) >= 2:
+        elif scores is not None:
             ordered = sorted(scores, reverse=True)
             margins.append(ordered[0] - ordered[1])
 
@@ -296,10 +321,20 @@ def _option_diagnostics(trace: Sequence[Mapping[str, Any]]) -> tuple[
             scores = best.get("option_scores")
             if isinstance(scores, Sequence) and not isinstance(scores, (str, bytes)) and scores:
                 best_index = max(range(len(scores)), key=lambda index: float(scores[index]))
-        if isinstance(best_index, int) and 0 <= best_index < 26:
+        if type(best_index) is int and 0 <= best_index < 4:
             retrieval_top_option = chr(ord("A") + best_index)
     option_margin = max(margins) if margins else None
-    return per_frame, [{"frame_id": item.get("frame_id"), "score": item.get("semantic_score")} for item in trace if "semantic_score" in item], option_margin, retrieval_top_option
+    return (
+        per_frame,
+        [
+            {"frame_id": item.get("frame_id"), "score": item.get("semantic_score")}
+            for item in trace
+            if "semantic_score" in item
+        ],
+        option_margin,
+        retrieval_top_option,
+        margins,
+    )
 
 
 def _memory_scores(
@@ -419,7 +454,13 @@ def _make_row(
     group = _classify(recent_correct, option_correct)
 
     trace = _traces(option)
-    per_frame_option_scores, _, option_margin, retrieval_top_option = _option_diagnostics(trace)
+    (
+        per_frame_option_scores,
+        _,
+        option_margin,
+        retrieval_top_option,
+        option_margins,
+    ) = _option_diagnostics(trace)
     memory_scores = _memory_scores(option, trace)
     keywords = _temporal_keywords(question)
     lost_recent = [
@@ -457,13 +498,15 @@ def _make_row(
         "recent_frame_distances_s": _temporal_distances(recent_timestamps, query_time_s),
         "option_recent_frame_distances_s": _temporal_distances(option_recent_timestamps, query_time_s),
         "option_memory_frame_distances_s": _temporal_distances(option_memory_timestamps, query_time_s),
+        "recent_timestamp_distances_s": _temporal_distances(recent_timestamps, query_time_s),
+        "option_memory_timestamp_distances_s": _temporal_distances(option_memory_timestamps, query_time_s),
         "option_semantic_trace": _jsonable(trace),
         "memory_scores": _jsonable(memory_scores),
         "memory_semantic_scores": _jsonable(memory_scores),
         "per_frame_option_scores": _jsonable(per_frame_option_scores),
         "option_scores_by_frame": _jsonable(per_frame_option_scores),
         "option_margin": option_margin,
-        "option_margins": [item.get("option_margin") for item in trace if "option_margin" in item],
+        "option_margins": option_margins,
         "retrieval_top_option": retrieval_top_option,
         "h1_recent_frame_loss_proxy": bool(lost_recent),
         "h1_recent_frame_loss_count": len(lost_recent),
@@ -543,10 +586,14 @@ def analyze_pair_records(
         group: (100.0 * group_counts[group] / n_pairs if n_pairs else 0.0)
         for group in _GROUPS
     }
-    recent_accuracy = sum(bool(row["recent_correct"]) for row in rows) / n_pairs if n_pairs else 0.0
-    option_accuracy = sum(bool(row["option_correct"]) for row in rows) / n_pairs if n_pairs else 0.0
+    recent_correct_count = sum(bool(row["recent_correct"]) for row in rows)
+    option_correct_count = sum(bool(row["option_correct"]) for row in rows)
+    recent_accuracy = recent_correct_count / n_pairs if n_pairs else 0.0
+    option_accuracy = option_correct_count / n_pairs if n_pairs else 0.0
     net_gain = group_counts["memory_helped"] - group_counts["memory_hurt"]
-    accuracy_delta = option_accuracy - recent_accuracy
+    accuracy_delta = (
+        (option_correct_count - recent_correct_count) / n_pairs if n_pairs else 0.0
+    )
     h2_match_count_by_group = _group_counts(
         rows, lambda row: row["h2_retrieval_top_option_match"] is True
     )
@@ -688,6 +735,8 @@ _CSV_FIELDS = (
     "recent_frame_distances_s",
     "option_recent_frame_distances_s",
     "option_memory_frame_distances_s",
+    "recent_timestamp_distances_s",
+    "option_memory_timestamp_distances_s",
     "option_semantic_trace",
     "memory_scores",
     "memory_semantic_scores",
