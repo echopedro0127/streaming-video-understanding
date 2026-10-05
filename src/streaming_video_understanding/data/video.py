@@ -14,6 +14,19 @@ from PIL import Image
 from .schema import FrameRecord
 
 
+def _image_nbytes(image: Any) -> int:
+    nbytes = getattr(image, "nbytes", None)
+    if nbytes is not None:
+        return int(nbytes)
+
+    size = getattr(image, "size", None)
+    getbands = getattr(image, "getbands", None)
+    if size is None or not callable(getbands):
+        return 0
+    width, height = size
+    return int(width) * int(height) * len(getbands())
+
+
 def validate_frame_timestamps(
     timestamps_s: Sequence[float],
     *,
@@ -219,7 +232,7 @@ class CachedFrameReader:
         exceeded = False
         for image, frame in self.reader.read_until(video_path, end_time_s):
             frames.append((image, frame))
-            cached_bytes += int(getattr(image, "nbytes", 0))
+            cached_bytes += _image_nbytes(image)
             if len(frames) > self.max_cache_frames or cached_bytes > self.max_cache_bytes:
                 exceeded = True
                 break

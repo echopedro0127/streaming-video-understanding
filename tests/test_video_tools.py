@@ -97,6 +97,46 @@ def test_cached_frame_reader_bounds_long_video_cache_and_releases_query_images()
     assert all(image.closed for image in reader.images)
 
 
+def test_cached_frame_reader_bounds_pil_image_bytes_and_releases_query_images():
+    from PIL import Image
+
+    from streaming_video_understanding.data.schema import FrameRecord
+
+    class CountingReader:
+        def __init__(self):
+            self.calls = 0
+            self.all_images = []
+
+        def read_until(self, video_path, end_time_s):
+            self.calls += 1
+
+            def frames():
+                for index in range(2):
+                    image = Image.new("RGB", (10, 10))
+                    self.all_images.append(image)
+                    yield image, FrameRecord(index, float(index))
+
+            return frames()
+
+    reader = CountingReader()
+    cached = CachedFrameReader(reader, max_cache_frames=8, max_cache_bytes=100)
+
+    decoded = list(cached.read_until("pil-video.mp4", 1.0))
+    cached.release_query_images(
+        "pil-video.mp4", tuple(image for image, _ in decoded)
+    )
+    again = list(cached.read_until("pil-video.mp4", 1.0))
+    cached.release_query_images(
+        "pil-video.mp4", tuple(image for image, _ in again)
+    )
+
+    assert reader.calls == 3
+    assert cached.cached_video_paths == ()
+    for image in reader.all_images:
+        with pytest.raises(ValueError, match="closed"):
+            image.load()
+
+
 def test_cached_frame_reader_cache_hit_reuses_open_images_after_release():
     from streaming_video_understanding.data.schema import FrameRecord
 
