@@ -211,9 +211,11 @@ class CachedFrameReader:
     ) -> Iterator[tuple[Image.Image, FrameRecord]]:
         path = Path(video_path).resolve()
         if path in self._uncacheable_paths:
+            self._clear_cache()
             yield from self._read_filtered(path, end_time_s)
             return
         if self.max_cache_frames == 0:
+            self._clear_cache()
             self._uncacheable_paths.add(path)
             yield from self._read_filtered(path, end_time_s)
             return

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from streaming_video_understanding.data.video import CachedFrameReader, validate_frame_timestamps
@@ -170,3 +172,41 @@ def test_cached_frame_reader_cache_hit_reuses_open_images_after_release():
     assert reader.calls == 1
     assert second[0][0] is first[0][0]
     assert not second[0][0].closed
+
+
+@pytest.mark.parametrize("uncacheable_mode", ("known", "zero-limit"))
+def test_cached_frame_reader_clears_previous_cache_before_uncached_read(uncacheable_mode):
+    from streaming_video_understanding.data.schema import FrameRecord
+
+    class TrackingImage:
+        nbytes = 4
+
+        def __init__(self):
+            self.closed = False
+
+        def close(self):
+            self.closed = True
+
+    class CountingReader:
+        def __init__(self):
+            self.images = []
+
+        def read_until(self, video_path, end_time_s):
+            image = TrackingImage()
+            self.images.append(image)
+            return iter(((image, FrameRecord(0, 0.0)),))
+
+    reader = CountingReader()
+    cached = CachedFrameReader(reader, max_cache_frames=2, max_cache_bytes=100)
+
+    list(cached.read_until("video-a.mp4", 0.0))
+    prior_images = tuple(reader.images)
+    if uncacheable_mode == "known":
+        cached._uncacheable_paths.add(Path("video-b.mp4").resolve())
+    else:
+        cached.max_cache_frames = 0
+
+    list(cached.read_until("video-b.mp4", 0.0))
+
+    assert cached.cached_video_paths == ()
+    assert all(image.closed for image in prior_images)
