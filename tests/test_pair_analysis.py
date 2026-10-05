@@ -690,6 +690,37 @@ def test_pair_analysis_accuracy_delta_uses_correct_counts_directly() -> None:
     assert summary["accuracy_delta"] == (1 - 3) / 3
 
 
+def test_real_artifacts_pair_diagnosis_for_videos_51_through_100() -> None:
+    worktree_root = Path(__file__).resolve().parents[1]
+    recent_path = worktree_root.parent / "scale-100" / "results" / "scale-100" / "recent-8.jsonl"
+    option_path = worktree_root / "results" / "option-semantic-validation-real-time-51-100.jsonl"
+    missing_paths = [
+        str(path) for path in (recent_path, option_path) if not path.is_file()
+    ]
+    if missing_paths:
+        pytest.skip(
+            "real paired-analysis artifacts are unavailable: " + ", ".join(missing_paths)
+        )
+
+    cli = _load_pair_analysis_cli()
+    result = analyze_pair_records(
+        cli._load_jsonl(recent_path),
+        cli._load_jsonl(option_path),
+        RECENT_POLICY,
+        OPTION_POLICY,
+        min_video_index=51,
+        max_video_index=100,
+    )
+
+    summary = result.summary
+    assert summary["n_pairs"] == 250
+    assert summary["recent_accuracy"] == pytest.approx(95 / 250)
+    assert summary["option_accuracy"] == pytest.approx(90 / 250)
+    assert summary["group_counts"]["memory_helped"] == 5
+    assert summary["group_counts"]["memory_hurt"] == 10
+    assert summary["accuracy_delta"] == pytest.approx(-0.02)
+
+
 @pytest.mark.parametrize(
     ("content", "match", "line_number"),
     [
