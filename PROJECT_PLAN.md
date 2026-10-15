@@ -18,9 +18,9 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 | Failure analysis | Complete | 30 failure cases manually reviewed in `docs/FAILURE_ANALYSIS.md`; five representative contact sheets rendered; trade-off plots generated under `assets/figures/` |
 | Budget sensitivity | Complete | Four safe policies completed on the first 50 QA rows; 200/200 records passed the causal audit; 16-frame probe excluded after reaching the 6GB/context limit |
 | Task 1-7 implementation | Complete | Semantic policy IDs, CLIP scoring/cache, evaluator integration, profiling, and tests are implemented at current HEAD |
-| Option-aware retrieval validation | Complete for available 250 QA; 100-video expansion pending | 2 policies × 250 QA = 500 records; `runtime_failed=0`; causal, budget, and option-schema violations are all 0. This is 250 QA evaluated under two policies, not the pending 500-QA expansion |
+| Option-aware retrieval validation | Complete for 100 videos; full strategy matrix pending | 2 policies × 500 QA = 1,000 records across `sample_1`–`sample_100`; combined Option-Semantic accuracy is 50.8% and Option-Semantic-Diverse is 50.6%; causal, budget, option-schema, and runtime violations are all 0 |
 | Task 8 smoke and documentation | Complete after this update | One-sample mock and real SmolVLM semantic-diverse smoke evidence is recorded below |
-| Full semantic accuracy validation | Complete for available 250 QA; 100-video expansion pending | 5 policies × 250 QA = 1,250 records; `runtime_failed=0`; causal and budget violations are both 0; current annotations cover only `real-time-1-50`, so the 100-video/500-QA expansion remains pending |
+| Full semantic accuracy validation | Complete for the 50-video subset; partial at 100-video scale | Five-policy validation is complete on 250 QA from `real-time-1-50`; at 100-video scale, Recent-8, Recent-4, Timestamp-aware-Memory-4, and both Option-aware policies have measured results, while Uniform-8 and Q-only semantic policies still need a full run |
 
 ## Research scope
 
@@ -110,7 +110,7 @@ proven accuracy gain.
 | CLIP cache | `E:\NewApplication\CodeToRun\forCV\streaming-video-understanding\hf_cache\hub\models--openai--clip-vit-base-patch32`; approximately **1157.8 MiB** (about **1.16 GB**) measured after download, including cache artifacts |
 | Mock semantic-diverse smoke | `processed=1 skipped=0`; selected/input frames `5`; `query_time=4.0`; timestamps `0..4`; trace count `1`; `retrieval_latency_ms=990.394 ms`; mock pipeline evidence only |
 | Real SmolVLM semantic-diverse smoke | `processed=1 skipped=0`; no OOM; `input_frames=5`; timestamps `0..4`; trace count `1`; `retrieval_ms=493.4114`; `model_latency_ms=3433.9946`; record `latency_ms=4201.0253`; `peak_gpu_memory_mb=2877.4521`; profile `total_ms=4702.2538` |
-| Full semantic accuracy | **Complete for available 250 QA**; 5 policies × 250 QA = 1,250 records; 100-video/500-QA expansion remains pending because annotations cover only `real-time-1-50` |
+| Full semantic accuracy | **Complete for the 50-video subset**; 5 policies × 250 QA = 1,250 records. The 100-video scale currently has measured Recent-8, Recent-4, Timestamp-aware, and Option-aware results, while Uniform-8 and Q-only semantic full runs remain open |
 
 ### Available 250-QA semantic validation
 
@@ -169,6 +169,41 @@ Retrieval latency is affected by shared image-feature-cache warm-up and policy
 execution order. The first option-aware policy includes more cache work, while
 the second mostly reads warm features; the timing values should be interpreted
 with this caveat.
+
+## Scale-100 Option-aware expansion (2026-10-05)
+
+The 51-100 archive was extracted from the previously verified local archive and
+evaluated with the two Option-aware policies. The run used the main
+`data/streamingbench` root after an initial worktree path mismatch was
+diagnosed; existing 1-50 results were preserved.
+
+| Scope | Records | Result |
+|---|---:|---|
+| 1-50, Option-Semantic-Memory-4 | 250 | 65.6% |
+| 1-50, Option-Semantic-Diverse-Memory-4 | 250 | 65.6% |
+| 51-100, Option-Semantic-Memory-4 | 250 | 36.0% |
+| 51-100, Option-Semantic-Diverse-Memory-4 | 250 | 35.6% |
+| 1-100, Option-Semantic-Memory-4 | 500 | 50.8% |
+| 1-100, Option-Semantic-Diverse-Memory-4 | 500 | 50.6% |
+
+The combined 1-100 run produced 1,000 records with zero runtime errors,
+future-frame violations, frame-budget violations, or option-schema violations.
+Peak GPU memory was approximately 3.83 GB. The large gap between the first and
+second 50-video blocks is recorded as a long-tail / split-difficulty finding,
+not as an accuracy improvement claim.
+
+Still pending at 100-video scale:
+
+- Uniform-8;
+- Q-only semantic-memory and semantic-diverse-memory;
+- Recent-4 + Uniform-Memory-4;
+- full M=8/M=16 and K=16 ablations;
+- calibrated retrieval confidence, option permutation stability, and
+  answer/clarification routing;
+- 100-video failure-case re-sampling and manual analysis.
+
+The detailed handoff for further discussion is
+`PROJECT_STATUS_FOR_GPT_UPDATED.md`.
 
 ## Stop conditions
 
