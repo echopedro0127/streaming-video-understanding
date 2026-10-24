@@ -270,6 +270,15 @@ reported with this caveat rather than treated as a clean cold-start ranking.
 - These one-sample checks do not establish semantic accuracy or an accuracy
   improvement; the full controlled semantic accuracy is reported above.
 
+## Selective-memory follow-up
+
+The question-only `adaptive-semantic-v1` policy allocates a fixed eight-frame
+budget among recent context and semantic history, with explicit route traces.
+Implementation, video-cluster paired diagnosis, evidence annotation instructions,
+and experiment status: [Selective memory stage 1](docs/SELECTIVE_MEMORY_STAGE1.md).
+Adaptive real-model accuracy is not yet measured. The existing candidate horizon
+is 60 seconds; persistent incremental ingestion remains future work.
+
 ## Results
 
 Fixed-budget evaluation has been completed on 250 timestamped QA items from

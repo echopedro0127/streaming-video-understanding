@@ -34,7 +34,8 @@ _SEMANTIC_POLICY_PATTERN = re.compile(
 
 def _requires_semantic_scorer(policy_ids: tuple[str, ...]) -> bool:
     return any(
-        _SEMANTIC_POLICY_PATTERN.fullmatch(policy_id.strip())
+        policy_id.strip().lower() == "adaptive-semantic-v1"
+        or _SEMANTIC_POLICY_PATTERN.fullmatch(policy_id.strip())
         for policy_id in policy_ids
     )
 

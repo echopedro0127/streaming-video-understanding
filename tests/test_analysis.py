@@ -37,6 +37,13 @@ def _summary(policy_id: str = "recent-8") -> dict[str, object]:
     }
 
 
+@pytest.mark.parametrize("policy_id", ["adaptive-semantic-v1", "recent-6+semantic-memory-2"])
+def test_selective_memory_policies_are_plot_compatible(policy_id):
+    row = normalize_summary(_summary(policy_id))
+    assert row["policy_id"] == policy_id
+    assert policy_id in DISPLAY_POLICY_ORDER
+
+
 def test_normalize_summary_maps_metrics_and_converts_latency_to_seconds() -> None:
     row = normalize_summary(_summary())
 

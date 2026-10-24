@@ -24,6 +24,20 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Selective-memory follow-up (2026-10-24)
+
+- Implemented `adaptive-semantic-v1`: frozen question-only 8+0 / 6+2 / 4+4
+  allocation with auditable rules; reuses Q-only retrieval and the existing model.
+- Implemented video-cluster paired bootstrap and a blinded 60-QA evidence review
+  queue. All evidence annotations are pending human review.
+- Existing tail-split diagnosis: Recent-8 95/250 versus Option-4+4 90/250;
+  helped/hurt 5/10; delta -2.0 pp, video-cluster CI95 [-5.2, +1.2] pp.
+- Option-aware 6+2 resumed from 126/250 with the original config. Its complete
+  summary and the new adaptive real-model run remain pending.
+- Current candidate horizon is 60 seconds; this is causal prefix evaluation,
+  not yet a persistent incremental ingestion engine.
+- Full method, commands and limitations: `docs/SELECTIVE_MEMORY_STAGE1.md`.
+
 Primary benchmark: StreamingBench `Real-Time Visual Understanding_1-50.zip` (approximately 50 videos and 250 timestamped QA items). The complete 203GB release is intentionally not downloaded.
 
 Primary model: `HuggingFaceTB/SmolVLM2-500M-Video-Instruct`, loaded only when the optional runtime dependencies are installed. The evaluator and all policy tests must work with the mock backend without a GPU.

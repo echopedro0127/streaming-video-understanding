@@ -22,9 +22,11 @@ OPTION_SEMANTIC_POLICY_ORDER = (
     "recent-4+option-semantic-diverse-memory-4",
 )
 ALLOCATION_ABLATION_POLICY_ORDER = ("recent-6+option-semantic-memory-2",)
+SELECTIVE_MEMORY_POLICY_ORDER = ("recent-6+semantic-memory-2", "adaptive-semantic-v1")
 DISPLAY_POLICY_ORDER = (
     POLICY_ORDER
     + SEMANTIC_POLICY_ORDER
+    + SELECTIVE_MEMORY_POLICY_ORDER
     + OPTION_SEMANTIC_POLICY_ORDER
     + ALLOCATION_ABLATION_POLICY_ORDER
 )
@@ -41,6 +43,8 @@ POLICY_LABELS = {
         "Recent-4 + Option-Semantic-Diverse-Memory-4"
     ),
     "recent-6+option-semantic-memory-2": "Recent-6 + Option-Semantic-Memory-2",
+    "recent-6+semantic-memory-2": "Recent-6 + Semantic-Memory-2",
+    "adaptive-semantic-v1": "Question-Routed Semantic Memory (v1)",
 }
 
 _REQUIRED_FIELDS = (

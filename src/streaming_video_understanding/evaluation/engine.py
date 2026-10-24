@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import time
 import gc
+from dataclasses import asdict
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -20,6 +21,7 @@ from ..streaming.sampler import (
     uniform_history,
 )
 from ..streaming.semantic import select_semantic_history
+from ..streaming.routing import route_question
 from ..utils.config import ProjectConfig
 from .failures import FailureStore
 from .profiling import RuntimeProfileStore
@@ -47,6 +49,10 @@ def _reset_gpu_peak_memory() -> None:
 
 def _policy_parts(policy_id: str, budget: int) -> tuple[str, int, int]:
     normalized = policy_id.lower().strip()
+    if normalized == "adaptive-semantic-v1":
+        if budget != 8:
+            raise ValueError("adaptive-semantic-v1 requires visual_budget=8")
+        return "adaptive", 8, 0
     if normalized in {"recent", "recent-window"}:
         return "recent", budget, 0
     if normalized in {"uniform", "uniform-history"}:
@@ -388,8 +394,14 @@ def _evaluate_sample(
     profile_store: RuntimeProfileStore | None = None,
     semantic_scorer: SemanticFrameScorer | OptionAwareFrameScorer | None = None,
 ) -> dict[str, Any]:
-    policy_kind, _, _ = _policy_parts(policy_id, config.experiment.visual_budget)
     total_started = time.perf_counter()
+    _policy_parts(policy_id, config.experiment.visual_budget)
+    route = (
+        route_question(sample.question, budget=config.experiment.visual_budget)
+        if policy_id.lower().strip() == "adaptive-semantic-v1" else None
+    )
+    selection_policy_id = route.resolved_policy_id if route else policy_id
+    policy_kind, _, _ = _policy_parts(selection_policy_id, config.experiment.visual_budget)
     query_time_s = sample.query_time_s
     tolerance_s = config.dataset.timestamp_tolerance_s
     context_start_s = max(0.0, query_time_s - config.dataset.context_horizon_s)
@@ -435,7 +447,7 @@ def _evaluate_sample(
             options=sample.options,
             query_time_s=query_time_s,
             budget=config.experiment.visual_budget,
-            policy_id=policy_id,
+            policy_id=selection_policy_id,
             tolerance_s=tolerance_s,
             semantic_scorer=semantic_scorer,
             candidate_multiplier=config.retrieval.candidate_multiplier,
@@ -457,7 +469,7 @@ def _evaluate_sample(
             query=sample.question,
             query_time_s=query_time_s,
             budget=config.experiment.visual_budget,
-            policy_id=policy_id,
+            policy_id=selection_policy_id,
             tolerance_s=tolerance_s,
             semantic_scorer=semantic_scorer,
             candidate_multiplier=config.retrieval.candidate_multiplier,
@@ -471,7 +483,7 @@ def _evaluate_sample(
             visible_frames,
             query_time_s=query_time_s,
             budget=config.experiment.visual_budget,
-            policy_id=policy_id,
+            policy_id=selection_policy_id,
             tolerance_s=tolerance_s,
         )
         semantic_trace = ()
@@ -508,6 +520,10 @@ def _evaluate_sample(
         "config_id": config_id or policy_id,
         "policy_id": policy_id,
         "question": sample.question,
+        "task_type": sample.task_type,
+        "temporal_clue_type": sample.temporal_clue_type,
+        "context_start_s": context_start_s,
+        "context_horizon_s": config.dataset.context_horizon_s,
         "query_time_s": query_time_s,
         "ground_truth": sample.answer,
         "prediction": model_response.answer,
@@ -536,6 +552,8 @@ def _evaluate_sample(
         "sample_fps": config.runtime.sample_fps,
         "retrieval_latency_ms": retrieval_latency_ms,
     }
+    if route is not None:
+        record["routing"] = asdict(route)
     if policy_kind in {
         "semantic",
         "semantic-diverse",
