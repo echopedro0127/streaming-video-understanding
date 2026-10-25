@@ -1,6 +1,6 @@
 # Selective temporal memory: stage 1
 
-Updated: 2026-10-24 (Asia/Shanghai).
+Updated: 2026-10-25 (Asia/Shanghai).
 
 ## Implemented
 
@@ -110,12 +110,36 @@ allocation ablation and must not be presented as the same retrieval algorithm.
 
 ## Running and remaining experiments
 
-- The existing Option-Semantic-6+2 evaluation was resumed from 126/250 completed
-  rows with its original configuration and config ID. Full paired 6+2 summaries
-  must wait for all 250 rows and causal/budget/key audits.
-- Adaptive routing has synthetic/mock evaluator and CLI-resume tests. Its
-  real-model smoke and accuracy run are pending the GPU slot. No adaptive accuracy
-  improvement is claimed.
+- Option-Semantic-6+2 is complete: 250/250 QA from videos 51–100, 93 correct
+  (37.2%), zero missing IDs, duplicate keys, future-frame violations,
+  recent/memory/readout budget violations, or runtime failures. All rows use the
+  original config ID `recent-6+option-semantic-memory-2-0f9adb02ff39`.
+- Relative to Recent-8 (95/250), 6+2 helped 4 and hurt 6: -0.8 pp,
+  video-cluster bootstrap CI95 [-3.2, +1.6] pp.
+- Relative to Option-4+4 (90/250), 6+2 helped 4 and hurt 1: +1.2 pp,
+  CI95 [-0.4, +2.8] pp. Both intervals span zero; a stable gain has not
+  been established. No rules are changed based on these outcomes.
+- Legacy decode-plus-model latency: mean 25.948 s, P50 24.132 s, P95 54.483 s;
+  peak allocated GPU memory 3834.31 MiB; average input 7.98 frames.
+  The 250-row profile reports mean pipeline time 26.045 s, decode 23.199 s,
+  retrieval 0.083 s, processor 0.786 s and generation 1.962 s. This resumed run
+  spans sessions and cache states, so it does not establish a controlled speedup.
+- An initial five-QA real adaptive smoke succeeded on sample_51; all five
+  questions use the current route. A separate three-QA route-coverage split
+  `configs/splits/adaptive-routing-smoke-tail.json` covers current, unspecified
+  and counting routes: all three completed, actual allocations were 8+0 / 6+2 /
+  4+4, all input/causal/route-budget checks passed, and no runtime failures were
+  found. A real-model resume returned `processed=0 skipped=3`; the output SHA256
+  remained `EC46B287ED22E9F99CB991E566D96A62EB7336A5724CD6DBE93D96AC83A2B71A`.
+  No explicit-history question exists in the tail split
+  under the frozen v1 rules; that branch has synthetic coverage only.
+- Adaptive full tail-split evaluation is now running in
+  `results/adaptive-semantic-v1-real-time-51-100.jsonl`, seeded with the three
+  audited smoke records and matching profile/failure sidecars. It uses config ID
+  `adaptive-semantic-v1-e81bd6be6411`; the resumed evaluator skips those keys.
+  The process is followed by a 250-row coverage/causal/budget/runtime audit,
+  runtime summary, exact Recent-8 pairing and video-cluster diagnosis. Each stage
+  stops on failure. No adaptive accuracy improvement is claimed before completion.
 - During the first 14 newly resumed records, decoding accounted for 88.92% of
   legacy `latency_ms`. This is a partial-run observation, not a full benchmark
   result. Existing `latency_ms` is decode plus model time; use the profile's
@@ -124,3 +148,25 @@ allocation ablation and must not be presented as the same retrieval algorithm.
   and reconstructs memory for each QA. A fixed eight-frame model input does not
   establish bounded total RAM/disk or incremental encoding. Event writing and
   true incremental ingestion remain subsequent, separately controlled packages.
+
+### Completed 6+2 artifacts
+
+- `results/option-semantic-6plus2-real-time-51-100.jsonl` and its summary/profile;
+- `results/analysis/51-100-recent8-vs-6plus2-*`;
+- `results/analysis/51-100-option4-vs-6plus2-*`;
+- cluster uncertainty: `results/analysis/2026-10-25-6plus2-diagnosis/diagnosis.json`
+  and `results/analysis/2026-10-25-option4-vs-6plus2-diagnosis/diagnosis.json`.
+
+These are local generated artifacts. The evidence-review queues remain pending;
+the earlier 60-row v2 queue is the primary annotation set to avoid multiplying
+manual work. H1 frame overlap and H3 keyword counts are proxies; H2 retrieval
+agreement is not calibrated confidence; H4 both-wrong cases do not alone identify
+the answerer as the cause.
+
+Small completed summaries, paired uncertainty and source hashes are published
+under [`experiments/2026-10-25`](../experiments/2026-10-25/README.md), without raw
+videos, model weights or machine-specific paths.
+
+The model selected option C in 162/250 cases (64.8%), while C is the correct
+position in 54/250 (21.6%). This motivates later option-permutation checks;
+it does not prove position bias independently of content and task difficulty.

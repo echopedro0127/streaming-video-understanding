@@ -1,0 +1,9 @@
+{
+  "split": "adaptive-routing-smoke-tail",
+  "description": "Three tail-split QA covering the current, unspecified and repeated-counting question-rule routes. No explicit-history route exists in this tail split under v1 rules.",
+  "sample_ids": [
+    "Real-Time Visual Understanding_sample_51_1",
+    "Real-Time Visual Understanding_sample_57_2",
+    "Real-Time Visual Understanding_sample_71_1"
+  ]
+}

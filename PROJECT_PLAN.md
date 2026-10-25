@@ -32,8 +32,13 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
   queue. All evidence annotations are pending human review.
 - Existing tail-split diagnosis: Recent-8 95/250 versus Option-4+4 90/250;
   helped/hurt 5/10; delta -2.0 pp, video-cluster CI95 [-5.2, +1.2] pp.
-- Option-aware 6+2 resumed from 126/250 with the original config. Its complete
-  summary and the new adaptive real-model run remain pending.
+- Option-aware 6+2 completed 250/250 on videos 51–100: 93 correct (37.2%),
+  audit violations/runtime failures 0. Against Recent-8: helped/hurt 4/6,
+  -0.8 pp (CI95 [-3.2, +1.6]); against Option-4+4: 4/1, +1.2 pp
+  (CI95 [-0.4, +2.8]). Published small summaries: `experiments/2026-10-25/`.
+- Adaptive current/unspecified/counting real smoke completed 3/3; real resume
+  skipped all 3 with unchanged output checksum. Full 250-QA tail evaluation is
+  running with automatic completion audit and Recent-8 pairing; accuracy pending.
 - Current candidate horizon is 60 seconds; this is causal prefix evaluation,
   not yet a persistent incremental ingestion engine.
 - Full method, commands and limitations: `docs/SELECTIVE_MEMORY_STAGE1.md`.

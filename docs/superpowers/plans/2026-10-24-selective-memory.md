@@ -17,7 +17,7 @@ No answer, task label, evidence annotation, or future frame is visible to the ro
 
 ## Work packages and verification
 
-- [ ] 1. Resume `results/option-semantic-6plus2-real-time-51-100.jsonl` using the
+- [x] 1. Resume `results/option-semantic-6plus2-real-time-51-100.jsonl` using the
   unchanged config/derived annotation. Verify unique sample/config keys, causal
   boundary, 6/2/8 limits, runtime failures and 250 completed rows before summary.
   Run `scripts/benchmark_runtime.py` and both `scripts/analyze_policy_pairs.py`
@@ -32,7 +32,7 @@ No answer, task label, evidence annotation, or future frame is visible to the ro
   `configs/adaptive-semantic-1fps.yaml`. New ID `adaptive-semantic-v1` fixes B=8;
   revision requires a new version/ID to avoid invalid resume reuse. Preserve
   existing latency field semantics; publish full end-to-end profile separately.
-- [ ] 4. Verify focused and full tests; run synthetic/mock routing and real-model
+- [x] 4. Verify focused and full tests; run synthetic/mock routing and real-model
   smoke with distinct outputs and resume. Run GPU jobs sequentially.
 - [x] 5. Add reusable diagnostic report with video-cluster paired bootstrap,
   per-route groups explicitly labeled rule proxies, plus an evidence review queue
@@ -41,10 +41,18 @@ No answer, task label, evidence annotation, or future frame is visible to the ro
 - [x] 6. Update PROJECT_PLAN.md and a dated experiment report with exact counts,
   commands and limitations. Commit only source/config/tests/public reports.
 
-Checkpoint: full suite 427 passed; independent review verified old baseline
+Checkpoint (2026-10-25): 6+2 completed 250/250 with zero audit/runtime violations.
+Recent-8 vs 6+2: 95 vs 93 correct, helped/hurt 4/6, CI95 [-3.2,+1.6] pp.
+Option-4+4 vs 6+2: 90 vs 93 correct, helped/hurt 4/1, CI95 [-0.4,+2.8] pp.
+Initial real adaptive smoke completed five current-route QA. Balanced three-route
+real smoke completed 3/3; real resume returned processed=0/skipped=3 with an
+unchanged checksum. Full adaptive 250-QA run is active with completion audits
+and exact Recent-8 pair analysis scheduled after successful inference.
+
+Full suite 427 passed; independent review verified old baseline
 selection and old configuration hashes, and prompted a review-order blinding fix.
-Synthetic adaptive CLI smoke and resume passed. Real adaptive smoke waits for
-the existing 6+2 job; do not mark work packages 1 or 4 complete prematurely.
+Synthetic adaptive CLI smoke and resume passed. Full adaptive QA accuracy is
+still unmeasured; no accuracy improvement is claimed.
 
 ## Research boundaries and subsequent packages
 

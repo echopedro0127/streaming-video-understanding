@@ -1,0 +1,56 @@
+{
+  "accuracy_delta": -0.008,
+  "baseline_accuracy": 0.38,
+  "baseline_policy": "recent-8",
+  "bootstrap": {
+    "ci95": [
+      -0.032,
+      0.016
+    ],
+    "method": "paired cluster percentile",
+    "n_resamples": 2000,
+    "seed": 42,
+    "unit": "video",
+    "warning": null
+  },
+  "candidate_accuracy": 0.372,
+  "candidate_policy": "recent-6+option-semantic-memory-2",
+  "evidence_review_sampling": {
+    "method": "paired-outcome-balanced",
+    "n_rows": 60,
+    "seed": 42,
+    "status": "unannotated"
+  },
+  "grouping_note": "Question-rules-v1 groups are lexical proxies, not evidence labels or calibrated confidence.",
+  "helped": 4,
+  "hurt": 6,
+  "n_pairs": 250,
+  "n_videos": 50,
+  "route_proxy_groups": {
+    "counting": {
+      "accuracy_delta": 0.0,
+      "baseline_accuracy": 0.22666666666666666,
+      "candidate_accuracy": 0.22666666666666666,
+      "helped": 3,
+      "hurt": 3,
+      "n_pairs": 150
+    },
+    "current": {
+      "accuracy_delta": -0.02040816326530612,
+      "baseline_accuracy": 0.6020408163265306,
+      "candidate_accuracy": 0.5816326530612245,
+      "helped": 1,
+      "hurt": 3,
+      "n_pairs": 98
+    },
+    "unspecified": {
+      "accuracy_delta": 0.0,
+      "baseline_accuracy": 1.0,
+      "candidate_accuracy": 1.0,
+      "helped": 0,
+      "hurt": 0,
+      "n_pairs": 2
+    }
+  },
+  "video_macro_accuracy_delta": -0.008
+}
