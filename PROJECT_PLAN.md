@@ -24,6 +24,20 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Causal temporal coverage probe (2026-10-26)
+
+- Complete: frozen20QA/20videos, threeMCQconditions,60generations. SameB8/model;
+  Recent-8,60s time bins and whole-prefix time bins all score3/20(15%).
+- Mean selected spans7.007/45.696/200.350s; wider span alone yields no gain.
+  Both paired helped/hurt0/0; degenerate bootstrap[0,0] is not population equivalence.
+- Audit/runtime violations0; historical Recent-8 frames/predictions match20/20;
+  five short-prefix controls agree. Retained-image peak23 (bound24+incoming).
+  Smoke/full resume skip3/20 unchanged. Full suite492passed.
+- Three preselected cases reviewed from1FPS contact sheets; observations are
+  assistant-generated and pending human verification, not evidence labels.
+- Report: `experiments/2026-10-26/context-coverage/README.md`.
+  Next: verify event intervals before event-change/cumulative-state diagnostics.
+
 ### Choice-free counting pilot (2026-10-26)
 
 - Completed 20 paired QA / 40 generations on 20 videos excluded from the earlier

@@ -1,0 +1,89 @@
+{
+  "conditions": {
+    "recent-8": {
+      "accuracy": 0.15,
+      "correct": 3,
+      "mean_model_latency_ms": 2404.004554997664,
+      "mean_oldest_frame_age_s": 7.779050000000001,
+      "mean_temporal_span_s": 7.007,
+      "p95_model_latency_ms": 2885.720895008126,
+      "parse_valid_count": 20
+    },
+    "time-bin-60s-8": {
+      "accuracy": 0.15,
+      "correct": 3,
+      "mean_model_latency_ms": 2305.436089998693,
+      "mean_oldest_frame_age_s": 48.97019999999999,
+      "mean_temporal_span_s": 45.69564999999999,
+      "p95_model_latency_ms": 2571.476120009902,
+      "parse_valid_count": 20
+    },
+    "time-bin-prefix-8": {
+      "accuracy": 0.15,
+      "correct": 3,
+      "mean_model_latency_ms": 2327.0838649987127,
+      "mean_oldest_frame_age_s": 214.58565,
+      "mean_temporal_span_s": 200.35015,
+      "p95_model_latency_ms": 2555.114524993405,
+      "parse_valid_count": 20
+    }
+  },
+  "config_id": "context-coverage-v1-8cff49fa1e3a",
+  "inference_calls": 60,
+  "mean_ingest_and_optional_render_ms": 16635.609335002664,
+  "num_samples": 20,
+  "num_videos": 20,
+  "paired": {
+    "time-bin-60s-8_vs_recent-8": {
+      "accuracy_delta": 0.0,
+      "bootstrap": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "method": "paired cluster percentile",
+        "n_resamples": 2000,
+        "seed": 42,
+        "unit": "video",
+        "warning": null
+      },
+      "helped": 0,
+      "hurt": 0
+    },
+    "time-bin-prefix-8_vs_recent-8": {
+      "accuracy_delta": 0.0,
+      "bootstrap": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "method": "paired cluster percentile",
+        "n_resamples": 2000,
+        "seed": 42,
+        "unit": "video",
+        "warning": null
+      },
+      "helped": 0,
+      "hurt": 0
+    }
+  },
+  "peak_retained_images": 23,
+  "peak_shared_gpu_memory_mb": 3537.18115234375,
+  "protocol": {
+    "annotation_sha256": "b9ca9584d4f5aff717b64b0e1e606e188a76d12782045d55de503ca046d0f888",
+    "bin_rule": "within-bin closest to centre; earlier timestamp/id ties",
+    "budget": 8,
+    "order": "rotate recent/window/prefix by sorted sample index",
+    "prefix_scope": "all sampled frames at or before query, known query time",
+    "review_sample_ids": {
+      "long": "Real-Time Visual Understanding_sample_80_2",
+      "medium": "Real-Time Visual Understanding_sample_100_3",
+      "short": "Real-Time Visual Understanding_sample_84_1"
+    },
+    "source_config_id": "recent-8-49853eb6e9ba",
+    "split_sha256": "2f97f2e1fbfa000eaf0de53255d4969bb1ea140868096083b5f4975e14d8413c",
+    "version": "context-coverage-v1",
+    "window_s": 60
+  },
+  "scope": "Query-aware causal coverage diagnostic, not evidence recall or persistent streaming memory"
+}

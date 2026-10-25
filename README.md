@@ -1,5 +1,9 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
+Latest diagnostic (2026-10-26): fixed8-frame temporal coverage on20countingQA,
+60generations; Recent-8 /60s bins /prefix bins all3/20(15%). Wider temporal span
+alone did not improve this pilot. See [protocol, audit and limitations](experiments/2026-10-26/context-coverage/README.md).
+
 一个面向 streaming video understanding 的小型、可复现研究工程。项目比较固定视觉预算下的 recent-window、uniform-history，以及“recent local context + compressed global memory”策略，并显式检查 query timestamp 之后的帧不能进入推理。
 
 ## Motivation
