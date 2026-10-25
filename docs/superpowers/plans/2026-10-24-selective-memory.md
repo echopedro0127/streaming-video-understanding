@@ -46,13 +46,16 @@ Recent-8 vs 6+2: 95 vs 93 correct, helped/hurt 4/6, CI95 [-3.2,+1.6] pp.
 Option-4+4 vs 6+2: 90 vs 93 correct, helped/hurt 4/1, CI95 [-0.4,+2.8] pp.
 Initial real adaptive smoke completed five current-route QA. Balanced three-route
 real smoke completed 3/3; real resume returned processed=0/skipped=3 with an
-unchanged checksum. Full adaptive 250-QA run is active with completion audits
-and exact Recent-8 pair analysis scheduled after successful inference.
+unchanged checksum. Full adaptive run completed 250/250 QA and profiles, with
+92 correct (36.8%) and zero audit/runtime violations. Against Recent-8: helped 4,
+hurt 7, delta -1.2 pp, video-cluster CI95 [-4.0,+1.6] pp. All 98 current-route
+predictions and manifests match Recent-8; counting is 31/150 versus 34/150.
 
 Full suite 427 passed; independent review verified old baseline
 selection and old configuration hashes, and prompted a review-order blinding fix.
-Synthetic adaptive CLI smoke and resume passed. Full adaptive QA accuracy is
-still unmeasured; no accuracy improvement is claimed.
+Synthetic adaptive CLI smoke and resume passed. Full adaptive results are
+recorded in `docs/SELECTIVE_MEMORY_STAGE1.md` and `experiments/2026-10-25/`.
+No accuracy improvement is claimed.
 
 ## Research boundaries and subsequent packages
 

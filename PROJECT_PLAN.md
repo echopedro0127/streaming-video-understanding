@@ -37,8 +37,11 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
   -0.8 pp (CI95 [-3.2, +1.6]); against Option-4+4: 4/1, +1.2 pp
   (CI95 [-0.4, +2.8]). Published small summaries: `experiments/2026-10-25/`.
 - Adaptive current/unspecified/counting real smoke completed 3/3; real resume
-  skipped all 3 with unchanged output checksum. Full 250-QA tail evaluation is
-  running with automatic completion audit and Recent-8 pairing; accuracy pending.
+  skipped all 3 with unchanged output checksum. Full tail evaluation completed
+  250/250: 92 correct (36.8%), audit/runtime violations 0; against Recent-8,
+  helped/hurt 4/7, -1.2 pp, video-cluster CI95 [-4.0, +1.6] pp.
+- All 98 current-route predictions and frame manifests match Recent-8 exactly;
+  the counting group is 31/150 versus 34/150. No overall improvement established.
 - Current candidate horizon is 60 seconds; this is causal prefix evaluation,
   not yet a persistent incremental ingestion engine.
 - Full method, commands and limitations: `docs/SELECTIVE_MEMORY_STAGE1.md`.

@@ -276,8 +276,11 @@ The question-only `adaptive-semantic-v1` policy allocates a fixed eight-frame
 budget among recent context and semantic history, with explicit route traces.
 Implementation, video-cluster paired diagnosis, evidence annotation instructions,
 and experiment status: [Selective memory stage 1](docs/SELECTIVE_MEMORY_STAGE1.md).
-Adaptive real-model accuracy is not yet measured. The existing candidate horizon
-is 60 seconds; persistent incremental ingestion remains future work.
+On videos 51–100 (250 QA), adaptive routing scored 36.8% versus Recent-8's 38.0%
+(paired delta -1.2 pp, video-cluster CI95 [-4.0, +1.6] pp). No overall gain was
+established. Public summaries: [completed experiments](experiments/2026-10-25/README.md).
+The existing candidate horizon is 60 seconds; persistent incremental ingestion
+remains future work.
 
 ## Results
 

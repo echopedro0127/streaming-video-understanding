@@ -9,6 +9,7 @@ Model: SmolVLM2-500M-Video-Instruct; CLIP ViT-B/32 retrieval; 1 FPS;
 | Recent-8 | 95/250 | 38.0% |
 | Recent-4 + Option-Semantic-Memory-4 | 90/250 | 36.0% |
 | Recent-6 + Option-Semantic-Memory-2 | 93/250 | 37.2% |
+| Q-only Adaptive-Semantic-v1 | 92/250 | 36.8% |
 
 The 6+2 run passed exact split coverage, unique sample/config key, causal frame,
 6/2/8 capacity and runtime-failure audits. The unrounded summary and two paired
@@ -36,7 +37,33 @@ cache/session timings are descriptive, not a controlled speedup claim. Summary
 latency is the legacy decode-plus-model field; broader profile total excludes
 wrapper cleanup. GPU memory is allocated peak in MiB, not total process memory.
 
-These results evaluate **option-aware fixed allocation**, not the new Q-only
-adaptive router. The repository's question-rule groups and blank evidence-review
-queues are diagnostic aids, not human evidence labels. The generated queues
-have not been annotated.
+The fixed memory policies use option-aware retrieval; the adaptive policy uses
+Q-only retrieval. Their comparison does not isolate allocation from retrieval.
+The repository's question-rule groups and blank evidence-review queues are
+diagnostic aids, not human evidence labels. No queue has been annotated.
+
+## Completed adaptive evaluation
+
+Config: `configs/adaptive-semantic-1fps.yaml`;
+config ID: `adaptive-semantic-v1-e81bd6be6411`.
+The final resume processed 201 and skipped 49 existing records. The 250 records
+and 250 profiles passed split coverage, identity, causal/horizon/budget and
+correctness checks. Runtime failures, duplicate keys and missing profiles: zero.
+
+Against Recent-8: helped 4, hurt 7, delta -1.2 pp, video-cluster bootstrap
+CI95 [-4.0,+1.6] pp. No overall improvement established.
+
+- Current route: 59/98 versus baseline 59/98; all predictions and frame manifests
+  match exactly (98/98).
+- Counting route: 31/150 versus 34/150; helped 4, hurt 7.
+- Unspecified: 2/2 versus 2/2; explicit-history: no real samples.
+
+Latency mean/P50/P95: 21.101/18.024/48.922 s; allocated GPU peak 3834.31 MiB;
+mean input 7.98 frames. Timings span sessions/cache states and do not establish
+a controlled speedup. Full raw-output SHA256 is
+`517C38544D8E5DEE0EB05372DE3803DB4FED72D13E95B251DD75265EF48B2CAA`.
+
+Machine-readable evidence: `adaptive-semantic-v1-tail-summary.json`,
+`recent8-vs-adaptive-v1-diagnosis.json`, `adaptive-semantic-v1-tail-audit.json`.
+The next diagnostic step is reviewing the 11 helped/hurt cases and annotating
+evidence; these outcomes alone do not establish the mechanism behind the loss.

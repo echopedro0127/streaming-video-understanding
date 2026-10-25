@@ -133,13 +133,14 @@ allocation ablation and must not be presented as the same retrieval algorithm.
   remained `EC46B287ED22E9F99CB991E566D96A62EB7336A5724CD6DBE93D96AC83A2B71A`.
   No explicit-history question exists in the tail split
   under the frozen v1 rules; that branch has synthetic coverage only.
-- Adaptive full tail-split evaluation is now running in
+- Adaptive full tail-split evaluation completed 250/250 in
   `results/adaptive-semantic-v1-real-time-51-100.jsonl`, seeded with the three
   audited smoke records and matching profile/failure sidecars. It uses config ID
-  `adaptive-semantic-v1-e81bd6be6411`; the resumed evaluator skips those keys.
-  The process is followed by a 250-row coverage/causal/budget/runtime audit,
-  runtime summary, exact Recent-8 pairing and video-cluster diagnosis. Each stage
-  stops on failure. No adaptive accuracy improvement is claimed before completion.
+  `adaptive-semantic-v1-e81bd6be6411`. The final resume processed 201 and skipped
+  49 existing records. Coverage, identity, causal/horizon/budget, correctness and
+  profile audits passed: 250 QA and 250 profiles, zero missing/duplicate keys,
+  protocol violations or runtime failures. The failure sidecar contains 158
+  incorrect answers, not execution errors.
 - During the first 14 newly resumed records, decoding accounted for 88.92% of
   legacy `latency_ms`. This is a partial-run observation, not a full benchmark
   result. Existing `latency_ms` is decode plus model time; use the profile's
@@ -170,3 +171,43 @@ videos, model weights or machine-specific paths.
 The model selected option C in 162/250 cases (64.8%), while C is the correct
 position in 54/250 (21.6%). This motivates later option-permutation checks;
 it does not prove position bias independently of content and task difficulty.
+
+### Completed adaptive evaluation
+
+| Policy | Correct / 250 | Accuracy |
+|---|---:|---:|
+| Recent-8 | 95 | 38.0% |
+| Option-Semantic-4+4 | 90 | 36.0% |
+| Option-Semantic-6+2 | 93 | 37.2% |
+| Q-only Adaptive-Semantic-v1 | 92 | 36.8% |
+
+Adaptive versus Recent-8: helped 4, hurt 7, delta -1.2 pp; paired video-cluster
+CI95 [-4.0, +1.6] pp, 2,000 resamples, seed 42. There is no established overall
+gain. The option-aware policies differ in both retrieval and allocation; this
+table is not an isolation of the router's effect against matched Q-only controls.
+
+| Question-rule proxy | QA | Recent-8 correct | Adaptive correct | Helped / hurt |
+|---|---:|---:|---:|---:|
+| Current | 98 | 59 | 59 | 0 / 0 |
+| Repeated-event counting | 150 | 34 | 31 | 4 / 7 |
+| Unspecified | 2 | 2 | 2 | 0 / 0 |
+
+All 98 current-route predictions and selected-frame manifests match Recent-8
+exactly. Thus the current route preserves that baseline on this subset, while
+the counting route accounts for the observed net loss of three correct answers.
+This localizes the difference but does not identify whether missing evidence,
+the 60-second horizon or the answerer caused it. Inspect the 11 helped/hurt cases
+before changing rules. Explicit-history routing has no real samples in this split.
+
+Adaptive legacy latency: mean 21.101 s, P50 18.024 s, P95 48.922 s; peak allocated
+GPU memory 3834.31 MiB; mean input 7.98 frames. Mean profile total is 21.151 s,
+decode 18.589 s, retrieval 0.035 s, processor 0.617 s and generation 1.895 s.
+Multiple sessions/cache states preclude a controlled speedup claim. Option C is
+predicted 168/250 times (67.2%); this remains a descriptive imbalance only.
+
+Artifacts:
+
+- `results/adaptive-semantic-v1-real-time-51-100.jsonl`, summary and profile;
+- `results/analysis/51-100-recent8-vs-adaptive-v1-*` (4 helped, 7 hurt cases);
+- `results/analysis/2026-10-25-adaptive-v1-diagnosis/diagnosis.json`;
+- public summaries, audit and source hash under `experiments/2026-10-25/`.

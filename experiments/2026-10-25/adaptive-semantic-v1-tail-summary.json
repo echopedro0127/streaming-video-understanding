@@ -1,0 +1,31 @@
+{
+  "accuracy_by_ground_truth_position": {
+    "A": 0.2112676056338028,
+    "B": 0.39344262295081966,
+    "C": 0.8333333333333334,
+    "D": 0.125
+  },
+  "average_input_frames": 7.98,
+  "average_retained_frames": 7.98,
+  "compression_ratio": 0.20285793625141688,
+  "ground_truth_distribution": {
+    "A": 71,
+    "B": 61,
+    "C": 54,
+    "D": 64
+  },
+  "mean_latency_ms": 21101.28737280052,
+  "num_samples": 250,
+  "p50_latency_ms": 18024.357149988646,
+  "p95_latency_ms": 48921.86792998548,
+  "peak_gpu_memory_mb": 3834.3125,
+  "prediction_distribution": {
+    "A": 31,
+    "B": 43,
+    "C": 168,
+    "D": 8
+  },
+  "question_accuracy": 0.368,
+  "throughput_samples_per_s": 0.04739047349731828,
+  "video_macro_accuracy": 0.36800000000000005
+}
