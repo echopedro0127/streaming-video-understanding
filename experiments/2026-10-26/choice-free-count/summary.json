@@ -1,0 +1,58 @@
+{
+  "config_id": "choice-free-count-v1-840c22f32657",
+  "inference_calls": 40,
+  "mean_shared_decode_ms": 15900.79865000298,
+  "methods": {
+    "count": {
+      "accuracy": 0.1,
+      "correct": 2,
+      "mean_model_latency_ms": 2269.4042699964484,
+      "outside_option_count": 15,
+      "p50_model_latency_ms": 2284.1120499942917,
+      "p95_model_latency_ms": 2455.073264974635,
+      "parse_valid_count": 20,
+      "parse_valid_rate": 1.0,
+      "valid_count_mae": 3.2,
+      "valid_count_mae_denominator": 20
+    },
+    "mcq": {
+      "accuracy": 0.15,
+      "correct": 3,
+      "mean_model_latency_ms": 2441.139750002185,
+      "outside_option_count": 0,
+      "p50_model_latency_ms": 2345.6957500020508,
+      "p95_model_latency_ms": 3047.5303250132133,
+      "parse_valid_count": 20,
+      "parse_valid_rate": 1.0,
+      "valid_count_mae": 1.85,
+      "valid_count_mae_denominator": 20
+    }
+  },
+  "num_samples": 20,
+  "num_videos": 20,
+  "paired": {
+    "accuracy_delta": -0.05,
+    "bootstrap": {
+      "ci95": [
+        -0.25,
+        0.15
+      ],
+      "method": "paired cluster percentile",
+      "n_resamples": 2000,
+      "seed": 42,
+      "unit": "video",
+      "warning": null
+    },
+    "helped": 2,
+    "hurt": 3
+  },
+  "peak_shared_gpu_memory_mb": 3537.18115234375,
+  "protocol": {
+    "annotation_sha256": "b9ca9584d4f5aff717b64b0e1e606e188a76d12782045d55de503ca046d0f888",
+    "order": "count-first at odd index in sorted frozen IDs",
+    "source_config_id": "recent-8-49853eb6e9ba",
+    "split_sha256": "2f97f2e1fbfa000eaf0de53255d4969bb1ea140868096083b5f4975e14d8413c",
+    "version": "choice-free-count-v1"
+  },
+  "scope": "Counting pilot, video-disjoint from the 11-case diagnostic, not pristine unseen data"
+}

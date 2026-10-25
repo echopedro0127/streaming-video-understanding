@@ -289,6 +289,10 @@ reproduced the original predictions, but answer-content consistency under two
 option permutations was 27.3% (Recent-8) and 31.8% (adaptive). These are diagnostic
 stability figures, not benchmark accuracies. See [protocol and audit](experiments/2026-10-26/README.md).
 
+A separate fixed-Recent-8 readout pilot on 20 videos disjoint from that diagnostic
+scored 15% with MCQ and 10% with choice-free counting; CI spans zero, no gain
+established. [Pilot and limitations](experiments/2026-10-26/choice-free-count/README.md).
+
 Fixed-budget evaluation has been completed on 250 timestamped QA items from
 50 videos with `SmolVLM2-500M-Video-Instruct` on an RTX 3060 Laptop GPU.
 Every policy used the same causal evaluator and a maximum visual budget of

@@ -1,0 +1,29 @@
+{
+  "split": "counting-readout-video-disjoint-20",
+  "description": "One numeric counting QA per eligible video, video-disjoint from the earlier 11-case diagnostic. Earlier benchmark runs include these videos; not a pristine unseen test.",
+  "selection_seed": "20261026",
+  "selection_rule": "Within each eligible video, minimum SHA256(seed:video_id:sample_id); no answer or correctness filtering.",
+  "excluded_video_ids": ["sample_73", "sample_74", "sample_75", "sample_81", "sample_83", "sample_85", "sample_87", "sample_89", "sample_90", "sample_99"],
+  "sample_ids": [
+    "Real-Time Visual Understanding_sample_100_3",
+    "Real-Time Visual Understanding_sample_71_4",
+    "Real-Time Visual Understanding_sample_72_5",
+    "Real-Time Visual Understanding_sample_76_4",
+    "Real-Time Visual Understanding_sample_77_4",
+    "Real-Time Visual Understanding_sample_78_3",
+    "Real-Time Visual Understanding_sample_79_5",
+    "Real-Time Visual Understanding_sample_80_2",
+    "Real-Time Visual Understanding_sample_82_2",
+    "Real-Time Visual Understanding_sample_84_1",
+    "Real-Time Visual Understanding_sample_86_5",
+    "Real-Time Visual Understanding_sample_88_1",
+    "Real-Time Visual Understanding_sample_91_4",
+    "Real-Time Visual Understanding_sample_92_2",
+    "Real-Time Visual Understanding_sample_93_3",
+    "Real-Time Visual Understanding_sample_94_5",
+    "Real-Time Visual Understanding_sample_95_4",
+    "Real-Time Visual Understanding_sample_96_5",
+    "Real-Time Visual Understanding_sample_97_2",
+    "Real-Time Visual Understanding_sample_98_1"
+  ]
+}

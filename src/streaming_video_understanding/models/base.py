@@ -14,6 +14,8 @@ class ModelRequest:
     options: tuple[str, ...]
     query_time_s: float
     include_timestamps: bool
+    readout_mode: str = "mcq"
+    allow_invalid_answer: bool = False
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,8 @@ class ModelResponse:
     processor_latency_ms: float | None = None
     generation_latency_ms: float | None = None
     postprocess_latency_ms: float | None = None
+    predicted_count: int | None = None
+    parse_valid: bool = True
 
 
 class ModelBackend(Protocol):

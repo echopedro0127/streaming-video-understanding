@@ -4,6 +4,7 @@ import time
 
 from .base import ModelRequest, ModelResponse
 from .prompt import build_prompt, parse_answer_letter
+from .counting import build_count_prompt, parse_count, numeric_options
 
 
 class SmolVLMBackend:
@@ -33,7 +34,12 @@ class SmolVLMBackend:
 
     def infer(self, request: ModelRequest) -> ModelResponse:
         torch = self._torch
-        prompt = build_prompt(
+        if request.readout_mode not in {"mcq", "count"}:
+            raise ValueError(f"Unsupported readout mode: {request.readout_mode}")
+        if request.readout_mode == "count" and request.include_timestamps:
+            raise ValueError("count readout v1 uses no timestamp prompt")
+        counts = numeric_options(request.options) if request.readout_mode == "count" else None
+        prompt = build_count_prompt(request.question) if counts is not None else build_prompt(
             question=request.question,
             options=request.options,
             timestamps_s=request.timestamps_s,
@@ -80,7 +86,22 @@ class SmolVLMBackend:
                 generated_ids[:, input_length:],
                 skip_special_tokens=True,
             )[0]
-            answer = parse_answer_letter(generated_text)
+            predicted_count = parse_count(generated_text) if counts is not None else None
+            parse_valid = counts is None or predicted_count is not None
+            if counts is None:
+                try:
+                    answer = parse_answer_letter(generated_text)
+                except ValueError:
+                    if not request.allow_invalid_answer:
+                        raise
+                    answer = "INVALID_MCQ"
+                    parse_valid = False
+            elif predicted_count is None:
+                answer = "INVALID_COUNT"
+            elif predicted_count not in counts:
+                answer = "OUT_OF_OPTIONS"
+            else:
+                answer = chr(65 + counts.index(predicted_count))
             postprocess_latency_ms = (time.perf_counter() - postprocess_started) * 1000.0
         except torch.cuda.OutOfMemoryError as exc:
             if torch.cuda.is_available():
@@ -96,4 +117,6 @@ class SmolVLMBackend:
             processor_latency_ms=processor_latency_ms,
             generation_latency_ms=generation_latency_ms,
             postprocess_latency_ms=postprocess_latency_ms,
+            predicted_count=predicted_count,
+            parse_valid=parse_valid,
         )

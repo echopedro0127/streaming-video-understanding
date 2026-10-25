@@ -1,5 +1,8 @@
 # Counting-case option-order diagnostic
 
+Follow-up: [choice-free count pilot on 20 video-disjoint QA](choice-free-count/README.md).
+This is separate; the diagnostic results below remain unchanged.
+
 This is a **post-hoc diagnostic on 11 outcome-selected QA**, not a representative
 benchmark or an accuracy improvement claim. Cases are exactly the four helped
 and seven hurt items from the completed Recent-8 versus adaptive-v1 comparison.

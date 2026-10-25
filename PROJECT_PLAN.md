@@ -24,6 +24,18 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Choice-free counting pilot (2026-10-26)
+
+- Completed 20 paired QA / 40 generations on 20 videos excluded from the earlier
+  11-case diagnostic. Frozen answer-independent selection, one QA per video;
+  videos appeared in earlier benchmark runs, so not pristine unseen data.
+- Same Recent-8 images; MCQ/count order 10/10. Accuracy 3/20 vs 2/20, delta -5 pp,
+  CI95 [-25,+15] pp; no gain established. Both parse 20/20; count emits 1 in 17/20,
+  outside choices in 15/20. No nearest-choice repair.
+- Audit/runtime errors 0, MCQ predictions/frames reproduce 20/20. Resume skipped 20
+  unchanged. Tests: 474 passed. Report: `experiments/2026-10-26/choice-free-count/README.md`.
+- Next priority: evidence answerability and event history, not parser/routing tuning.
+
 ### Counting-case diagnosis (2026-10-26)
 
 - Completed 66 inferences on the 11 previously helped/hurt QA: 22 same-config
