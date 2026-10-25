@@ -1,0 +1,27 @@
+{
+  "annotation_status": "pending_human_verification",
+  "source": "Preselected context-coverage contact sheets, assistant observations at1FPS",
+  "not_official_annotations": true,
+  "no_certified_event_counts": true,
+  "excluded_from_selection_and_inference": true,
+  "cases": [
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "query_time_s": 18,
+      "candidate_intervals_s": [],
+      "review_instruction": "Inspect continuous prefix0-18s; no inserted clip apparent in sampled sheet. Empty candidates do not certify absence."
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "query_time_s": 86,
+      "candidate_intervals_s": [],
+      "review_instruction": "Inspect continuous prefix0-86s; presenter/board dominates sampled sheet. Verify absence before assigning count0."
+    },
+    {
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "query_time_s": 185,
+      "candidate_intervals_s": [[81, 99], [99, 125]],
+      "review_instruction": "Review color and monochrome insertions, refine true boundaries, decide counting convention; inspect whole prefix for missed events and distinguish lighting changes near133-159s. Intervals are rough review brackets only."
+    }
+  ]
+}

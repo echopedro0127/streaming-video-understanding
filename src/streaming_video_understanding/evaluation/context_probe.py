@@ -14,6 +14,7 @@ from ..analysis.allocation import allocation_diagnosis
 from ..models.base import ModelRequest
 from ..models.counting import numeric_options
 from ..streaming.context_bank import CONTEXT_MODES, ContextFrameBank
+from ..streaming.change_memory import ChangeMemory
 from .engine import _peak_gpu_memory_mb, _reset_gpu_peak_memory
 from .metrics import _percentile
 
@@ -107,16 +108,33 @@ def _render_selection(bank, path: Path, sample_id: str):
         canvas.close()
 
 
-def evaluate_context_sample(sample, *, reader, backend, order_offset=0, material_dir: Path | None = None):
+def evaluate_context_sample(sample, *, reader, backend, order_offset=0, material_dir: Path | None = None, change_probe=False):
     counts = numeric_options(sample.options)
     started = time.perf_counter()
     bank = ContextFrameBank(query_time_s=sample.query_time_s)
+    change = ChangeMemory(query_time_s=sample.query_time_s) if change_probe else None
     timeline = CausalTimeline(material_dir, sample_id=sample.sample_id, query_time_s=sample.query_time_s) if material_dir else None
-    order = CONTEXT_MODES[order_offset % 3:] + CONTEXT_MODES[:order_offset % 3]
+    modes = ('recent-8', 'time-bin-prefix-8', 'change-4+4') if change_probe else CONTEXT_MODES
+    order = modes[order_offset % 3:] + modes[:order_offset % 3]
+    def observe(image, frame):
+        if change is not None:
+            change.update(image.copy(), frame)
+        if timeline is not None:
+            timeline.add(image, frame)
+    def close_banks():
+        errors = []
+        for owned_bank in (bank, change):
+            if owned_bank is not None:
+                try:
+                    owned_bank.close()
+                except BaseException as exc:
+                    errors.append(exc)
+        if errors:
+            raise errors[0]
     try:
         ingest_started = time.perf_counter()
         for image, frame in reader.read_until(sample.video_path, end_time_s=sample.query_time_s):
-            bank.update(image, frame, on_frame=timeline.add if timeline else None)
+            bank.update(image, frame, on_frame=observe)
         pages = timeline.finish() if timeline else ()
         if material_dir:
             _render_selection(bank, Path(material_dir) / "selection.jpg", sample.sample_id)
@@ -124,12 +142,12 @@ def evaluate_context_sample(sample, *, reader, backend, order_offset=0, material
         _reset_gpu_peak_memory()
         conditions = {}
         for mode in order:
-            frames = bank.frames(mode)
+            frames = change.frames() if mode == 'change-4+4' else bank.frames(mode)
             if len(frames) != 8:
                 raise ValueError(f"{sample.sample_id}: {mode} has {len(frames)} frames, expected8")
             timestamps = tuple(frame.timestamp_s for frame in frames)
             response = backend.infer(ModelRequest(
-                images=bank.images(mode), timestamps_s=timestamps, question=sample.question,
+                images=change.images() if mode == 'change-4+4' else bank.images(mode), timestamps_s=timestamps, question=sample.question,
                 options=sample.options, query_time_s=sample.query_time_s,
                 include_timestamps=False, allow_invalid_answer=True,
             ))
@@ -149,15 +167,19 @@ def evaluate_context_sample(sample, *, reader, backend, order_offset=0, material
                       sampled_prefix_frames=bank.processed_frames, peak_retained_images=bank.peak_retained_images,
                       ingest_and_optional_render_ms=ingest_ms, shared_peak_gpu_memory_mb=_peak_gpu_memory_mb(),
                       rendered_prefix_pages=len(pages), rendered_material=bool(material_dir))
+        if change is not None:
+            record.update(change_memory_peak_images=change.peak_retained_images,
+                          combined_retained_image_bound=32, change_candidates=change.change_candidates,
+                          change_history_scores=change.history_scores())
     except BaseException as primary:
         try:
-            bank.close()
+            close_banks()
         except BaseException as cleanup:
             primary.add_note(f"context bank cleanup failed: {cleanup!r}")
         if timeline:
             timeline.abort()
         raise
-    bank.close()
+    close_banks()
     gc.collect()
     record["pipeline_latency_ms"] = (time.perf_counter() - started) * 1000
     return record
@@ -167,7 +189,10 @@ def summarize_context_probe(rows, *, n_bootstrap=2000):
     if not rows:
         raise ValueError("context probe has no complete samples")
     summaries, paired = {}, {}
-    for mode in CONTEXT_MODES:
+    modes = tuple(sorted(rows[0]['conditions']))
+    if any(set(row['conditions']) != set(modes) for row in rows):
+        raise ValueError('mixed context conditions')
+    for mode in modes:
         results = [row["conditions"][mode] for row in rows]
         summaries[mode] = dict(
             correct=sum(result["count"] == row["ground_truth_count"] for row, result in zip(rows, results)),

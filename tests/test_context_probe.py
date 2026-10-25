@@ -103,7 +103,44 @@ def test_summary_uses_same_qa_denominator_for_each_context():
     assert result["paired"]["time-bin-prefix-8_vs_recent-8"]["accuracy_delta"] == 0.0
 
 
-def test_runner_smoke_resume_preserves_three_mode_order_and_does_not_load_model(monkeypatch, tmp_path):
+def test_change_probe_preserves_baselines_and_releases_copies():
+    plain = evaluate_context_sample(sample(), reader=Reader(), backend=Backend())
+    reader, backend = Reader(), Backend()
+    row = evaluate_context_sample(sample(), reader=reader, backend=backend, change_probe=True)
+    assert set(row['conditions']) == {'recent-8', 'time-bin-prefix-8', 'change-4+4'}
+    for key in ('recent-8', 'time-bin-prefix-8'):
+        assert row['conditions'][key]['selected_frames'] == plain['conditions'][key]['selected_frames']
+    assert row['change_memory_peak_images'] <= 8
+    assert row['combined_retained_image_bound'] == 32
+    assert len(row['change_history_scores']) == 4
+    for request in backend.requests:
+        assert len(request.images) == 8
+        assert not request.include_timestamps
+        for image in request.images:
+            with pytest.raises(ValueError):
+                image.getpixel((0, 0))
+    summary = summarize_context_probe([row], n_bootstrap=20)
+    assert 'change-4+4' in summary['conditions']
+
+
+def test_change_probe_model_error_closes_both_banks(monkeypatch):
+    from streaming_video_understanding.streaming.change_memory import ChangeMemory
+    copies = []
+    original = ChangeMemory.update
+    def track(self, image, frame):
+        copies.append(image)
+        return original(self, image, frame)
+    monkeypatch.setattr(ChangeMemory, 'update', track)
+    reader = Reader()
+    with pytest.raises(RuntimeError, match='model failed'):
+        evaluate_context_sample(sample(), reader=reader, backend=Backend(fail=True), change_probe=True)
+    for image in [*reader.images, *copies]:
+        with pytest.raises(ValueError):
+            image.getpixel((0, 0))
+
+
+@pytest.mark.parametrize('change_probe', [False, True])
+def test_runner_smoke_resume_preserves_three_mode_order_and_does_not_load_model(monkeypatch, tmp_path, change_probe):
     import json
     import sys
     import scripts.run_context_coverage as cli
@@ -120,12 +157,18 @@ def test_runner_smoke_resume_preserves_three_mode_order_and_does_not_load_model(
     monkeypatch.setattr(sys, "argv", ["run_context_coverage.py", "--config", "configs/adaptive-semantic-1fps.yaml",
                                      "--data-root", str(tmp_path), "--annotations", str(annotation),
                                      "--split", str(split), "--output", str(output), "--limit", "3", "--resume"])
+    if change_probe:
+        sys.argv.append('--change-probe')
     assert cli.main() == 0
     before = output.read_bytes()
     saved = [json.loads(line) for line in before.decode().splitlines()]
     assert len(saved) == 3
     assert len({row["mode_order"][0] for row in saved}) == 3
     assert all(row["inference_calls"] == 3 and row["peak_retained_images"] <= 24 for row in saved)
+    assert ('change-4+4' in saved[0]['conditions']) == change_probe
+    if change_probe:
+        assert saved[0]['record_type'] == 'change-memory-v1'
+        assert saved[0]['protocol']['change_threshold'] == 0.08
     assert cli.main() == 0
     assert len(constructed) == 1
     assert output.read_bytes() == before

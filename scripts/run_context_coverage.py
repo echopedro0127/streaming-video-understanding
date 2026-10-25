@@ -19,6 +19,7 @@ from streaming_video_understanding.models.counting import numeric_options
 from streaming_video_understanding.models.smolvlm import SmolVLMBackend
 from streaming_video_understanding.utils.config import configuration_id, load_config
 from streaming_video_understanding.utils.seed import set_seed
+from streaming_video_understanding.streaming.change_memory import ChangeMemory
 
 
 def main():
@@ -30,6 +31,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--change-probe", action="store_true", help="opt-in Recent8/prefix8/change4+4 diagnostic")
     args = parser.parse_args()
     if args.limit is not None and args.limit <= 0:
         parser.error("--limit must be positive")
@@ -60,7 +62,13 @@ def main():
                     annotation_sha256=hashlib.sha256(annotation.read_bytes()).hexdigest(),
                     split_sha256=hashlib.sha256(args.split.read_bytes()).hexdigest(),
                     review_sample_ids=reviews, order="rotate recent/window/prefix by sorted sample index")
-    run_id = "context-coverage-v1-" + hashlib.sha256(json.dumps(protocol, sort_keys=True).encode()).hexdigest()[:12]
+    if args.change_probe:
+        protocol.update(version='change-memory-v1', change_threshold=ChangeMemory.threshold,
+                        change_cooldown_s=ChangeMemory.cooldown_s, thumbnail='RGB32x32 bilinear; adjacent MAD/255',
+                        history_rule='top4 evicted score; noncandidate0; earlier timestamp/id ties',
+                        order='rotate recent/prefix/change by sorted sample index',
+                        review_material='prior context-coverage preselected3 cases; human verification pending')
+    run_id = protocol['version'] + '-' + hashlib.sha256(json.dumps(protocol, sort_keys=True).encode()).hexdigest()[:12]
     store = ResumeStore(args.output)
     if store.completed_keys - {(sample.sample_id, run_id) for sample in samples}:
         parser.error("output contains unexpected sample/config keys")
@@ -73,13 +81,13 @@ def main():
     failed = 0
     for index, sample in pending:
         material = None
-        if sample.sample_id in reviews.values():
+        if sample.sample_id in reviews.values() and not args.change_probe:
             # Hashed folder names cannot escape the output tree via annotation IDs.
             material = args.output.parent / (args.output.stem + "-materials") / hashlib.sha256(sample.sample_id.encode()).hexdigest()[:12]
         try:
             record = evaluate_context_sample(sample, reader=reader, backend=backend,
-                                             order_offset=index, material_dir=material)
-            record.update(config_id=run_id, protocol=protocol, record_type="context-coverage-v1")
+                                             order_offset=index, material_dir=material, change_probe=args.change_probe)
+            record.update(config_id=run_id, protocol=protocol, record_type=protocol['version'])
             if material:
                 record["material_folder"] = material.name
             store.append(record)
@@ -103,6 +111,10 @@ def main():
                        peak_retained_images=max(row["peak_retained_images"] for row in rows),
                        mean_ingest_and_optional_render_ms=sum(row["ingest_and_optional_render_ms"] for row in rows)/20,
                        peak_shared_gpu_memory_mb=max(row["shared_peak_gpu_memory_mb"] for row in rows))
+        if args.change_probe:
+            summary.update(change_memory_peak_images=max(row['change_memory_peak_images'] for row in rows),
+                           combined_retained_image_bound=32,
+                           mean_change_candidates=sum(row['change_candidates'] for row in rows)/20)
         args.output.with_name(args.output.stem + "-summary.json").write_text(
             json.dumps(summary, indent=2, sort_keys=True, allow_nan=False) + "\n", encoding="utf-8")
         print("Full context probe complete", flush=True)
