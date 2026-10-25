@@ -1,0 +1,94 @@
+{
+  "by_policy": {
+    "adaptive-semantic-v1": {
+      "correct_to_wrong": 4,
+      "label_sticky_count": 14,
+      "label_sticky_opportunities": 20,
+      "label_sticky_rate": 0.7,
+      "n_comparisons": 22,
+      "original_accuracy": 0.36363636363636365,
+      "permuted_accuracy": 0.36363636363636365,
+      "semantic_consistency": 0.3181818181818182,
+      "semantic_consistent_count": 7,
+      "wrong_to_correct": 4
+    },
+    "recent-8": {
+      "correct_to_wrong": 10,
+      "label_sticky_count": 6,
+      "label_sticky_opportunities": 21,
+      "label_sticky_rate": 0.2857142857142857,
+      "n_comparisons": 22,
+      "original_accuracy": 0.6363636363636364,
+      "permuted_accuracy": 0.22727272727272727,
+      "semantic_consistency": 0.2727272727272727,
+      "semantic_consistent_count": 6,
+      "wrong_to_correct": 1
+    }
+  },
+  "conditions": [
+    {
+      "correct_to_wrong": 2,
+      "label_sticky_count": 7,
+      "label_sticky_opportunities": 10,
+      "label_sticky_rate": 0.7,
+      "n_comparisons": 11,
+      "original_accuracy": 0.36363636363636365,
+      "permuted_accuracy": 0.36363636363636365,
+      "policy_id": "adaptive-semantic-v1",
+      "seed": 17,
+      "semantic_consistency": 0.36363636363636365,
+      "semantic_consistent_count": 4,
+      "wrong_to_correct": 2
+    },
+    {
+      "correct_to_wrong": 2,
+      "label_sticky_count": 7,
+      "label_sticky_opportunities": 10,
+      "label_sticky_rate": 0.7,
+      "n_comparisons": 11,
+      "original_accuracy": 0.36363636363636365,
+      "permuted_accuracy": 0.36363636363636365,
+      "policy_id": "adaptive-semantic-v1",
+      "seed": 29,
+      "semantic_consistency": 0.2727272727272727,
+      "semantic_consistent_count": 3,
+      "wrong_to_correct": 2
+    },
+    {
+      "correct_to_wrong": 6,
+      "label_sticky_count": 3,
+      "label_sticky_opportunities": 11,
+      "label_sticky_rate": 0.2727272727272727,
+      "n_comparisons": 11,
+      "original_accuracy": 0.6363636363636364,
+      "permuted_accuracy": 0.18181818181818182,
+      "policy_id": "recent-8",
+      "seed": 17,
+      "semantic_consistency": 0.18181818181818182,
+      "semantic_consistent_count": 2,
+      "wrong_to_correct": 1
+    },
+    {
+      "correct_to_wrong": 4,
+      "label_sticky_count": 3,
+      "label_sticky_opportunities": 10,
+      "label_sticky_rate": 0.3,
+      "n_comparisons": 11,
+      "original_accuracy": 0.6363636363636364,
+      "permuted_accuracy": 0.2727272727272727,
+      "policy_id": "recent-8",
+      "seed": 29,
+      "semantic_consistency": 0.36363636363636365,
+      "semantic_consistent_count": 4,
+      "wrong_to_correct": 0
+    }
+  ],
+  "control": "Selected frame manifests and order match the stored original condition for every comparison.",
+  "n_comparisons": 44,
+  "n_samples": 11,
+  "scope": "Post-hoc outcome-selected diagnostic; not representative benchmark accuracy or calibrated confidence.",
+  "seeds": [
+    17,
+    29
+  ]
+}

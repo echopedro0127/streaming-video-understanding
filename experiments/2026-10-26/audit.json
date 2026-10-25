@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-26",
+  "timezone": "Asia/Shanghai",
+  "scope": "Post-hoc selected 4 helped and 7 hurt cases, not representative benchmark accuracy",
+  "split": "adaptive-changed-counting-11",
+  "num_questions": 11,
+  "num_videos": 10,
+  "seeds": [17, 29],
+  "permutation_inference_rows": 44,
+  "same_config_unpermuted_control_rows": 22,
+  "total_inference_rows": 66,
+  "profile_rows": 66,
+  "runtime_failures": 0,
+  "duplicate_keys": 0,
+  "missing_expected_pairs": 0,
+  "protocol_violations": 0,
+  "controlled_comparisons": 44,
+  "replay_vs_historical_prediction_changes": 0,
+  "replay_vs_historical_frame_changes": 0,
+  "pairs_with_duplicate_permutations_across_seeds": 0,
+  "repository_tests_passed": 450,
+  "raw_sha256": {
+    "replay-controls.jsonl": "81554D501F89475518258039DDCBBBB3A2915F771FCCF2032759062147B3EA6E",
+    "options-seed-17.jsonl": "F71625173C963B54F384B1AADEDB2A733700F2A51C3049BDAE2CFD22A959071E",
+    "options-seed-29.jsonl": "3AD2A06E7F3BF8B594143ECDA308C40052585864C34BDDC794F82293107F166B"
+  }
+}

@@ -24,6 +24,18 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Counting-case diagnosis (2026-10-26)
+
+- Completed 66 inferences on the 11 previously helped/hurt QA: 22 same-config
+  replay controls plus 44 option permutations (seeds 17/29, two policies).
+- Controls reproduced all historical predictions and selected-frame manifests.
+  All 44 permutation comparisons passed config/prompt/timestamp/frame controls;
+  66 profiles present; missing/duplicate/protocol/runtime violations 0.
+- Answer-content consistency: Recent-8 6/22 (27.3%), adaptive-v1 7/22 (31.8%).
+  These are selected-case stability measurements, not benchmark accuracy.
+- Full suite: 450 passed. Public methods, results, audit and next decision:
+  `experiments/2026-10-26/README.md`. No inference/routing behavior changed.
+
 ### Selective-memory follow-up (2026-10-24)
 
 - Implemented `adaptive-semantic-v1`: frozen question-only 8+0 / 6+2 / 4+4

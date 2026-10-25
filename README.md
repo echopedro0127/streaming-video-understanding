@@ -284,6 +284,11 @@ remains future work.
 
 ## Results
 
+Counting-case follow-up: on 11 post-hoc helped/hurt QA, 22 matched replay controls
+reproduced the original predictions, but answer-content consistency under two
+option permutations was 27.3% (Recent-8) and 31.8% (adaptive). These are diagnostic
+stability figures, not benchmark accuracies. See [protocol and audit](experiments/2026-10-26/README.md).
+
 Fixed-budget evaluation has been completed on 250 timestamped QA items from
 50 videos with `SmolVLM2-500M-Video-Instruct` on an RTX 3060 Laptop GPU.
 Every policy used the same causal evaluator and a maximum visual budget of

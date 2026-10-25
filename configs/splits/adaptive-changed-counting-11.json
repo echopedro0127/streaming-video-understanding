@@ -1,0 +1,17 @@
+{
+  "split": "adaptive-changed-counting-11",
+  "description": "Post-hoc diagnostic: all 4 helped and 7 hurt QA from Recent-8 versus Adaptive-Semantic-v1 on videos 51-100; not a representative benchmark.",
+  "sample_ids": [
+    "Real-Time Visual Understanding_sample_73_1",
+    "Real-Time Visual Understanding_sample_74_1",
+    "Real-Time Visual Understanding_sample_75_2",
+    "Real-Time Visual Understanding_sample_81_3",
+    "Real-Time Visual Understanding_sample_83_1",
+    "Real-Time Visual Understanding_sample_85_3",
+    "Real-Time Visual Understanding_sample_87_2",
+    "Real-Time Visual Understanding_sample_89_5",
+    "Real-Time Visual Understanding_sample_90_5",
+    "Real-Time Visual Understanding_sample_99_2",
+    "Real-Time Visual Understanding_sample_99_3"
+  ]
+}
