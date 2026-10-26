@@ -24,6 +24,27 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Frozen three-video event validation (2026-10-26)
+
+- Complete591classifications:sample79_2@185s,75_2@203s,76_2@203s; deterministic
+  question/timestamp/hash-only selection from27eligible videos, excluding80/84/100.
+  Videos appeared in earlier QA benchmarks; not pristine unseen tests.
+- Implementation/model/prompt/state rules unchanged. Only source/horizon/frame
+  count/query times change; six primary queries at0/20/40/60/80/100%prefix,
+  all sampled timestamps predeclared secondary analysis.
+- All591source/causal/prompt/mapping/protocol/replay/runtime checks pass; all
+ 591outputs parse. Full resumes skip185/203/203 unchanged; development output
+  unchanged. Existing17focused event tests pass; prior full suite543unchanged.
+- Pooled model mean760.047ms, P50653.190ms, P951219.457ms; cumulative449.188s,
+  pipeline451.478s/1.309FPS, GPU allocated peak1298.91MiB. Excludes prep/load/
+  logappend; no algorithmic speedup claim. Source hashes distinct, near-duplicate
+  independence not established; one exact JPEG hash shared per pair.
+- Human metrics pending3interval exports. Per-case predicted intervals/counts
+  archived locally and withheld publicly until annotation to reduce contamination.
+- Review index:`results/event-state/validation-3/review-index.html`; user saves
+  separate event-labels.json in each sample79/sample75/sample76 directory.
+- Artifacts:`experiments/2026-10-26/event-state-validation/README.md`.
+
 ### Human event scoring completed (2026-10-26)
 
 - User submitted2complete-prefix intervals on sample80_2. Original predictions,

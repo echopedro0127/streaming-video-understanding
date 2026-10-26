@@ -26,9 +26,9 @@ different conventions silently. Human metrics stay null until submitted.
   config differences, and focused existing event-state tests.
 - [x] Freeze config/cohort commit before inference. Prepare three clipped videos,
   manifests and local blinded index; check exact duration and frame counts.
-- [ ] Sequentially run591classifications; replay/source/prompt/mapping/state/cost
+- [x] Sequentially run591classifications; replay/source/prompt/mapping/state/cost
   audit and unchanged full resumes. No code/rule tuning against these results.
-- [ ] Publish per-case predictions/costs, blank human metric fields, update status
+- [x] Archive full predictions locally; publish costs/hashes and blank human fields, update status
   and sync branch. Preserve development video and all earlier benchmarks.
 - [ ] User complete-prefix intervals, per-case and pooled/macro metrics; distinguish
   three correlated video cases from18primary queries or591sample timestamps.
@@ -41,3 +41,15 @@ Additional diagnostic declared before inference: distinguish initial black-frame
 candidate differences from later classification flicker. If benefits are confined
 to startup artifacts, do not generalize them to all temporal memory errors.
 No black-frame filter or other policy is introduced into this frozen experiment.
+
+During human annotation, public/status reports disclose progress, hashes and
+costs but omit per-case predicted intervals/counts until the three labels are
+submitted. Full raw traces/summaries remain archived locally. This reduces label
+contamination but does not make the study independently double-blind.
+
+Completed591calls/3videos, all parsed; no source/causal/prompt/mapping/protocol/
+state-replay/summary/runtime violations. Full resumes skip185/203/203 unchanged;
+development raw hash unchanged. Mean760.047ms, P50653.190ms, P951219.457ms,
+cumulative449.188smodel and451.478spipeline, allocated GPU1298.91MiB.
+Human intervals pending; public per-case counters/intervals withheld during
+annotation. Full source/state replay audited by main agent, no extra reviewer.

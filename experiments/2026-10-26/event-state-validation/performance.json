@@ -1,0 +1,70 @@
+{
+  "cohort": "event-state-validation-v1",
+  "num_videos": 3,
+  "num_frames": 591,
+  "inference_calls": 591,
+  "parse_valid_frames": 591,
+  "cases": [
+    {
+      "video_id": "sample_79",
+      "sample_id": "Real-Time Visual Understanding_sample_79_2",
+      "num_frames": 185,
+      "config_id": "event-state-v1-a59f8302ad81",
+      "manifest_sha256": "85e51ae6bba974b3da22bd4a12ec71b84987450975b84b7f100b13e47e36e8b5",
+      "predictions_sha256": "474b086c1d64727e851037fd50a27fa82ef74fc63c317c85497c5b37d479fbfe",
+      "mean_model_latency_ms": 879.4518789222992,
+      "p50_model_latency_ms": 784.5578000415117,
+      "p95_model_latency_ms": 1288.0305200000296,
+      "cumulative_model_latency_ms": 162698.59760062536,
+      "cumulative_pipeline_latency_ms": 163591.1624999717,
+      "processing_throughput_fps": 1.1308679342628427,
+      "peak_gpu_memory_mb": 1298.9072265625,
+      "human_labels_present": false
+    },
+    {
+      "video_id": "sample_75",
+      "sample_id": "Real-Time Visual Understanding_sample_75_2",
+      "num_frames": 203,
+      "config_id": "event-state-v1-9b75b5a22ac1",
+      "manifest_sha256": "1e8fd26ed74f746b571ff27d63926e644885f32b1f69983dfd86f5f9afe4869b",
+      "predictions_sha256": "cc32eee904005b3f704fa0a1ac6d23dad3c58444f39ac0e0a663c1109805ae23",
+      "mean_model_latency_ms": 764.501504927502,
+      "p50_model_latency_ms": 644.5778000052087,
+      "p95_model_latency_ms": 1217.1012699895073,
+      "cumulative_model_latency_ms": 155193.8055002829,
+      "cumulative_pipeline_latency_ms": 155938.0145005416,
+      "processing_throughput_fps": 1.3017993120548224,
+      "peak_gpu_memory_mb": 1298.9072265625,
+      "human_labels_present": false
+    },
+    {
+      "video_id": "sample_76",
+      "sample_id": "Real-Time Visual Understanding_sample_76_2",
+      "num_frames": 203,
+      "config_id": "event-state-v1-e3a6be7d84e3",
+      "manifest_sha256": "40d0242cf1bc82191a14bf0cd55aa52aa4560b6a721a0ccb999ca04ed5ad3c6f",
+      "predictions_sha256": "541b6f88b5e07fba07a505ede1e7992033bf7976ea88df6b591c7f8f26537021",
+      "mean_model_latency_ms": 646.77432167322,
+      "p50_model_latency_ms": 635.3019999805838,
+      "p95_model_latency_ms": 754.4427599932533,
+      "cumulative_model_latency_ms": 131295.18729966367,
+      "cumulative_pipeline_latency_ms": 131948.545999825,
+      "processing_throughput_fps": 1.5384784914588543,
+      "peak_gpu_memory_mb": 1298.9072265625,
+      "human_labels_present": false
+    }
+  ],
+  "pooled": {
+    "mean_model_latency_ms": 760.0466842649271,
+    "p50_model_latency_ms": 653.1897999811918,
+    "p95_model_latency_ms": 1219.457200000761,
+    "cumulative_model_latency_ms": 449187.59040057193,
+    "cumulative_pipeline_latency_ms": 451477.7230003383,
+    "processing_throughput_fps": 1.309034687409277,
+    "peak_gpu_memory_mb": 1298.9072265625
+  },
+  "per_case_predicted_counts_and_intervals": null,
+  "publication_policy": "Withheld pending all3human interval exports; full traces and summaries archived locally",
+  "human_metrics": null,
+  "timing_scope": "Classification pipeline excludes preparation/decode/export/model load/log append; not end-to-end live latency or hard realtime"
+}
