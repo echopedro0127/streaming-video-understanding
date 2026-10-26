@@ -1,0 +1,12 @@
+{
+  "version": "perception-probe-v1",
+  "sample_fps": 1.0,
+  "max_image_side": 640,
+  "jpeg_quality": 95,
+  "selection_scope": "Purposeful diagnostic from three prior preselected review cases; not random or representative, no certified labels",
+  "cases": [
+    {"sample_id": "Real-Time Visual Understanding_sample_84_1", "query_time_s": 18.0, "frame_ids": [1, 3, 5, 7, 9, 11, 13, 16]},
+    {"sample_id": "Real-Time Visual Understanding_sample_100_3", "query_time_s": 86.0, "frame_ids": [5, 15, 25, 35, 45, 55, 65, 75]},
+    {"sample_id": "Real-Time Visual Understanding_sample_80_2", "query_time_s": 185.0, "frame_ids": [12, 35, 81, 85, 92, 105, 115, 145]}
+  ]
+}

@@ -1,0 +1,43 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8">
+<title>单帧画面核验</title>
+<style>body{font:16px system-ui;margin:24px;background:#f4f6fa;color:#172033}header{position:sticky;top:0;background:white;padding:16px;border:1px solid #ccd4df}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:20px}article{background:white;padding:12px;border-radius:8px}img{width:100%;height:220px;object-fit:contain;background:#151515}select,input,button{font:inherit;padding:8px;margin:6px}select{width:95%}small{display:block}#status{font-weight:bold}</style>
+<header><h1>24 帧画面核验</h1><p>仅判断当前画面。插入片段不按人物数量判断；讲解者变暗不等于空白过渡。拿不准请选择“无法判断”。本页不显示模型结果，也不预填标签。</p>
+<label>核验者 <input id="reviewer" placeholder="姓名或代号"></label>
+<label><input id="confirmed" type="checkbox">我已逐张核验，无法确定的已明确标记</label>
+<button id="export">保存 human-labels.json</button><span id="status"></span>
+<small>请保存到 E 盘本项目 results/perception-probe/human-labels.json。浏览器进度仅作方便；导出的 JSON 才供评分。</small><small id="notice"></small></header>
+<main id="frames"></main>
+<script>
+const BUNDLE=__MANIFEST_DATA__;
+const CATEGORIES=[['presenter','讲解者／教学板画面'],['inserted_scene','插入的电影／表演片段'],['transition','空白画面／过渡'],['uncertain','无法判断']];
+const STORAGE='perception-review:'+BUNDLE.manifest_sha256;
+let saved={};try{saved=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch(e){}
+const labels=saved.labels||{};
+function progress(){document.getElementById('status').textContent=Object.keys(labels).length+'/'+BUNDLE.frames.length;}
+function persist(){try{localStorage.setItem(STORAGE,JSON.stringify({labels,reviewer:document.getElementById('reviewer').value}));}catch(e){document.getElementById('notice').textContent='浏览器无法保存进度，请完成后导出文件。';}progress();}
+function buildExport(){
+  const reviewer=document.getElementById('reviewer').value.trim();
+  if(!reviewer||!document.getElementById('confirmed').checked)throw Error('请填写核验者并确认逐张核验。');
+  if(BUNDLE.frames.some(f=>!CATEGORIES.some(c=>c[0]===labels[f.frame_key])))throw Error('请为每一帧选择类别。');
+  return {manifest_sha256:BUNDLE.manifest_sha256,annotation_source:'human_self_reported',reviewer,reviewed:true,labels:BUNDLE.frames.map(f=>({frame_key:f.frame_key,category:labels[f.frame_key]}))};
+}
+document.getElementById('reviewer').value=saved.reviewer||'';
+document.getElementById('reviewer').oninput=persist;
+for(const f of BUNDLE.frames){
+ const card=document.createElement('article'),im=document.createElement('img'),info=document.createElement('small'),select=document.createElement('select');
+ im.src=f.image;im.alt='待核验帧 '+f.frame_key;
+ info.textContent=f.sample_id+' | frame '+f.frame_id+' | '+f.timestamp_s.toFixed(3)+'s';
+ const empty=document.createElement('option');empty.value='';empty.textContent='请选择（未标注）';select.appendChild(empty);
+ for(const [value,name] of CATEGORIES){const option=document.createElement('option');option.value=value;option.textContent=name;select.appendChild(option);}
+ select.value=labels[f.frame_key]||'';select.onchange=()=>{if(select.value)labels[f.frame_key]=select.value;else delete labels[f.frame_key];persist();};
+ card.appendChild(im);card.appendChild(info);card.appendChild(select);document.getElementById('frames').appendChild(card);
+}
+document.getElementById('export').onclick=async()=>{
+ try{
+  const text=JSON.stringify(buildExport(),null,2)+'\n';
+  if(window.showSaveFilePicker){const handle=await window.showSaveFilePicker({suggestedName:'human-labels.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});const writer=await handle.createWritable();await writer.write(text);await writer.close();}
+  else{const url=URL.createObjectURL(new Blob([text],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='human-labels.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  document.getElementById('notice').textContent='已发起保存；请确认文件位于 E 盘指定位置。';
+ }catch(e){document.getElementById('notice').textContent=e.name==='AbortError'?'已取消保存，标注进度仍保留。':e.message;}
+};progress();
+</script></html>
