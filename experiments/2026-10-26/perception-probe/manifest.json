@@ -1,0 +1,251 @@
+{
+  "annotation_sha256": "b9ca9584d4f5aff717b64b0e1e606e188a76d12782045d55de503ca046d0f888",
+  "frames": [
+    {
+      "frame_id": 1,
+      "frame_key": "aa304c93d1c6",
+      "image": "images/aa304c93d1c6.jpg",
+      "image_sha256": "788e8bef5b8d8110a8145937d41664c98e03548076095fbd4db17b465a98e2c6",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 1.001,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 3,
+      "frame_key": "4f5b2f899e24",
+      "image": "images/4f5b2f899e24.jpg",
+      "image_sha256": "94e84f353b77623be87fc128493679908695576d498467d987cbadb18392e8e1",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 3.003,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 5,
+      "frame_key": "62af4e9c4dad",
+      "image": "images/62af4e9c4dad.jpg",
+      "image_sha256": "1120cd3bbb0e326f6d90fbde33738a56ada160ad7a8a8f861e226221a29b2521",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 5.005,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 7,
+      "frame_key": "4aa2f78c65a4",
+      "image": "images/4aa2f78c65a4.jpg",
+      "image_sha256": "592fb9ab09648d8dce432ee77cc2d35e29a50778d8b14f785fa657d3ada0bae6",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 7.007,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 9,
+      "frame_key": "741389aef247",
+      "image": "images/741389aef247.jpg",
+      "image_sha256": "9dd3d9bb6f4087deb330c885c1ee82b0a41f36cbe785e36487feb0ab58e38567",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 9.009,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 11,
+      "frame_key": "c5616fb9e000",
+      "image": "images/c5616fb9e000.jpg",
+      "image_sha256": "eee164cd545ccd525c66b8b166d968c5d05fd6300703dbbc3c951c6d88ea24e3",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 11.011,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 13,
+      "frame_key": "6f53fa089ed4",
+      "image": "images/6f53fa089ed4.jpg",
+      "image_sha256": "2a4cfd105477b285445cb8b98b5b53c3af0d56f6fe1d8a73fdf1be9ee95a893c",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 13.013,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 16,
+      "frame_key": "3ed92214455c",
+      "image": "images/3ed92214455c.jpg",
+      "image_sha256": "42ad294aceee80bc87ff4e688798a8e1092c3610351c0c9f0593acd63d4ea32a",
+      "query_time_s": 18.0,
+      "sample_id": "Real-Time Visual Understanding_sample_84_1",
+      "timestamp_s": 16.016,
+      "video_id": "sample_84"
+    },
+    {
+      "frame_id": 5,
+      "frame_key": "331d8f062f30",
+      "image": "images/331d8f062f30.jpg",
+      "image_sha256": "faac2b7e7835098287a04ae01aa7c281b68054cf6a137e1dca3df8af2c2ca7de",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 5.005,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 15,
+      "frame_key": "b4c4260f0840",
+      "image": "images/b4c4260f0840.jpg",
+      "image_sha256": "07fc22279a3fa4d6147e59658612dce7c24cd1b39b7e70609f00da592b1348c6",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 15.015,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 25,
+      "frame_key": "f17988eaa64a",
+      "image": "images/f17988eaa64a.jpg",
+      "image_sha256": "b2ec70d85e016b6c12e3cb52de754b284ff21f3125c83ad1bb47bb44df3a21f7",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 25.025,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 35,
+      "frame_key": "0849f5e0c3af",
+      "image": "images/0849f5e0c3af.jpg",
+      "image_sha256": "499e23d38abc5de7f2df4a4d99273f89489f0baad05200ae297fd9d872e05944",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 35.035,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 45,
+      "frame_key": "2777b31fe908",
+      "image": "images/2777b31fe908.jpg",
+      "image_sha256": "2918f7ad38007151c66c59b6e5832538604cfca031fd1e461d3581ae3157c000",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 45.045,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 55,
+      "frame_key": "8c019a244408",
+      "image": "images/8c019a244408.jpg",
+      "image_sha256": "2d85b5461169208322161c96411f9554d17db9c3931da5ac2c769b0f129fb23f",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 55.055,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 65,
+      "frame_key": "60c85fe04ed4",
+      "image": "images/60c85fe04ed4.jpg",
+      "image_sha256": "96e56fe30bd3d3b381074575e86e28cfb6c3c79e39b0a49342d7365b27501090",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 65.065,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 75,
+      "frame_key": "2c99ebe7a0e8",
+      "image": "images/2c99ebe7a0e8.jpg",
+      "image_sha256": "1d81d87f486ef7ea21fefc9e6720468152ab9ff7f60bd49ab5cb79176b7f8255",
+      "query_time_s": 86.0,
+      "sample_id": "Real-Time Visual Understanding_sample_100_3",
+      "timestamp_s": 75.075,
+      "video_id": "sample_100"
+    },
+    {
+      "frame_id": 12,
+      "frame_key": "71631907dd62",
+      "image": "images/71631907dd62.jpg",
+      "image_sha256": "6630e3918b4d3cfa49cbbdd892ee00ac7d61967afb4cd328c25d8c73f6c3c40a",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 12.012,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 35,
+      "frame_key": "8e2cc500a96d",
+      "image": "images/8e2cc500a96d.jpg",
+      "image_sha256": "57af5c046307cdf9a0fd30e68c4ca94a25e74aba0852c47440dffabfccd0e37e",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 35.035,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 81,
+      "frame_key": "50e89704cfd5",
+      "image": "images/50e89704cfd5.jpg",
+      "image_sha256": "24c7e4a966c2a254fcdb01c03a0553fbe3288c10f43571edac9752fd620e3799",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 81.081,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 85,
+      "frame_key": "6125af9d0ad8",
+      "image": "images/6125af9d0ad8.jpg",
+      "image_sha256": "8388be3ab5fe41f50b65b9ed94135b18961eb202aa3fad3432e005f6e73d62e1",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 85.085,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 92,
+      "frame_key": "b86ad9792e70",
+      "image": "images/b86ad9792e70.jpg",
+      "image_sha256": "a101f445b3fea9489dda88a47b9c08248c72c95c38a3dca5c236b44fe6a40df7",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 92.092,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 105,
+      "frame_key": "3de9cbc1eca3",
+      "image": "images/3de9cbc1eca3.jpg",
+      "image_sha256": "ffaec65f2abeb08d8e2d9ee766da3eb10f02b017c513f41436e4bba73fc2a658",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 105.105,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 115,
+      "frame_key": "ae7540465109",
+      "image": "images/ae7540465109.jpg",
+      "image_sha256": "973b1ad7d1e878d748794298c647f727c503327263e2f92dadb5411476070a83",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 115.115,
+      "video_id": "sample_80"
+    },
+    {
+      "frame_id": 145,
+      "frame_key": "302436c8409c",
+      "image": "images/302436c8409c.jpg",
+      "image_sha256": "c190deebc4f651384755919fc2f443edd1f82819ad59b79aa037d88e4ce59087",
+      "query_time_s": 185.0,
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 145.145,
+      "video_id": "sample_80"
+    }
+  ],
+  "jpeg_quality": 95,
+  "label_status": "pending_human_review",
+  "max_image_side": 640,
+  "selection_config_sha256": "58c172c06fa591643dd1a6768041e6b7e5ccd5ebf82f186d336a423a61778f4c",
+  "selection_scope": "Purposeful diagnostic from three prior preselected review cases; not random or representative, no certified labels",
+  "version": "perception-probe-v1"
+}

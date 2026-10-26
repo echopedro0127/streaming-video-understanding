@@ -1,6 +1,11 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
-Latest: [visual and option sensitivity diagnostic](experiments/2026-10-26/visual-sensitivity/README.md),
+Latest: [human-reviewable perception probe](experiments/2026-10-26/perception-probe/README.md),
+24 frames / 48 generations; semantic option-cycle consistency 23/24.
+Recognition accuracy is unmeasured pending actual human review; a local blinded
+label page and hash-bound scorer are ready.
+
+Previous: [visual and option sensitivity diagnostic](experiments/2026-10-26/visual-sensitivity/README.md),
 20 QA / 80 generations. Original/blank/reverse each score 20%; option-cycle 40%,
 but only 1/20 answer contents persist after permutation. These are diagnostics,
 not accuracy gains; exact frozen local input is required for replay.

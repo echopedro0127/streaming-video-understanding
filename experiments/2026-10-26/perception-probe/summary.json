@@ -1,0 +1,68 @@
+{
+  "accuracy": null,
+  "conditions": {
+    "option-cycle": {
+      "category_distribution": {
+        "inserted_scene": 3,
+        "presenter": 21
+      },
+      "letter_distribution": {
+        "A": 3,
+        "D": 21
+      },
+      "mean_model_latency_ms": 915.2429625028162,
+      "p95_model_latency_ms": 1393.1138750223909,
+      "parse_valid_count": 24
+    },
+    "original": {
+      "category_distribution": {
+        "inserted_scene": 4,
+        "presenter": 20
+      },
+      "letter_distribution": {
+        "A": 20,
+        "B": 4
+      },
+      "mean_model_latency_ms": 1012.1440708317095,
+      "p95_model_latency_ms": 1674.2084250174235,
+      "parse_valid_count": 24
+    }
+  },
+  "config_id": "perception-probe-v1-d03feb8b93ae",
+  "inference_calls": 48,
+  "label_status": "pending_human_review",
+  "label_sticky": 0,
+  "num_frames": 24,
+  "num_videos": 3,
+  "protocol": {
+    "categories": [
+      "presenter",
+      "inserted_scene",
+      "transition",
+      "uncertain"
+    ],
+    "descriptions": [
+      "A teaching presenter beside a whiteboard or teaching board.",
+      "An inserted movie or performance scene, not the teaching presenter.",
+      "A blank screen or transition where neither scene is visible.",
+      "The image is too ambiguous to decide among the other categories."
+    ],
+    "input_frames": 1,
+    "manifest_sha256": "11623fac36c397bce2408ffa263536e0fa7fcde1ee972fc387b70e0df30184d9",
+    "max_new_tokens": 8,
+    "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+    "option_cycle": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "order": "alternate original/cycle-first by manifest frame index",
+    "question": "Which description best matches the visible image?",
+    "seed": 42,
+    "timestamp_text": false,
+    "version": "perception-probe-v1"
+  },
+  "semantic_consistent": 23,
+  "valid_pairs": 24
+}

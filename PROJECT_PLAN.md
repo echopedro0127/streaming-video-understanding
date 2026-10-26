@@ -24,6 +24,23 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Human-reviewable perception probe (2026-10-26)
+
+- Implemented prepare/run/score CLI and blinded local category-review page.
+ 24purposeful frames from3preselected cases, same JPEGs for human and model;
+ portable timing-free selection/image-hash manifest, images remain local.
+- Completed24pairs/48generations with unchanged SmolVLM2-500M. Parse48/48,
+ semantic category consistency23/24, displayed-letter stickiness0/24.
+ Accuracy remains null; human frame annotation/scoring is pending.
+- Source/image/selection/causal/prompt/mapping/protocol/runtime violations0;
+ counterbalanced12/12; resume skipped24 unchanged.526tests passed; code and
+ independent artifact reviews passed. Browser export logic tested with Node;
+ browser layout/save picker not manually verified.
+- Review page: `results/perception-probe/review.html`; user exports matching
+ `human-labels.json` there. Actual human annotation and continuous-event labels
+ cannot be replaced by assistant guesses or semantic-consistency measurements.
+- Artifacts: `experiments/2026-10-26/perception-probe/README.md`.
+
 ### Fixed-selection visual sensitivity (2026-10-26)
 
 - Complete:20QA/20videos,80generations; fixed Change-4+4 source selections.
