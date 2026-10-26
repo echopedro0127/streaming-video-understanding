@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>连续片段区间核验</title>
+<style>body{font:16px system-ui;margin:24px;max-width:1150px;background:#f4f6fa;color:#172033}section{background:white;padding:16px;margin:14px 0;border-radius:8px}video{width:100%;max-width:800px;background:black}img{max-width:280px}input,select,button{font:inherit;padding:7px;margin:5px}li{padding:6px}small{display:block}#notice{color:#8a2600}</style>
+<h1>连续视频：标记每次插入片段</h1><section><p>请完整观看前缀，再标出每次电影／表演插入的起止时间 [开始,结束)。片段内部换镜头不自动拆成新事件，讲解者灯光变暗也不自动算插入。请明确短暂切回讲解后的计数规则。本页不显示模型结果、不预填区间。</p>
+<video id="video" controls preload="metadata"></video><small id="time"></small><img id="frame" alt="最近已到达的1FPS参考帧"><small id="frameinfo"></small></section>
+<section><label>开始秒 <input id="start" type="number" min="0" step="0.1"></label><button id="start-now">取当前开始时间</button>
+<label>结束秒 <input id="end" type="number" min="0" step="0.1"></label><button id="end-now">取当前结束时间</button>
+<label><input id="censored" type="checkbox">截止时仍在片段中（结束设为前缀截止）</label><button id="add">添加区间</button><ol id="intervals"></ol></section>
+<section><label>核验者 <input id="reviewer" placeholder="姓名或代号"></label>
+<label>短暂讲解后再次插入 <select id="convention"><option value="">请选择计数规则</option><option value="split_on_presenter_return">每次回到讲解后再插入算新事件</option><option value="merge_brief_returns_within_same_insertion">属于同一插入的短暂切回合并</option></select></label>
+<label><input id="reviewed" type="checkbox">我已完整核验整个前缀，包括没有插入的时段</label>
+<label><input id="no-events" type="checkbox">若列表为空，我确认整段没有插入片段</label>
+<button id="export">保存 event-labels.json</button><small>请保存到 E 盘本页面同目录；浏览器存储只作进度缓存，导出文件才用于评分。</small><p id="notice"></p></section>
+<script>
+const DATA=__EVENT_DATA__;const STORAGE='event-review:'+DATA.manifest_sha256;
+let saved={};try{saved=JSON.parse(localStorage.getItem(STORAGE)||'{}')}catch(e){}
+let intervals=Array.isArray(saved.intervals)?saved.intervals:[];
+const video=document.getElementById('video');video.src=DATA.video;
+document.getElementById('reviewer').value=saved.reviewer||'';document.getElementById('convention').value=saved.convention||'';
+function validateIntervals(items){let last=0;for(const e of items){if(!Number.isFinite(e.start_s)||!Number.isFinite(e.end_s)||e.start_s<last||e.end_s<=e.start_s||e.end_s>DATA.end_time_s||typeof e.end_censored!=='boolean'||(e.end_censored&&e.end_s!==DATA.end_time_s))throw Error('区间需按时间排序、不重叠，且在前缀范围内。');last=e.end_s;}}
+function persist(){try{localStorage.setItem(STORAGE,JSON.stringify({intervals,reviewer:document.getElementById('reviewer').value,convention:document.getElementById('convention').value}));}catch(e){document.getElementById('notice').textContent='无法缓存进度，请记得导出。';}}
+function render(){const list=document.getElementById('intervals');list.replaceChildren();intervals.forEach((e,i)=>{const li=document.createElement('li'),button=document.createElement('button');li.textContent=e.start_s.toFixed(3)+' – '+e.end_s.toFixed(3)+'s'+(e.end_censored?'（截止截断）':'');button.textContent='删除';button.onclick=()=>{intervals.splice(i,1);render();persist();};li.appendChild(button);list.appendChild(li);});}
+video.ontimeupdate=()=>{if(video.currentTime>DATA.end_time_s){video.pause();video.currentTime=DATA.end_time_s;}document.getElementById('time').textContent=video.currentTime.toFixed(3)+' / '+DATA.end_time_s+'s';const past=DATA.frames.filter(f=>f.timestamp_s<=video.currentTime);if(past.length){const f=past[past.length-1];document.getElementById('frame').src=f.image;document.getElementById('frameinfo').textContent='frame '+f.frame_id+' @ '+f.timestamp_s.toFixed(3)+'s';}};
+document.getElementById('start-now').onclick=()=>document.getElementById('start').value=video.currentTime.toFixed(3);
+document.getElementById('end-now').onclick=()=>document.getElementById('end').value=Math.min(video.currentTime,DATA.end_time_s).toFixed(3);
+document.getElementById('add').onclick=()=>{try{const startText=document.getElementById('start').value,endText=document.getElementById('end').value,censored=document.getElementById('censored').checked;if(!startText||(!endText&&!censored))throw Error('请填写起止时间。');const next=[...intervals,{start_s:Number(startText),end_s:censored?DATA.end_time_s:Number(endText),end_censored:censored}].sort((a,b)=>a.start_s-b.start_s);validateIntervals(next);intervals=next;render();persist();document.getElementById('notice').textContent='已添加，记得完整核验后导出。';}catch(e){document.getElementById('notice').textContent=e.message;}};
+function buildExport(){const reviewer=document.getElementById('reviewer').value.trim(),convention=document.getElementById('convention').value;if(!reviewer||!document.getElementById('reviewed').checked)throw Error('请填写核验者并确认完整观看。');if(!['split_on_presenter_return','merge_brief_returns_within_same_insertion'].includes(convention))throw Error('请选择计数规则。');validateIntervals(intervals);if(!intervals.length&&!document.getElementById('no-events').checked)throw Error('空列表需要明确确认没有事件。');return {manifest_sha256:DATA.manifest_sha256,annotation_source:'human_self_reported',reviewer,reviewed_full_prefix:true,counting_convention:convention,no_events_confirmed:!intervals.length,intervals};}
+document.getElementById('reviewer').oninput=persist;document.getElementById('convention').onchange=persist;
+document.getElementById('export').onclick=async()=>{try{const text=JSON.stringify(buildExport(),null,2)+'\n';if(window.showSaveFilePicker){const handle=await window.showSaveFilePicker({suggestedName:'event-labels.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});const writer=await handle.createWritable();await writer.write(text);await writer.close();}else{const url=URL.createObjectURL(new Blob([text],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='event-labels.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}document.getElementById('notice').textContent='请确认 event-labels.json 已保存在 E 盘本页面同目录。';}catch(e){document.getElementById('notice').textContent=e.name==='AbortError'?'已取消保存，进度仍保留。':e.message;}};
+render();
+</script></html>

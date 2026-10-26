@@ -67,7 +67,7 @@ def verify_bundle(manifest_path):
     return manifest
 
 
-def prepare_bundle(config,samples,*,reader,output_dir,annotation_sha256):
+def prepare_bundle(config,samples,*,reader,output_dir,annotation_sha256,embed_selection=False,review_page=True):
     output_dir=Path(output_dir)
     config_sha=hashlib.sha256(json.dumps(config,sort_keys=True).encode()).hexdigest()
     path=output_dir/'manifest.json'
@@ -75,7 +75,8 @@ def prepare_bundle(config,samples,*,reader,output_dir,annotation_sha256):
         old=verify_bundle(path)
         if old.get('selection_config_sha256')!=config_sha or old.get('annotation_sha256')!=annotation_sha256:
             raise ValueError('existing bundle config/annotation mismatch')
-        write_review_page(path)
+        if review_page:
+            write_review_page(path)
         return path
     if config.get('version')!='perception-probe-v1' or config.get('sample_fps')!=1.0 or config.get('max_image_side')!=640 or config.get('jpeg_quality')!=95:
         raise ValueError('unsupported perception export configuration')
@@ -115,9 +116,12 @@ def prepare_bundle(config,samples,*,reader,output_dir,annotation_sha256):
     manifest=dict(version='perception-probe-v1',selection_config_sha256=config_sha,
                   annotation_sha256=annotation_sha256,selection_scope=config['selection_scope'],
                   max_image_side=640,jpeg_quality=95,label_status='pending_human_review',frames=frames)
+    if embed_selection:
+        manifest['selection_config']=config
     path.write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n',encoding='utf-8')
     verify_bundle(path)
-    write_review_page(path)
+    if review_page:
+        write_review_page(path)
     return path
 
 
