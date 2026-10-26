@@ -1,0 +1,19 @@
+{
+  "version": "event-state-validation-v1",
+  "selection_seed": "event-validation-v1",
+  "annotation_sha256": "b9ca9584d4f5aff717b64b0e1e606e188a76d12782045d55de503ca046d0f888",
+  "eligibility": "Question contains movie clips and inserted; integer query timestamp120..240s; exclude development videos80,84,100",
+  "within_video_selection": "Minimum SHA256(event-validation-v1:question_id), no answer/correctness filtering",
+  "video_selection": "First3 by SHA256(event-validation-v1:video:video_id) ascending",
+  "eligible_videos": 27,
+  "excluded_video_ids": ["sample_80", "sample_84", "sample_100"],
+  "primary_query_fractions": [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+  "secondary_query_protocol": "All actual sampled timestamps; counts and near-onset errors reported separately from primary6points",
+  "frozen_model_and_rule_config": "configs/event-state-v1.json; all parameters except sample_id/end/frame_ids_stop/query timestamps unchanged",
+  "scope": "Not used for state-rule debugging; videos appeared in earlier QA benchmark, not pristine unseen data; no near-duplicate/source-level independence guarantee",
+  "cases": [
+    {"video_id": "sample_79", "sample_id": "Real-Time Visual Understanding_sample_79_2", "end_time_s": 185.0, "frame_count": 185, "config": "configs/event-state-validation-v1/sample79.json", "source_video_sha256": "81664f62ee734b9d9f989a2ebb6605e5196f42526cea2a5cee3a96ea56271c42"},
+    {"video_id": "sample_75", "sample_id": "Real-Time Visual Understanding_sample_75_2", "end_time_s": 203.0, "frame_count": 203, "config": "configs/event-state-validation-v1/sample75.json", "source_video_sha256": "e9393012863c7e4e411faed8568360c95d77f5773b70b798f86ece75d61e18a1"},
+    {"video_id": "sample_76", "sample_id": "Real-Time Visual Understanding_sample_76_2", "end_time_s": 203.0, "frame_count": 203, "config": "configs/event-state-validation-v1/sample76.json", "source_video_sha256": "724305225469be02498095cc4bd4c4074b02beea2ae4a17969b18a4c94ed42fc"}
+  ]
+}

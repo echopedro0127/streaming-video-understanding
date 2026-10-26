@@ -1,0 +1,16 @@
+{
+  "version": "event-state-v1",
+  "sample_id": "Real-Time Visual Understanding_sample_79_2",
+  "end_time_s": 185.0,
+  "sample_fps": 1.0,
+  "frame_ids_stop": 185,
+  "max_image_side": 640,
+  "jpeg_quality": 95,
+  "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+  "max_new_tokens": 8,
+  "seed": 42,
+  "policies": {"raw": {"enter_frames": 1, "exit_frames": 1}, "debounced": {"enter_frames": 2, "exit_frames": 2}},
+  "unknown_policy": "hold active state; reset pending confirmation streaks",
+  "query_times_s": [0.0, 37.0, 74.0, 111.0, 148.0, 185.0],
+  "event_iou_threshold": 0.5
+}
