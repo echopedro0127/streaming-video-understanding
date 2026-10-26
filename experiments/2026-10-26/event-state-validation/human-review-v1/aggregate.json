@@ -1,0 +1,234 @@
+{
+  "annotation_revision": "submitted-v1",
+  "annotation_source": "human_self_reported",
+  "cases": [
+    {
+      "labels_sha256": "ea931d2c2726b118b224ab3f480d5bb38dd48d00069053d84ff0ecfaffea5b07",
+      "manifest_sha256": "85e51ae6bba974b3da22bd4a12ec71b84987450975b84b7f100b13e47e36e8b5",
+      "num_frames": 185,
+      "policies": {
+        "debounced": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 0.0,
+          "event_f1": 1.0,
+          "event_precision": 1.0,
+          "event_recall": 1.0,
+          "event_true_positives": 2,
+          "false_events": 0,
+          "matched_ious": [
+            0.9614384385224125,
+            0.9489814073481011
+          ],
+          "mean_confirmation_delay_s": 1.5939999999999905,
+          "predicted_events": 2,
+          "query_accuracy": 1.0,
+          "query_ground_truth": [
+            0,
+            0,
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        "raw": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 1.0,
+          "event_f1": 0.8,
+          "event_precision": 0.6666666666666666,
+          "event_recall": 1.0,
+          "event_true_positives": 2,
+          "false_events": 1,
+          "matched_ious": [
+            0.9614384385224125,
+            0.9489814073481011
+          ],
+          "mean_confirmation_delay_s": 0.5929999999999893,
+          "predicted_events": 3,
+          "query_accuracy": 0.0,
+          "query_ground_truth": [
+            0,
+            0,
+            1,
+            1,
+            2,
+            2
+          ]
+        }
+      },
+      "predictions_sha256": "474b086c1d64727e851037fd50a27fa82ef74fc63c317c85497c5b37d479fbfe",
+      "true_events": 2,
+      "video_id": "sample_79"
+    },
+    {
+      "labels_sha256": "a0f7c5e3d6d94b5f6213556d03585570d72bee4a9476b0ed4b4d5cf4b8950238",
+      "manifest_sha256": "1e8fd26ed74f746b571ff27d63926e644885f32b1f69983dfd86f5f9afe4869b",
+      "num_frames": 203,
+      "policies": {
+        "debounced": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 0.0,
+          "event_f1": 1.0,
+          "event_precision": 1.0,
+          "event_recall": 1.0,
+          "event_true_positives": 3,
+          "false_events": 0,
+          "matched_ious": [
+            0.9196517767946341,
+            0.92990342990343,
+            0.9517449918105083
+          ],
+          "mean_confirmation_delay_s": 1.18133333333333,
+          "predicted_events": 3,
+          "query_accuracy": 1.0,
+          "query_ground_truth": [
+            0,
+            1,
+            2,
+            2,
+            2,
+            3
+          ]
+        },
+        "raw": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 1.0,
+          "event_f1": 0.8571428571428571,
+          "event_precision": 0.75,
+          "event_recall": 1.0,
+          "event_true_positives": 3,
+          "false_events": 1,
+          "matched_ious": [
+            0.9196517767946341,
+            0.92990342990343,
+            0.9517449918105083
+          ],
+          "mean_confirmation_delay_s": 0.18033333333332754,
+          "predicted_events": 4,
+          "query_accuracy": 0.0,
+          "query_ground_truth": [
+            0,
+            1,
+            2,
+            2,
+            2,
+            3
+          ]
+        }
+      },
+      "predictions_sha256": "cc32eee904005b3f704fa0a1ac6d23dad3c58444f39ac0e0a663c1109805ae23",
+      "true_events": 3,
+      "video_id": "sample_75"
+    },
+    {
+      "labels_sha256": "e691bec1d099a887afdf63e4e8351c519fefe7fbb2de0ce34df93fb43e3ae08d",
+      "manifest_sha256": "40d0242cf1bc82191a14bf0cd55aa52aa4560b6a721a0ccb999ca04ed5ad3c6f",
+      "num_frames": 203,
+      "policies": {
+        "debounced": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 0.0,
+          "event_f1": 1.0,
+          "event_precision": 1.0,
+          "event_recall": 1.0,
+          "event_true_positives": 3,
+          "false_events": 0,
+          "matched_ious": [
+            0.9509901862843041,
+            0.8920516410017127,
+            0.9158215010142003
+          ],
+          "mean_confirmation_delay_s": 1.505333333333328,
+          "predicted_events": 3,
+          "query_accuracy": 1.0,
+          "query_ground_truth": [
+            0,
+            0,
+            1,
+            2,
+            3,
+            3
+          ]
+        },
+        "raw": {
+          "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+          "count_mae": 1.0,
+          "event_f1": 0.8571428571428571,
+          "event_precision": 0.75,
+          "event_recall": 1.0,
+          "event_true_positives": 3,
+          "false_events": 1,
+          "matched_ious": [
+            0.9509901862843041,
+            0.8920516410017127,
+            0.9158215010142003
+          ],
+          "mean_confirmation_delay_s": 0.5043333333333232,
+          "predicted_events": 4,
+          "query_accuracy": 0.0,
+          "query_ground_truth": [
+            0,
+            0,
+            1,
+            2,
+            3,
+            3
+          ]
+        }
+      },
+      "predictions_sha256": "541b6f88b5e07fba07a505ede1e7992033bf7976ea88df6b591c7f8f26537021",
+      "true_events": 3,
+      "video_id": "sample_76"
+    }
+  ],
+  "classification_calls": 591,
+  "cohort": "event-state-validation-v1",
+  "counting_convention": "split_on_presenter_return",
+  "development_video_excluded": true,
+  "human_events": 8,
+  "new_model_calls_for_scoring": 0,
+  "num_videos": 3,
+  "policies": {
+    "debounced": {
+      "dense_accuracy": 0.9915397631133672,
+      "dense_correct": 586,
+      "dense_count_mae": 0.008460236886632826,
+      "event_true_positives": 8,
+      "event_weighted_mean_confirmation_delay_s": 1.4059999999999944,
+      "human_events": 8,
+      "macro_f1": 1.0,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "micro_f1": 1.0,
+      "micro_precision": 1.0,
+      "micro_recall": 1.0,
+      "predicted_events": 8,
+      "primary_count_mae": 0.0,
+      "primary_query_accuracy": 1.0,
+      "primary_query_correct": 18,
+      "video_macro_mean_confirmation_delay_s": 1.426888888888883
+    },
+    "raw": {
+      "dense_accuracy": 0.0,
+      "dense_correct": 0,
+      "dense_count_mae": 1.0050761421319796,
+      "event_true_positives": 8,
+      "event_weighted_mean_confirmation_delay_s": 0.40499999999999137,
+      "human_events": 8,
+      "macro_f1": 0.8380952380952381,
+      "macro_precision": 0.7222222222222222,
+      "macro_recall": 1.0,
+      "micro_f1": 0.8421052631578947,
+      "micro_precision": 0.7272727272727273,
+      "micro_recall": 1.0,
+      "predicted_events": 11,
+      "primary_count_mae": 1.0,
+      "primary_query_accuracy": 0.0,
+      "primary_query_correct": 0,
+      "video_macro_mean_confirmation_delay_s": 0.42588888888888005
+    }
+  },
+  "primary_correlated_queries": 18,
+  "scope": "Three previously benchmarked videos, eight human events; not representative500-QA or independent18/591tests",
+  "secondary_correlated_timestamps": 591
+}

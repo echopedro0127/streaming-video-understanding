@@ -1,5 +1,12 @@
 # Three-video frozen event-state validation
 
+Human review is complete. [Scores and failure attribution](human-review-v1/README.md)
+report8human events: raw precision72.7% versus confirmation100%, both recall100%.
+All gains are suppression of the same startup black-frame artifact; confirmation
+adds1.001s media delay. This is not a general temporal-memory accuracy gain.
+The original cost/audit JSONs remain pre-label snapshots; full prediction
+snapshots and anonymous human intervals are now released under human-review-v1.
+
 ## Selection and scope
 
 Freeze the existing event-state implementation, model, prompt and raw1/1 versus
@@ -76,8 +83,9 @@ Human labels are self-reported, not independently authenticated. When convention
 differ, results must be separated or explicitly qualified, not silently pooled.
 No human label or interval truth is inferred from model predictions.
 
-While labels are pending, public reports withhold per-case predicted counts and
-intervals; raw traces and full summaries remain local. This reduces accidental
+During annotation, public reports withheld per-case predicted counts and
+intervals; raw traces stayed local. All3labels are now submitted and full model
+snapshots are linked in the human-review report. This reduced accidental
 contamination but is not an independently double-blind study. Model choices,
 state rules and the selected cases are never changed according to these results.
 

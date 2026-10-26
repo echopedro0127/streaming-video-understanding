@@ -30,7 +30,7 @@ different conventions silently. Human metrics stay null until submitted.
   audit and unchanged full resumes. No code/rule tuning against these results.
 - [x] Archive full predictions locally; publish costs/hashes and blank human fields, update status
   and sync branch. Preserve development video and all earlier benchmarks.
-- [ ] User complete-prefix intervals, per-case and pooled/macro metrics; distinguish
+- [x] User complete-prefix intervals, per-case and pooled/macro metrics; distinguish
   three correlated video cases from18primary queries or591sample timestamps.
 
 Before inference:all3configs validate and only allowed fields differ; annotation
@@ -53,3 +53,11 @@ development raw hash unchanged. Mean760.047ms, P50653.190ms, P951219.457ms,
 cumulative449.188smodel and451.478spipeline, allocated GPU1298.91MiB.
 Human intervals pending; public per-case counters/intervals withheld during
 annotation. Full source/state replay audited by main agent, no extra reviewer.
+
+Human scoring complete:all3exports share split_on_presenter_return,8events.
+MicroP/R raw8/11,8/8 versus confirmation8/8,8/8; primarycountMAE1/0. Event-
+weighted media delay.405/1.406s. Dense confirmation586/591correct,MAE.00846.
+All3raw false events are shared initial black-frame candidates; no evidence
+of later isolated-noise suppression. Minimum human duration5.585s/gap14.894s.
+Full prediction snapshots now released with human scores. Rules unchanged;
+next experiment is a separately labelled posthoc black-frame artifact control.

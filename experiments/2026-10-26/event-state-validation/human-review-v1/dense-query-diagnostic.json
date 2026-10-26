@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "num_timestamps": 185,
+      "policies": {
+        "debounced": {
+          "accuracy": 0.9891891891891892,
+          "correct": 183,
+          "count_mae": 0.010810810810810811,
+          "mismatches": [
+            {
+              "ground_truth_count": 1,
+              "predicted_count": 0,
+              "timestamp_s": 46.046
+            },
+            {
+              "ground_truth_count": 2,
+              "predicted_count": 1,
+              "timestamp_s": 140.14
+            }
+          ]
+        },
+        "raw": {
+          "accuracy": 0.0,
+          "correct": 0,
+          "count_mae": 1.0,
+          "mismatches": "All timestamps mismatched; complete traces archived locally"
+        }
+      },
+      "video_id": "sample_79"
+    },
+    {
+      "num_timestamps": 203,
+      "policies": {
+        "debounced": {
+          "accuracy": 0.9950738916256158,
+          "correct": 202,
+          "count_mae": 0.0049261083743842365,
+          "mismatches": [
+            {
+              "ground_truth_count": 3,
+              "predicted_count": 2,
+              "timestamp_s": 170.17
+            }
+          ]
+        },
+        "raw": {
+          "accuracy": 0.0,
+          "correct": 0,
+          "count_mae": 1.0098522167487685,
+          "mismatches": "All timestamps mismatched; complete traces archived locally"
+        }
+      },
+      "video_id": "sample_75"
+    },
+    {
+      "num_timestamps": 203,
+      "policies": {
+        "debounced": {
+          "accuracy": 0.9901477832512315,
+          "correct": 201,
+          "count_mae": 0.009852216748768473,
+          "mismatches": [
+            {
+              "ground_truth_count": 2,
+              "predicted_count": 1,
+              "timestamp_s": 82.082
+            },
+            {
+              "ground_truth_count": 3,
+              "predicted_count": 2,
+              "timestamp_s": 130.13
+            }
+          ]
+        },
+        "raw": {
+          "accuracy": 0.0,
+          "correct": 0,
+          "count_mae": 1.0049261083743843,
+          "mismatches": "All timestamps mismatched; complete traces archived locally"
+        }
+      },
+      "video_id": "sample_76"
+    }
+  ],
+  "new_model_calls": 0,
+  "protocol": "Predeclared all actual sampled timestamps, secondary to six fractions per video"
+}

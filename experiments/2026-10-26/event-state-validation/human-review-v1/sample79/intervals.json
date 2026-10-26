@@ -1,0 +1,19 @@
+{
+  "annotation_source": "human_self_reported",
+  "counting_convention": "split_on_presenter_return",
+  "intervals": [
+    {
+      "end_censored": false,
+      "end_s": 80.428,
+      "start_s": 45.32
+    },
+    {
+      "end_censored": false,
+      "end_s": 161.475,
+      "start_s": 139.68
+    }
+  ],
+  "manifest_sha256": "85e51ae6bba974b3da22bd4a12ec71b84987450975b84b7f100b13e47e36e8b5",
+  "raw_labels_sha256": "ea931d2c2726b118b224ab3f480d5bb38dd48d00069053d84ff0ecfaffea5b07",
+  "reviewer_identity_removed": true
+}

@@ -1,0 +1,33 @@
+{
+  "cohort": "event-state-validation-v1",
+  "annotation_revision": "submitted-v1",
+  "annotation_source": "human_self_reported",
+  "counting_conventions_consistent": true,
+  "counting_convention": "split_on_presenter_return",
+  "full_prefix_review_confirmed_per_video": true,
+  "num_videos": 3,
+  "human_events": 8,
+  "primary_correlated_queries": 18,
+  "secondary_correlated_timestamps": 591,
+  "raw_predicted_events": 11,
+  "raw_true_positives": 8,
+  "raw_false_positives": 3,
+  "debounced_predicted_events": 8,
+  "debounced_true_positives": 8,
+  "debounced_false_positives": 0,
+  "false_negatives_both_policies": 0,
+  "all_false_positives_are_initial_black_frame": true,
+  "no_sub_two_second_events_or_returns_observed": true,
+  "official_endpoint_counts_match_human_counts": {"sample_79": 2, "sample_75": 3, "sample_76": 3},
+  "human_label_files_sha256": {
+    "sample_79": "ea931d2c2726b118b224ab3f480d5bb38dd48d00069053d84ff0ecfaffea5b07",
+    "sample_75": "a0f7c5e3d6d94b5f6213556d03585570d72bee4a9476b0ed4b4d5cf4b8950238",
+    "sample_76": "e691bec1d099a887afdf63e4e8351c519fefe7fbb2de0ce34df93fb43e3ae08d"
+  },
+  "source_or_manifest_or_prediction_hash_violations": 0,
+  "new_model_calls": 0,
+  "rule_or_prompt_changes_after_labels": false,
+  "reviewer_identity_published": false,
+  "verification": "Existing scoring CLI plus separate main-agent IoU/count/dense-time arithmetic; no additional independent reviewer",
+  "scope": "Three previously benchmarked videos/eight human events with a common startup artifact; not representative video-QA accuracy"
+}

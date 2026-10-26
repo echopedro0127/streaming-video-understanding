@@ -1,0 +1,149 @@
+{
+  "config_id": "event-state-v1-9b75b5a22ac1",
+  "cumulative_model_latency_ms": 155193.8055002829,
+  "cumulative_pipeline_latency_ms": 155938.0145005416,
+  "event_metrics": null,
+  "human_label_status": "pending",
+  "inference_calls": 203,
+  "input_frames_per_call": 1,
+  "mean_model_latency_ms": 764.501504927502,
+  "num_frames": 203,
+  "p50_model_latency_ms": 644.5778000052087,
+  "p95_model_latency_ms": 1217.1012699895073,
+  "peak_gpu_memory_mb": 1298.9072265625,
+  "policies": {
+    "debounced": {
+      "final_count": 3,
+      "intervals": [
+        {
+          "confirmed_at_s": 22.022,
+          "confirmed_end_at_s": 29.029,
+          "end_censored": false,
+          "end_s": 28.028,
+          "start_s": 21.021
+        },
+        {
+          "confirmed_at_s": 51.051,
+          "confirmed_end_at_s": 57.057,
+          "end_censored": false,
+          "end_s": 56.056,
+          "start_s": 50.05
+        },
+        {
+          "confirmed_at_s": 171.171,
+          "confirmed_end_at_s": 202.202,
+          "end_censored": false,
+          "end_s": 201.201,
+          "start_s": 170.17
+        }
+      ],
+      "query_counts": [
+        {
+          "count": 0,
+          "timestamp_s": 0.0
+        },
+        {
+          "count": 1,
+          "timestamp_s": 40.6
+        },
+        {
+          "count": 2,
+          "timestamp_s": 81.2
+        },
+        {
+          "count": 2,
+          "timestamp_s": 121.8
+        },
+        {
+          "count": 2,
+          "timestamp_s": 162.4
+        },
+        {
+          "count": 3,
+          "timestamp_s": 203.0
+        }
+      ]
+    },
+    "raw": {
+      "final_count": 4,
+      "intervals": [
+        {
+          "confirmed_at_s": 0.0,
+          "confirmed_end_at_s": 1.001,
+          "end_censored": false,
+          "end_s": 1.001,
+          "start_s": 0.0
+        },
+        {
+          "confirmed_at_s": 21.021,
+          "confirmed_end_at_s": 28.028,
+          "end_censored": false,
+          "end_s": 28.028,
+          "start_s": 21.021
+        },
+        {
+          "confirmed_at_s": 50.05,
+          "confirmed_end_at_s": 56.056,
+          "end_censored": false,
+          "end_s": 56.056,
+          "start_s": 50.05
+        },
+        {
+          "confirmed_at_s": 170.17,
+          "confirmed_end_at_s": 201.201,
+          "end_censored": false,
+          "end_s": 201.201,
+          "start_s": 170.17
+        }
+      ],
+      "query_counts": [
+        {
+          "count": 1,
+          "timestamp_s": 0.0
+        },
+        {
+          "count": 2,
+          "timestamp_s": 40.6
+        },
+        {
+          "count": 3,
+          "timestamp_s": 81.2
+        },
+        {
+          "count": 3,
+          "timestamp_s": 121.8
+        },
+        {
+          "count": 3,
+          "timestamp_s": 162.4
+        },
+        {
+          "count": 4,
+          "timestamp_s": 203.0
+        }
+      ]
+    }
+  },
+  "processing_throughput_fps": 1.3017993120548224,
+  "protocol": {
+    "config_sha256": "a65efb3ad193483acce0b9a46aaf5612cb11e8be238bbf34f0873980bf17f33c",
+    "descriptions": [
+      "A teaching presenter beside a whiteboard or teaching board.",
+      "An inserted movie or performance scene, not the teaching presenter.",
+      "A blank screen or transition where neither scene is visible.",
+      "The image is too ambiguous to decide among the other categories."
+    ],
+    "input_frames": 1,
+    "manifest_sha256": "1e8fd26ed74f746b571ff27d63926e644885f32b1f69983dfd86f5f9afe4869b",
+    "max_new_tokens": 8,
+    "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+    "option_order": "original",
+    "question": "Which description best matches the visible image?",
+    "seed": 42,
+    "timestamp_text": false,
+    "unknown_policy": "hold active state; reset pending confirmation streaks",
+    "version": "event-state-v1"
+  },
+  "scope": "Single known-video causal diagnostic;185calls differ from1call/8image baselines",
+  "total_input_images": 203
+}

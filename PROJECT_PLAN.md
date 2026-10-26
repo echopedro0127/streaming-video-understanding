@@ -24,6 +24,23 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Three-video human validation completed (2026-10-26)
+
+- All3human exports valid and convention-consistent,8events/591timestamps;
+  original classifiers and state rules unchanged, no new inference/training.
+- Event micro P/R/F1:raw72.7%/100%/.8421, confirmation100%/100%/1.0.
+  Primary18correlated queries:MAE1/0, counts correct0/18 vs18/18.
+- Event-weighted media confirmation delay.405/1.406s; dense counts confirmation
+ 586/591correct,MAE.00846 (raw1.00508). All5confirmation errors are pending
+  entries. No end-to-end realtime or independent591QA claim.
+- Crucially:all3raw false events are the same identical black startup frame,
+  not later temporal flicker. Shortest true insertion5.585s/gap14.894s; very
+  brief events/returns and source-level independence remain untested.
+- Next:black-frame-gate posthoc control, then new challenge cases; do not
+  generalize this artifact-specific precision gain to temporal memory efficacy.
+- Artifacts:`experiments/2026-10-26/event-state-validation/human-review-v1/`;
+  curve:`assets/figures/event-state-validation-3-counts.svg`.
+
 ### Frozen three-video event validation (2026-10-26)
 
 - Complete591classifications:sample79_2@185s,75_2@203s,76_2@203s; deterministic

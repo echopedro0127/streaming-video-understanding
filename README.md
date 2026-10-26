@@ -1,9 +1,9 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
-Latest: [frozen three-video state validation](experiments/2026-10-26/event-state-validation/README.md),
-591 frame classifications completed with unchanged rules; human interval labels
-pending. Model mean760ms/frame, pipeline1.31FPS, GPU allocated peak1.27GiB;
-these are processing costs, not accuracy or live realtime claims.
+Latest: [three-video human event validation](experiments/2026-10-26/event-state-validation/human-review-v1/README.md),
+8 labelled events / 591 frame classifications. Raw/confirmation precision is
+72.7%/100%, both recall100%; every gain is startup black-frame suppression and costs
+1.001s extra media confirmation delay. No general temporal-memory gain claimed.
 
 Previous: [continuous event-state diagnostic](experiments/2026-10-26/event-state/README.md),
 185 frame calls on one known video; raw/debounced counts3/2 against endpoint QA

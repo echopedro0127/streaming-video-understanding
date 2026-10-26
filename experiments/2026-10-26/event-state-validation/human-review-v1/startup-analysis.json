@@ -1,0 +1,47 @@
+{
+  "all_event_precision_gain_is_startup_suppression": true,
+  "analysis_declared_before_inference": true,
+  "minimum_human_event_duration_s": 5.585000000000001,
+  "minimum_within_video_presenter_gap_s": 14.894000000000005,
+  "scope": "No evidence here for suppressing later isolated false positives or recalling very brief events",
+  "startup_unmatched_events": [
+    {
+      "unmatched_intervals": [
+        {
+          "confirmed_at_s": 0.0,
+          "confirmed_end_at_s": 1.001,
+          "end_censored": false,
+          "end_s": 1.001,
+          "start_s": 0.0
+        }
+      ],
+      "video_id": "sample_79"
+    },
+    {
+      "unmatched_intervals": [
+        {
+          "confirmed_at_s": 0.0,
+          "confirmed_end_at_s": 1.001,
+          "end_censored": false,
+          "end_s": 1.001,
+          "start_s": 0.0
+        }
+      ],
+      "video_id": "sample_75"
+    },
+    {
+      "unmatched_intervals": [
+        {
+          "confirmed_at_s": 0.0,
+          "confirmed_end_at_s": 1.001,
+          "end_censored": false,
+          "end_s": 1.001,
+          "start_s": 0.0
+        }
+      ],
+      "video_id": "sample_76"
+    }
+  ],
+  "sub_two_second_insertions_observed": false,
+  "sub_two_second_presenter_returns_observed": false
+}
