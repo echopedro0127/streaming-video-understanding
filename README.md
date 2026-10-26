@@ -2,8 +2,9 @@
 
 Latest: [continuous event-state diagnostic](experiments/2026-10-26/event-state/README.md),
 185 frame calls on one known video; raw/debounced counts3/2 against endpoint QA
-truth2. Compute/history/prompt/resolution differ from direct QA; human event
-intervals are pending. This is not a benchmark accuracy or speedup claim.
+truth2. [Human event scoring](experiments/2026-10-26/event-state/human-review-v1/README.md)
+now reports precision66.7%→100% with recall100%, trading additional confirmation
+delay. This is one video/two events, not a benchmark accuracy or speedup claim.
 
 Previous: [human-reviewable perception probe](experiments/2026-10-26/perception-probe/README.md),
 24 frames / 48 generations; semantic option-cycle consistency 23/24.

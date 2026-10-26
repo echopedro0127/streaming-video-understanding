@@ -1,0 +1,12 @@
+{
+  "annotation_source": "human_self_reported",
+  "counting_convention": "split_on_presenter_return",
+  "sample_id": "Real-Time Visual Understanding_sample_80_2",
+  "manifest_sha256": "5a08c8a330eddb07e23a3616c561db7cfb7541d01872d6ff89da209c24fdb6a1",
+  "raw_labels_sha256": "2cd2abc327df071d889928d662e68d1d2a506189957a64bb6f9890a202a5ffce",
+  "reviewer_identity_removed": true,
+  "intervals": [
+    {"start_s": 81.994, "end_s": 97.133, "end_censored": false},
+    {"start_s": 99.613, "end_s": 123.757, "end_censored": false}
+  ]
+}

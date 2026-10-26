@@ -1,0 +1,56 @@
+{
+  "annotation_source": "human_self_reported",
+  "counting_convention": "split_on_presenter_return",
+  "labels_sha256": "2cd2abc327df071d889928d662e68d1d2a506189957a64bb6f9890a202a5ffce",
+  "manifest_sha256": "5a08c8a330eddb07e23a3616c561db7cfb7541d01872d6ff89da209c24fdb6a1",
+  "policies": {
+    "debounced": {
+      "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+      "count_mae": 0.0,
+      "event_f1": 1.0,
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "event_true_positives": 2,
+      "mean_confirmation_delay_s": 1.288499999999999,
+      "predicted_events": 2,
+      "query_accuracy": 1.0,
+      "query_ground_truth": [
+        0,
+        0,
+        1,
+        2,
+        2,
+        2
+      ]
+    },
+    "raw": {
+      "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+      "count_mae": 1.0,
+      "event_f1": 0.8,
+      "event_precision": 0.6666666666666666,
+      "event_recall": 1.0,
+      "event_true_positives": 2,
+      "mean_confirmation_delay_s": 0.2874999999999943,
+      "predicted_events": 3,
+      "query_accuracy": 0.0,
+      "query_ground_truth": [
+        0,
+        0,
+        1,
+        2,
+        2,
+        2
+      ]
+    }
+  },
+  "predictions_sha256": "6613ea592d6387e11ff5735f45b0e97136c210771590be400457fc8ab6bc4346",
+  "query_times_s": [
+    20.0,
+    60.0,
+    90.0,
+    110.0,
+    130.0,
+    185.0
+  ],
+  "true_events": 2
+}

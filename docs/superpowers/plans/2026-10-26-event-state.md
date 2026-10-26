@@ -44,7 +44,7 @@ data/perception_review.py; default24frame probe behavior unchanged.
 - [x] Audit/publish predictions and costs, existing QA comparisons with explicit
   scope/cumulative-cost differences; no human event metrics until annotated.
 - [x] Update project plan/status, sync branch, provide human review instructions.
-- [ ] Human complete-prefix intervals and final boundary/count scoring.
+- [x] Human complete-prefix intervals and final boundary/count scoring.
 
 Pre-inference:543tests passed. Independent review fixed a short-clip validation
 gap with a failing then passing regression. Encoding duration must match cutoff
@@ -61,3 +61,10 @@ Smoke/full resumes skip3/185 unchanged. Independent code review approved;
 main-agent final replay audit complete, additional final reviewer quota exhausted.
 Human event intervals and corresponding metrics remain pending; published output
 is under `experiments/2026-10-26/event-state/`.
+
+Human event scoring now complete with2submitted intervals. Raw P/R=2/3,2/2;
+confirmation P/R=2/2,2/2. Frozen-query countMAE1/0, media confirmation delay
+.2875/1.2885s. Posthoc all185timestamps expose two lagged confirmation counts,
+183/185correct; not a replacement for frozen6queries. No new model calls or
+rule changes. Human scores and count figures published separately, original
+pre-label snapshots retained. Single-reviewer/known-video limitations apply.

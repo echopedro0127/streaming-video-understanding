@@ -24,6 +24,20 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Human event scoring completed (2026-10-26)
+
+- User submitted2complete-prefix intervals on sample80_2. Original predictions,
+  rules and dataset benchmarks unchanged; no new inference/training.
+- Raw versus confirmation: precision66.7%/100%, recall100%/100%, F1.8/1.0;
+  IoUs.9346/.9652 for both true events, raw has1startup false event.
+- Frozen6queries: count MAE1/0, accuracy0/6 versus6/6. Mean media confirmation
+  delay.2875/1.2885s; no end-to-end latency claim.
+- Supplementary posthoc185timestamp diagnosis: confirmation183/185correct,
+  MAE.01081; two temporarily delayed counts at82.082 and100.100s. Correlated
+  timestamps, not185independentQA. One known video/two events only.
+- Artifacts:`experiments/2026-10-26/event-state/human-review-v1/`; count plot
+  `assets/figures/event-state-sample80-counts.svg`. Next freeze/examine3-5videos.
+
 ### Continuous perception-to-event-state diagnostic (2026-10-26)
 
 - Complete model run:185single-frame classifications on sample80_2,0-185s;

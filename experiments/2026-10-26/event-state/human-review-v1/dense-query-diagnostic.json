@@ -1,0 +1,13 @@
+{
+  "analysis_type": "posthoc supplementary all-frame timestamps; original six-query protocol unchanged",
+  "num_videos": 1,
+  "num_correlated_query_timestamps": 185,
+  "raw": {"correct": 0, "accuracy": 0.0, "count_mae": 1.0},
+  "debounced": {"correct": 183, "accuracy": 0.9891891891891892, "count_mae": 0.010810810810810811},
+  "debounced_mismatches": [
+    {"timestamp_s": 82.082, "prediction": 0, "ground_truth": 1},
+    {"timestamp_s": 100.1, "prediction": 1, "ground_truth": 2}
+  ],
+  "new_inference_calls": 0,
+  "scope": "Media-time causal count availability, not independent QA examples or live latency"
+}

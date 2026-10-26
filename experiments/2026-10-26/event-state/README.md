@@ -1,5 +1,10 @@
 # Causal perception-to-event-state diagnostic
 
+Human review update: [submitted event scoring](human-review-v1/README.md) now
+confirms two intervals. Raw/confirmation precision is66.7%/100%, recall100%/100%,
+and six-query count MAE1/0. Dense-time counts expose confirmation delay.
+Pre-annotation summary/audit JSON snapshots remain unchanged.
+
 ## Scope and frozen rules
 
 One previously inspected video/query, `sample_80_2`, prefix0-185s. This is a
@@ -32,13 +37,13 @@ tuned after observing this run's predictions or endpoint answer.
 | Final predicted event count | 3 | 2 |
 | Shared classification calls | 185 | Same185, no extra calls |
 | Query counts at20/60/90/110/130/185s | 1/1/2/3/3/3 | 0/0/1/2/2/2 |
-| Human event precision/recall | Pending | Pending |
-| Human interval-based count MAE | Pending | Pending |
+| Human event precision/recall | 66.7% /100% | 100% /100% |
+| Human interval-based count MAE, six frozen queries | 1.00 | 0.00 |
 
 Raw includes an initial candidate[0,1.001)s. The initial JPEG's RGB means are
 [0,0,0], yet the model selects inserted_scene. Two-frame confirmation does not
-admit this isolated prediction. This is an observed startup failure candidate,
-not a substitute for complete-prefix human event annotation.
+admit this isolated prediction. The extra candidate is unmatched under the
+user's subsequent complete-prefix human annotation.
 
 Both policies also predict estimated intervals[82.082,98.098) and
 [100.100,124.124)s. Debounced entry confirmations occur at83.083 and101.101s,
@@ -60,8 +65,8 @@ its numeric ground truth is2. Reuse prior model outputs without rerunning them:
 | Debounced state | 2 | 0 | Shared185 /185 |
 
 This single endpoint match does **not** validate event boundaries or a general
-accuracy improvement. Human IoU matching and frozen six-query count metrics
-remain null until the user supplies intervals. The old ground-truth count is
+accuracy improvement. Human IoU matching and frozen six-query metrics are now
+reported separately; the unlabelled snapshot is retained. The old ground-truth count is
 not used to classify frames, select rules or generate boundary annotations.
 
 Comparisons are **not compute-matched**:185single-image calls versus one8-image
