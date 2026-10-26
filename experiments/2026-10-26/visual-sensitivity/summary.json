@@ -1,0 +1,125 @@
+{
+  "comparisons": {
+    "blank": {
+      "content_consistency": 0.85,
+      "content_consistent": 17,
+      "label_sticky": null,
+      "paired": {
+        "accuracy_delta": 0.0,
+        "bootstrap": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "method": "paired cluster percentile",
+          "n_resamples": 2000,
+          "seed": 42,
+          "unit": "video",
+          "warning": null
+        },
+        "helped": 0,
+        "hurt": 0
+      },
+      "valid_pairs": 20
+    },
+    "option-cycle": {
+      "content_consistency": 0.05,
+      "content_consistent": 1,
+      "label_sticky": 18,
+      "paired": {
+        "accuracy_delta": 0.2,
+        "bootstrap": {
+          "ci95": [
+            -0.15,
+            0.55
+          ],
+          "method": "paired cluster percentile",
+          "n_resamples": 2000,
+          "seed": 42,
+          "unit": "video",
+          "warning": null
+        },
+        "helped": 8,
+        "hurt": 4
+      },
+      "valid_pairs": 20
+    },
+    "reverse": {
+      "content_consistency": 0.9,
+      "content_consistent": 18,
+      "label_sticky": null,
+      "paired": {
+        "accuracy_delta": 0.0,
+        "bootstrap": {
+          "ci95": [
+            0.0,
+            0.0
+          ],
+          "method": "paired cluster percentile",
+          "n_resamples": 2000,
+          "seed": 42,
+          "unit": "video",
+          "warning": null
+        },
+        "helped": 0,
+        "hurt": 0
+      },
+      "valid_pairs": 20
+    }
+  },
+  "conditions": {
+    "blank": {
+      "accuracy": 0.2,
+      "correct": 4,
+      "mean_model_latency_ms": 2898.855325009208,
+      "p95_model_latency_ms": 3237.5193550193217,
+      "parse_valid_count": 20
+    },
+    "option-cycle": {
+      "accuracy": 0.4,
+      "correct": 8,
+      "mean_model_latency_ms": 2854.192570000305,
+      "p95_model_latency_ms": 3321.29200999334,
+      "parse_valid_count": 20
+    },
+    "original": {
+      "accuracy": 0.2,
+      "correct": 4,
+      "mean_model_latency_ms": 3124.8547499999404,
+      "p95_model_latency_ms": 4463.319880020572,
+      "parse_valid_count": 20
+    },
+    "reverse": {
+      "accuracy": 0.2,
+      "correct": 4,
+      "mean_model_latency_ms": 2967.3830900050234,
+      "p95_model_latency_ms": 3526.703854996595,
+      "parse_valid_count": 20
+    }
+  },
+  "config_id": "visual-sensitivity-v1-95b23e88ccb2",
+  "inference_calls": 80,
+  "mean_decode_latency_ms": 35218.9006249886,
+  "num_samples": 20,
+  "num_videos": 20,
+  "protocol": {
+    "annotation_sha256": "b9ca9584d4f5aff717b64b0e1e606e188a76d12782045d55de503ca046d0f888",
+    "base_config_id": "recent-8-49853eb6e9ba",
+    "blank": "eight same-size RGB127 images",
+    "image_order": "reverse exactly",
+    "option_cycle": [
+      1,
+      2,
+      3,
+      0
+    ],
+    "order": "rotate original/blank/reverse/option-cycle by sorted frozen index",
+    "source_config_id": "change-memory-v1-0fbce55d18ea",
+    "source_sha256": "39be41e1322e91eb489f52881601a47e66aae298840db6a376de38db08bfa4e4",
+    "split_sha256": "2f97f2e1fbfa000eaf0de53255d4969bb1ea140868096083b5f4975e14d8413c",
+    "timestamp_metadata": "empty request timestamps, no timestamp text; actual provenance recorded separately",
+    "version": "visual-sensitivity-v1"
+  },
+  "scope": "Counterfactual diagnostics on inspected20QA; not streaming benchmark gains or proof of visual grounding",
+  "shared_peak_gpu_memory_mb": 3537.18115234375
+}

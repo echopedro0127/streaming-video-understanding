@@ -1,6 +1,11 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
-Latest follow-up: [frame-change memory diagnostic](experiments/2026-10-26/change-memory/README.md),
+Latest: [visual and option sensitivity diagnostic](experiments/2026-10-26/visual-sensitivity/README.md),
+20 QA / 80 generations. Original/blank/reverse each score 20%; option-cycle 40%,
+but only 1/20 answer contents persist after permutation. These are diagnostics,
+not accuracy gains; exact frozen local input is required for replay.
+
+Previous follow-up: [frame-change memory diagnostic](experiments/2026-10-26/change-memory/README.md),
 20 QA / 60 generations. Change-4+4 scores 20% versus 15% for controls, but a
 posthoc constant-C rule matches its correctness vector; no stable gain established.
 

@@ -24,6 +24,24 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Fixed-selection visual sensitivity (2026-10-26)
+
+- Complete:20QA/20videos,80generations; fixed Change-4+4 source selections.
+  Original / same-size blank / reversed images / option-cycle[1,2,3,0].
+  No model, prompt template, baseline or selection-threshold changes.
+- Original/blank/reverse each4/20(20%); option-cycle8/20(40%). Blank/reverse
+  content consistency17/20 and18/20. Option-cycle content consistency1/20,
+  displayed-letter stickiness18/20; +20pp CI95[-15,+55]pp is not a video gain.
+- Constant displayed C matches each condition's accuracy. Findings suggest
+  option-position dependence, not verified grounding or proof of ignoring images.
+  Reverse invariance alone is expected for some total-count tasks.
+- All audit/runtime violations0; original manifests/responses reproduce20/20;
+  order5/5/5/5, smoke/full resumes skip4/20 unchanged,513tests pass.
+- Exact frozen local source JSONL is required; hash includes timing fields.
+  Public summaries alone do not enable turnkey replay of this diagnostic.
+- Artifacts: `experiments/2026-10-26/visual-sensitivity/README.md`.
+  Next: human-verified perception/event boundaries before cumulative-event state.
+
 ### Frame-change memory probe (2026-10-26)
 
 - Complete: same20QA/20videos, Recent-8 / Prefix-8 / Change-4+4,60generations.

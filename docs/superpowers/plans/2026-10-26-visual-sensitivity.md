@@ -32,8 +32,8 @@ buffers/model processing excluded. No cache or extra dependency/model download.
   nofuture before retention, strict source match, normal/error image cleanup.
 - [x] Implement evaluator and summary; add failing CLI/resume/hash tests, implement
   CLI; full tests and independent review before real inference.
-- [ ] Run4QA/16call smoke (all first positions); resume unchanged; extend20/80.
-- [ ] Audit manifests/prompt controls/GT mapping/order and old original answers;
+- [x] Run4QA/16call smoke (all first positions); resume unchanged; extend20/80.
+- [x] Audit manifests/prompt controls/GT mapping/order and old original answers;
   publish measured artifacts and limitations, update status and sync branch.
 
 Interpretation guard: total-count questions are often order-invariant, so identical
@@ -45,3 +45,11 @@ condition's higher accuracy is not a streaming-method improvement.
 Pre-inference:513tests pass. Independent review found a too-permissive fresh-source
 guard; regression reproduced acceptance of an alternative valid source, then
 hard frozen ID/SHA256 checks fixed it before inference. Rereview approved.
+
+Completed:20QA/80calls, no audit/runtime violations. Original/blank/reverse4/20,
+option-cycle8/20; content consistency17/20,18/20,1/20 respectively; option-cycle
+letter stickiness18/20. No reliable video-method gain. All20original responses
+reproduce source, firstpositions5each; smoke/full resumes skip4/20 unchanged.
+Independent full artifact audit passed. Exact source SHA includes timing fields;
+rawlocalartifact required, not turnkey public replay. Public artifacts under
+`experiments/2026-10-26/visual-sensitivity/`.
