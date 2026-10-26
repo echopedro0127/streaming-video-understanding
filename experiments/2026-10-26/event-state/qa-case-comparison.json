@@ -1,0 +1,21 @@
+{
+  "sample_id": "Real-Time Visual Understanding_sample_80_2",
+  "query_time_s": 185.0,
+  "num_qa": 1,
+  "ground_truth_count": 2,
+  "ground_truth_provenance": "Existing StreamingBench QA label retained in prior derived baseline records; not human event interval annotations",
+  "existing_source_config_id": "change-memory-v1-0fbce55d18ea",
+  "existing_source_sha256": "39be41e1322e91eb489f52881601a47e66aae298840db6a376de38db08bfa4e4",
+  "existing_recent_8": {"prediction": 4, "absolute_error": 2, "calls": 1, "input_images": 8, "model_latency_ms": 2223.9106000051834},
+  "existing_change_4_plus_4": {"prediction": 4, "absolute_error": 2, "calls": 1, "input_images": 8, "model_latency_ms": 2217.2570999828167},
+  "existing_prefix_bins_8": {"prediction": 4, "absolute_error": 2, "calls": 1, "input_images": 8, "model_latency_ms": 2524.1004999843426},
+  "raw_state": {"prediction": 3, "absolute_error": 1, "shared_classification_calls": 185, "shared_input_images": 185},
+  "debounced_state": {"prediction": 2, "absolute_error": 0, "shared_classification_calls": 185, "shared_input_images": 185},
+  "matched_compute": false,
+  "matched_history_scope": false,
+  "matched_task_prompt": false,
+  "matched_image_resolution": false,
+  "controlled_ablation": "raw versus debounced uses identical perception outputs and cost",
+  "human_boundary_metrics": null,
+  "claim": "Endpoint observation on one inspected video only; no general accuracy, efficiency or memory-policy improvement established"
+}

@@ -39,11 +39,11 @@ data/perception_review.py; default24frame probe behavior unchanged.
   flicker,2separate events, prefix invariance, invalid chronology.
 - [x] RED/GREEN interval scoring/human provenance/contiguous resume and export;
   implement CLI prepare/run/score and blinded UI.
-- [ ] Full tests and independent review; export185frames and review clip;
+- [x] Full tests and independent review; export185frames and review clip;
   run185model calls, verify resumed replay and old baselines remain unchanged.
-- [ ] Audit/publish predictions and costs, existing QA comparisons with explicit
+- [x] Audit/publish predictions and costs, existing QA comparisons with explicit
   scope/cumulative-cost differences; no human event metrics until annotated.
-- [ ] Update project plan/status, sync branch, provide human review instructions.
+- [x] Update project plan/status, sync branch, provide human review instructions.
 - [ ] Human complete-prefix intervals and final boundary/count scoring.
 
 Pre-inference:543tests passed. Independent review fixed a short-clip validation
@@ -53,3 +53,11 @@ within0.11s. Full review approved; actual clip185.0s,185JPEGs through184.184s,
 5a08c8a330eddb07e23a3616c561db7cfb7541d01872d6ff89da209c24fdb6a1.
 UI export logic tested with Node; browser playback/file picker not manually
 verified. No guessed human intervals or scores produced.
+
+Run complete185calls: raw3/debounced2 at185s, endpoint QA truth2.185/185parsed,
+old8overlap frames reproduce; all full-prefix source/hash/state checks passed.
+Mean932.382ms, cumulative172.491smodel, allocated GPU peak1298.91MiB.
+Smoke/full resumes skip3/185 unchanged. Independent code review approved;
+main-agent final replay audit complete, additional final reviewer quota exhausted.
+Human event intervals and corresponding metrics remain pending; published output
+is under `experiments/2026-10-26/event-state/`.

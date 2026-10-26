@@ -24,6 +24,27 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Continuous perception-to-event-state diagnostic (2026-10-26)
+
+- Complete model run:185single-frame classifications on sample80_2,0-185s;
+  raw1/1 versus debounced2/2 share the exact same predictions and compute.
+- Final predictions3 versus2; existing endpoint QA truth2, while stored
+  Recent-8/Change-4+4/Prefix8 direct answers are4. One known case only;
+  comparison changes cumulative compute, history scope, prompt and resolution.
+- Initial black frame is predicted inserted_scene; debounce does not admit its
+  isolated candidate. Human event validity and interval metrics remain pending.
+- Mean932.382ms, P50835.942ms, P951329.697ms; processing1.068FPS, allocated
+  peak1298.91MiB;185calls/cumulative172.491smodel versus1call/8image baselines.
+  Not live end-to-end realtime or efficiency superiority. Counter11fields each;
+  evaluator metadata/disk review material are additional O(N) artifacts.
+- All source/causal/prompt/protocol/replay/runtime violations0; old8frame
+  overlap reproduces fully. Smoke/full resumes skip3/185 unchanged;543tests pass.
+  Independent code review passed; main-agent final replay/hash audit complete,
+  extra independent final artifact review unavailable due to reviewer quota.
+- Human page:`results/event-state/sample80-prefix/event-review.html`; user must
+  export `event-labels.json` there before event IoU/count-MAE scoring.
+- Artifacts:`experiments/2026-10-26/event-state/README.md`.
+
 ### User label adjudication v2 (2026-10-26)
 
 - Final user confirmation:145.145s is presenter. Exactly1label changes in a

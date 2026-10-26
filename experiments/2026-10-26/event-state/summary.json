@@ -1,0 +1,135 @@
+{
+  "config_id": "event-state-v1-e537544e096c",
+  "cumulative_model_latency_ms": 172490.6787998043,
+  "cumulative_pipeline_latency_ms": 173271.92909934092,
+  "event_metrics": null,
+  "human_label_status": "pending",
+  "inference_calls": 185,
+  "input_frames_per_call": 1,
+  "mean_model_latency_ms": 932.3820475665098,
+  "num_frames": 185,
+  "p50_model_latency_ms": 835.9424999798648,
+  "p95_model_latency_ms": 1329.696500010323,
+  "peak_gpu_memory_mb": 1298.9072265625,
+  "policies": {
+    "debounced": {
+      "final_count": 2,
+      "intervals": [
+        {
+          "confirmed_at_s": 83.083,
+          "confirmed_end_at_s": 99.099,
+          "end_censored": false,
+          "end_s": 98.098,
+          "start_s": 82.082
+        },
+        {
+          "confirmed_at_s": 101.101,
+          "confirmed_end_at_s": 125.125,
+          "end_censored": false,
+          "end_s": 124.124,
+          "start_s": 100.1
+        }
+      ],
+      "query_counts": [
+        {
+          "count": 0,
+          "timestamp_s": 20.0
+        },
+        {
+          "count": 0,
+          "timestamp_s": 60.0
+        },
+        {
+          "count": 1,
+          "timestamp_s": 90.0
+        },
+        {
+          "count": 2,
+          "timestamp_s": 110.0
+        },
+        {
+          "count": 2,
+          "timestamp_s": 130.0
+        },
+        {
+          "count": 2,
+          "timestamp_s": 185.0
+        }
+      ]
+    },
+    "raw": {
+      "final_count": 3,
+      "intervals": [
+        {
+          "confirmed_at_s": 0.0,
+          "confirmed_end_at_s": 1.001,
+          "end_censored": false,
+          "end_s": 1.001,
+          "start_s": 0.0
+        },
+        {
+          "confirmed_at_s": 82.082,
+          "confirmed_end_at_s": 98.098,
+          "end_censored": false,
+          "end_s": 98.098,
+          "start_s": 82.082
+        },
+        {
+          "confirmed_at_s": 100.1,
+          "confirmed_end_at_s": 124.124,
+          "end_censored": false,
+          "end_s": 124.124,
+          "start_s": 100.1
+        }
+      ],
+      "query_counts": [
+        {
+          "count": 1,
+          "timestamp_s": 20.0
+        },
+        {
+          "count": 1,
+          "timestamp_s": 60.0
+        },
+        {
+          "count": 2,
+          "timestamp_s": 90.0
+        },
+        {
+          "count": 3,
+          "timestamp_s": 110.0
+        },
+        {
+          "count": 3,
+          "timestamp_s": 130.0
+        },
+        {
+          "count": 3,
+          "timestamp_s": 185.0
+        }
+      ]
+    }
+  },
+  "processing_throughput_fps": 1.0676859255946478,
+  "protocol": {
+    "config_sha256": "5acc0184ae9219f192a610be9d0eb990a8f4b672360d93dddeae7e7289fb8466",
+    "descriptions": [
+      "A teaching presenter beside a whiteboard or teaching board.",
+      "An inserted movie or performance scene, not the teaching presenter.",
+      "A blank screen or transition where neither scene is visible.",
+      "The image is too ambiguous to decide among the other categories."
+    ],
+    "input_frames": 1,
+    "manifest_sha256": "5a08c8a330eddb07e23a3616c561db7cfb7541d01872d6ff89da209c24fdb6a1",
+    "max_new_tokens": 8,
+    "model_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+    "option_order": "original",
+    "question": "Which description best matches the visible image?",
+    "seed": 42,
+    "timestamp_text": false,
+    "unknown_policy": "hold active state; reset pending confirmation streaks",
+    "version": "event-state-v1"
+  },
+  "scope": "Single known-video causal diagnostic;185calls differ from1call/8image baselines",
+  "total_input_images": 185
+}

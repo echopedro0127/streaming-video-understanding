@@ -1,6 +1,11 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
-Latest: [human-reviewable perception probe](experiments/2026-10-26/perception-probe/README.md),
+Latest: [continuous event-state diagnostic](experiments/2026-10-26/event-state/README.md),
+185 frame calls on one known video; raw/debounced counts3/2 against endpoint QA
+truth2. Compute/history/prompt/resolution differ from direct QA; human event
+intervals are pending. This is not a benchmark accuracy or speedup claim.
+
+Previous: [human-reviewable perception probe](experiments/2026-10-26/perception-probe/README.md),
 24 frames / 48 generations; semantic option-cycle consistency 23/24.
 Original human labels score23/24 and22/24; after explicit posthoc user adjudication,
 v2 scores24/24 and23/24. See [revision provenance and limitations](experiments/2026-10-26/perception-probe/human-review-v2/README.md).
