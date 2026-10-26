@@ -24,7 +24,7 @@ different conventions silently. Human metrics stay null until submitted.
 
 - [x] Verify answer-independent selection, annotation/source hashes, only allowed
   config differences, and focused existing event-state tests.
-- [ ] Freeze config/cohort commit before inference. Prepare three clipped videos,
+- [x] Freeze config/cohort commit before inference. Prepare three clipped videos,
   manifests and local blinded index; check exact duration and frame counts.
 - [ ] Sequentially run591classifications; replay/source/prompt/mapping/state/cost
   audit and unchanged full resumes. No code/rule tuning against these results.
@@ -36,3 +36,8 @@ different conventions silently. Human metrics stay null until submitted.
 Before inference:all3configs validate and only allowed fields differ; annotation
 SHA matches; sources have distinct declared SHA256. Existing17event-state tests
 pass. No implementation changes or additional dependencies in this stage.
+
+Additional diagnostic declared before inference: distinguish initial black-frame
+candidate differences from later classification flicker. If benefits are confined
+to startup artifacts, do not generalize them to all temporal memory errors.
+No black-frame filter or other policy is introduced into this frozen experiment.
