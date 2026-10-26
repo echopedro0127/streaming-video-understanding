@@ -30,13 +30,19 @@ Do not inject these observations, GT or textual event summaries into inference.
   implement optional mode in `evaluation/context_probe.py` and
   `scripts/run_context_coverage.py`, with new protocol version/hash/output.
 - [x] Run full tests and independent review. Freeze thresholds before inference.
-- [ ] Run3QA smoke, verify unchanged resume, then complete20QA/60generations.
-- [ ] Audit old Recent-8 and prefix controls, nofuture/B8/capacity/order/errors,
+- [x] Run3QA smoke, verify unchanged resume, then complete20QA/60generations.
+- [x] Audit old Recent-8 and prefix controls, nofuture/B8/capacity/order/errors,
   paired accuracy and latency. Document negative as well as positive outcomes.
-- [ ] Publish small summaries, audit and review queue; update status/plan and
+- [x] Publish small summaries, audit and review queue; update status/plan and
   sync existing feature branch. Keep all original results unchanged.
 
 Pre-inference verification:503 tests passed. Independent review found one
 exceptional cleanup gap; two regression tests reproduced it before the fix.
 Rereview approved with no remaining P1/P2 issues. Threshold/cooldown frozen
 before smoke and not tuned against observed answers.
+
+Outcome: Change4/20 versus controls3/20;1helped0hurt, CI[0,+15]pp. Posthoc
+constant-C has identical per-QA correctness, so no verified memory improvement.
+All40 oldcontrol manifests/predictions reproduce; causal/budget/runtime audits0.
+Smoke/full resumes skip3/20 unchanged. Public results and pending-human evidence
+queue are in `experiments/2026-10-26/change-memory/`.

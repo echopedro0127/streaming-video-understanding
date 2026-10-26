@@ -24,6 +24,22 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Frame-change memory probe (2026-10-26)
+
+- Complete: same20QA/20videos, Recent-8 / Prefix-8 / Change-4+4,60generations.
+  Causal adjacent32x32RGB pixel difference, fixed0.08 threshold/2s cooldown,
+  four recent and four top-scored historical frames; no new dependencies.
+- Change4/20(20%) versus controls3/20(15%); helped1/hurt0, CI95[0,+15]pp.
+  Posthoc constant-C gets the same4/20 and identical correctness vector;
+  no verified memory gain or semantic event-counting claim.
+- Audit/runtime violations0;40historical control predictions/manifests match.
+  Change bank peak8images; paired diagnostic capacity bound32+incoming,
+  excluding decoder/framework buffers. Smoke/full resume skip3/20 unchanged.
+- Full suite503passed. Review fixed exceptional cleanup paths before inference.
+  Human event annotations remain pending. Next priority: visual sensitivity and
+  option-order controls, then verified event evidence before expanding/tuning.
+- Artifacts: `experiments/2026-10-26/change-memory/README.md`.
+
 ### Causal temporal coverage probe (2026-10-26)
 
 - Complete: frozen20QA/20videos, threeMCQconditions,60generations. SameB8/model;

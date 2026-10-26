@@ -1,5 +1,9 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
+Latest follow-up: [frame-change memory diagnostic](experiments/2026-10-26/change-memory/README.md),
+20 QA / 60 generations. Change-4+4 scores 20% versus 15% for controls, but a
+posthoc constant-C rule matches its correctness vector; no stable gain established.
+
 Latest diagnostic (2026-10-26): fixed8-frame temporal coverage on20countingQA,
 60generations; Recent-8 /60s bins /prefix bins all3/20(15%). Wider temporal span
 alone did not improve this pilot. See [protocol, audit and limitations](experiments/2026-10-26/context-coverage/README.md).
