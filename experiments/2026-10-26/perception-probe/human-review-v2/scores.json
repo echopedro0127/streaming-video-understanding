@@ -1,0 +1,32 @@
+{
+  "annotation_source": "human_self_reported",
+  "binary_balanced_recall": 1.0,
+  "conditions": {
+    "option-cycle": {
+      "accuracy": 0.9583333333333334,
+      "binary_balanced_recall": 0.875,
+      "per_class_recall": {
+        "inserted_scene": 0.75,
+        "presenter": 1.0
+      }
+    },
+    "original": {
+      "accuracy": 1.0,
+      "binary_balanced_recall": 1.0,
+      "per_class_recall": {
+        "inserted_scene": 1.0,
+        "presenter": 1.0
+      }
+    }
+  },
+  "human_category_counts": {
+    "inserted_scene": 4,
+    "presenter": 20
+  },
+  "labels_sha256": "036b85aa5e1b2c75af372bf75cb7f596fc2733ca6f4951f40565e6b34a814a0a",
+  "manifest_sha256": "11623fac36c397bce2408ffa263536e0fa7fcde1ee972fc387b70e0df30184d9",
+  "num_frames": 24,
+  "predictions_sha256": "c1e532880ca05b5d320df7dd67044ef99ee5477655558bd05b5dae857b907148",
+  "resolved_coverage": 1.0,
+  "resolved_frames": 24
+}

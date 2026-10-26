@@ -2,7 +2,8 @@
 
 Human review update: the user submitted24labels. [Submitted-v1 scoring and
 failure review](human-review-v1/README.md) gives23/24 original and22/24 cycled
-accuracy. One dark-frame label awaits adjudication; submitted labels are retained.
+accuracy. The user subsequently confirmed the dark frame as presenter:
+[posthoc v2](human-review-v2/README.md) scores24/24 and23/24; v1 is retained.
 The original unlabelled summary is preserved as the pre-review snapshot.
 
 ## Scope
@@ -123,8 +124,8 @@ Same cached model revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`,
 RTX 3060 Laptop 6GB, torch 2.14.0+cu126, transformers 5.16.1, Pillow 12.3.0.
 24 JPEGs occupy 1533124 bytes; no model/dependency download was required.
 
-Human annotation/scoring is now complete for submitted-v1; one label adjudication
-and continuous-video event boundary/counting-convention verification remain.
+Human annotation/scoring and explicit v2 adjudication are complete; continuous-
+video event boundary/counting-convention verification remains.
 Only after this evidence should a
 perception-to-cumulative-state pipeline be tested. Frame categories alone do not
 certify semantic event boundaries or counts, and this 24-frame review is not the

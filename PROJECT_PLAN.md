@@ -24,6 +24,15 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### User label adjudication v2 (2026-10-26)
+
+- Final user confirmation:145.145s is presenter. Exactly1label changes in a
+  separate v2; submitted-v1 labels/scores remain unchanged.
+- v2 original24/24, cycle23/24,20presenter/4inserted; no transition examples.
+  Explicitly posthoc after error review, not a general perfect-recognition claim
+  or a video-QA improvement. Model predictions unchanged; no new inference.
+- Artifacts: `experiments/2026-10-26/perception-probe/human-review-v2/`.
+
 ### Human-labelled perception scoring (2026-10-26)
 
 - User submitted24labels, all image-manifest bindings valid:19presenter,

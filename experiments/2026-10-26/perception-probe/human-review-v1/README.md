@@ -1,5 +1,9 @@
 # Submitted human-label scores (v1)
 
+Adjudication update: the user finalized the dark frame as presenter. See
+[v2 revision and scores](../human-review-v2/README.md); v1 below is preserved as
+submitted and is not silently overwritten.
+
 The user exported24frame labels from the local review page after inference had
 already completed. Source is a single reviewer's self-reported human annotation,
 not independently authenticated or double-blind ground truth. Frame-level model
