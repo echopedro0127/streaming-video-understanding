@@ -1,0 +1,25 @@
+{
+  "label_revision": "submitted-v1",
+  "cases": [
+    {
+      "frame_key": "6125af9d0ad8",
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 85.085,
+      "frame_id": 85,
+      "human_category": "inserted_scene",
+      "original_category": "inserted_scene",
+      "option_cycle_category": "presenter",
+      "analysis": "Dancers visible; cycled options change the category. No internal mechanism established."
+    },
+    {
+      "frame_key": "302436c8409c",
+      "sample_id": "Real-Time Visual Understanding_sample_80_2",
+      "timestamp_s": 145.145,
+      "frame_id": 145,
+      "human_category": "transition",
+      "original_category": "presenter",
+      "option_cycle_category": "presenter",
+      "analysis": "Presenter and board remain visible in low light; submitted label preserved pending user adjudication."
+    }
+  ]
+}

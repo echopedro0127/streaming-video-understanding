@@ -1,0 +1,20 @@
+{
+  "label_revision": "submitted-v1",
+  "annotation_source": "human_self_reported",
+  "num_labels": 24,
+  "resolved_labels": 24,
+  "num_videos": 3,
+  "label_counts": {"presenter": 19, "inserted_scene": 4, "transition": 1},
+  "missing_labels": 0,
+  "duplicate_labels": 0,
+  "manifest_mismatches": 0,
+  "original_correct": 23,
+  "option_cycle_correct": 22,
+  "manifest_sha256": "11623fac36c397bce2408ffa263536e0fa7fcde1ee972fc387b70e0df30184d9",
+  "labels_sha256": "1cc87b94525e8e9ece399cd2dfbc1c9019dab47c8cabeae7aa78a31728d5f322",
+  "predictions_sha256": "c1e532880ca05b5d320df7dd67044ef99ee5477655558bd05b5dae857b907148",
+  "new_inference_calls": 0,
+  "label_adjudication_pending": ["302436c8409c"],
+  "reviewer_identity_published": false,
+  "scope": "Small purposeful single-frame recognition probe; not StreamingBench QA accuracy"
+}

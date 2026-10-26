@@ -24,6 +24,19 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Human-labelled perception scoring (2026-10-26)
+
+- User submitted24labels, all image-manifest bindings valid:19presenter,
+  4inserted_scene,1transition; coverage24/24. No new model calls or training.
+- Submitted-v1: original23/24(95.8%), cycled22/24(91.7%). Presenter19/19 both;
+  inserted_scene4/4 versus3/4; transition0/1 both. Binary balanced recall excludes
+  transition and is not overall accuracy. Small purposeful3-video probe only.
+- One dark presenter/board frame submitted as transition awaits user adjudication;
+  preserve original labels/scores and report any later revision separately.
+- Pre-label snapshots/raw predictions unchanged. Next: continuous-event evidence,
+  then perception-to-cumulative-state validation; not a500QA accuracy gain.
+- Artifacts: `experiments/2026-10-26/perception-probe/human-review-v1/`.
+
 ### Human-reviewable perception probe (2026-10-26)
 
 - Implemented prepare/run/score CLI and blinded local category-review page.
@@ -31,7 +44,7 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
  portable timing-free selection/image-hash manifest, images remain local.
 - Completed24pairs/48generations with unchanged SmolVLM2-500M. Parse48/48,
  semantic category consistency23/24, displayed-letter stickiness0/24.
- Accuracy remains null; human frame annotation/scoring is pending.
+ Pre-label summary retains null accuracy; submitted human scores are separate.
 - Source/image/selection/causal/prompt/mapping/protocol/runtime violations0;
  counterbalanced12/12; resume skipped24 unchanged.526tests passed; code and
  independent artifact reviews passed. Browser export logic tested with Node;

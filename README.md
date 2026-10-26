@@ -2,8 +2,9 @@
 
 Latest: [human-reviewable perception probe](experiments/2026-10-26/perception-probe/README.md),
 24 frames / 48 generations; semantic option-cycle consistency 23/24.
-Recognition accuracy is unmeasured pending actual human review; a local blinded
-label page and hash-bound scorer are ready.
+User-submitted labels now score 23/24 original and22/24 cycled; one label remains
+under adjudication. See [human scoring and limitations](experiments/2026-10-26/perception-probe/human-review-v1/README.md).
+This is a24-frame perception probe, not the500-QA video benchmark.
 
 Previous: [visual and option sensitivity diagnostic](experiments/2026-10-26/visual-sensitivity/README.md),
 20 QA / 80 generations. Original/blank/reverse each score 20%; option-cycle 40%,

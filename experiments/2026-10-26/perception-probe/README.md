@@ -1,4 +1,9 @@
-# Single-frame perception probe: human review pending
+# Single-frame perception probe
+
+Human review update: the user submitted24labels. [Submitted-v1 scoring and
+failure review](human-review-v1/README.md) gives23/24 original and22/24 cycled
+accuracy. One dark-frame label awaits adjudication; submitted labels are retained.
+The original unlabelled summary is preserved as the pre-review snapshot.
 
 ## Scope
 
@@ -39,7 +44,7 @@ Image files and human labels remain local under ignored `results/`.
 | Same displayed letter after option cycle | 0/24 |
 | Original mean / P95 model latency | 1.012s / 1.674s |
 | Cycle mean / P95 model latency | 0.915s / 1.393s |
-| Recognition accuracy | **Not measured: human labels pending** |
+| Recognition accuracy | See separate submitted-v1 human scores |
 
 This simple scene task shows substantially different option-remapping behavior
 from the earlier counting diagnostic. Agreement is not correctness; it does not
@@ -118,8 +123,9 @@ Same cached model revision `7b375e1b73b11138ff12fe22c8f2822d8fe03467`,
 RTX 3060 Laptop 6GB, torch 2.14.0+cu126, transformers 5.16.1, Pillow 12.3.0.
 24 JPEGs occupy 1533124 bytes; no model/dependency download was required.
 
-Pending: actual human frame annotation and scores, then continuous-video event
-boundary/counting-convention verification. Only after this evidence should a
+Human annotation/scoring is now complete for submitted-v1; one label adjudication
+and continuous-video event boundary/counting-convention verification remain.
+Only after this evidence should a
 perception-to-cumulative-state pipeline be tested. Frame categories alone do not
 certify semantic event boundaries or counts, and this 24-frame review is not the
 planned 20-30-case human video-QA failure analysis.
