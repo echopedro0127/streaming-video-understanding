@@ -1,0 +1,104 @@
+{
+  "dark_presenter_check": {
+    "gated": false,
+    "image_sha256": "c190deebc4f651384755919fc2f443edd1f82819ad59b79aa037d88e4ce59087",
+    "rgb_extrema": [
+      [
+        0,
+        255
+      ],
+      [
+        0,
+        252
+      ],
+      [
+        0,
+        241
+      ]
+    ],
+    "timestamp_s": 145.145
+  },
+  "gated_timestamps_s": [
+    0.0
+  ],
+  "new_model_calls": 0,
+  "num_frames": 185,
+  "scope": "Separate known development video; excluded from three-video aggregate",
+  "scores": {
+    "annotation_source": "human_self_reported",
+    "counting_convention": "split_on_presenter_return",
+    "policies": {
+      "black_gate_raw": {
+        "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+        "count_mae": 0.0,
+        "event_f1": 1.0,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "event_true_positives": 2,
+        "mean_confirmation_delay_s": 0.2874999999999943,
+        "predicted_events": 2,
+        "query_accuracy": 1.0,
+        "query_ground_truth": [
+          0,
+          0,
+          1,
+          2,
+          2,
+          2
+        ]
+      },
+      "debounced": {
+        "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+        "count_mae": 0.0,
+        "event_f1": 1.0,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "event_true_positives": 2,
+        "mean_confirmation_delay_s": 1.288499999999999,
+        "predicted_events": 2,
+        "query_accuracy": 1.0,
+        "query_ground_truth": [
+          0,
+          0,
+          1,
+          2,
+          2,
+          2
+        ]
+      },
+      "raw": {
+        "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+        "count_mae": 1.0,
+        "event_f1": 0.8,
+        "event_precision": 0.6666666666666666,
+        "event_recall": 1.0,
+        "event_true_positives": 2,
+        "mean_confirmation_delay_s": 0.2874999999999943,
+        "predicted_events": 3,
+        "query_accuracy": 0.0,
+        "query_ground_truth": [
+          0,
+          0,
+          1,
+          2,
+          2,
+          2
+        ]
+      }
+    },
+    "query_times_s": [
+      20.0,
+      60.0,
+      90.0,
+      110.0,
+      130.0,
+      185.0
+    ],
+    "true_events": 2
+  },
+  "source_hashes": [
+    "5a08c8a330eddb07e23a3616c561db7cfb7541d01872d6ff89da209c24fdb6a1",
+    "6613ea592d6387e11ff5735f45b0e97136c210771590be400457fc8ab6bc4346",
+    "2cd2abc327df071d889928d662e68d1d2a506189957a64bb6f9890a202a5ffce"
+  ]
+}

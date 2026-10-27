@@ -24,6 +24,18 @@ Create a public-ready, reproducible streaming video QA evaluator that measures w
 
 ## Research scope
 
+### Strict black-frame posthoc control completed (2026-10-27)
+
+- Source-locked591-frame replay adds exact-zero RGB gate+raw1/1 without changing
+  original sources or making new model calls. Only the three startup frames gate.
+- Event micro precision/recall100%,18-query MAE0, matching confirmation2/2;
+  signed media confirmation delay.405s versus1.406s. Dense correct588/591 versus
+ 586/591. No measured inference speed or GPU savings.
+- Separate development80check:only startup gates; dark presenter145.145s passes.
+  This inspected-cohort posthoc control explains artifact suppression, not general
+  temporal-memory efficacy. Next:freeze all three rules for new challenge cases.
+- Artifacts:`experiments/2026-10-27/black-frame-control/README.md`.
+
 ### Three-video human validation completed (2026-10-26)
 
 - All3human exports valid and convention-consistent,8events/591timestamps;

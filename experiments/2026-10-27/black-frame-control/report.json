@@ -1,0 +1,3983 @@
+{
+  "aggregate": {
+    "black_gate_raw": {
+      "dense_correct": 588,
+      "dense_count_mae": 0.005076142131979695,
+      "dense_queries": 591,
+      "event_tp": 8,
+      "human_events": 8,
+      "mean_signed_media_confirmation_delay_s": 0.40499999999999137,
+      "micro_f1": 1.0,
+      "micro_precision": 1.0,
+      "micro_recall": 1.0,
+      "predicted_events": 8,
+      "primary_correct": 18,
+      "primary_count_mae": 0.0,
+      "primary_queries": 18
+    },
+    "debounced": {
+      "dense_correct": 586,
+      "dense_count_mae": 0.008460236886632826,
+      "dense_queries": 591,
+      "event_tp": 8,
+      "human_events": 8,
+      "mean_signed_media_confirmation_delay_s": 1.4059999999999944,
+      "micro_f1": 1.0,
+      "micro_precision": 1.0,
+      "micro_recall": 1.0,
+      "predicted_events": 8,
+      "primary_correct": 18,
+      "primary_count_mae": 0.0,
+      "primary_queries": 18
+    },
+    "raw": {
+      "dense_correct": 0,
+      "dense_count_mae": 1.0050761421319796,
+      "dense_queries": 591,
+      "event_tp": 8,
+      "human_events": 8,
+      "mean_signed_media_confirmation_delay_s": 0.40499999999999137,
+      "micro_f1": 0.8421052631578947,
+      "micro_precision": 0.7272727272727273,
+      "micro_recall": 1.0,
+      "predicted_events": 11,
+      "primary_correct": 0,
+      "primary_count_mae": 1.0,
+      "primary_queries": 18
+    }
+  },
+  "cases": [
+    {
+      "dense": {
+        "black_gate_raw": {
+          "absolute_error_sum": 0,
+          "correct": 185,
+          "mismatches": [],
+          "num_queries": 185
+        },
+        "debounced": {
+          "absolute_error_sum": 2,
+          "correct": 183,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 0,
+              "target": 1,
+              "timestamp_s": 46.046
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 2,
+              "timestamp_s": 140.14
+            }
+          ],
+          "num_queries": 185
+        },
+        "raw": {
+          "absolute_error_sum": 185,
+          "correct": 0,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 0.0
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 1.001
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 2.002
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 3.003
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 4.004
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 5.005
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 6.006
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 7.007
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 8.008
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 9.009
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 10.01
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 11.011
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 12.012
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 13.013
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 14.014
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 15.015
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 16.016
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 17.017
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 18.018
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 19.019
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 20.02
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 21.021
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 22.022
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 23.023
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 24.024
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 25.025
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 26.026
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 27.027
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 28.028
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 29.029
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 30.03
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 31.031
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 32.032
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 33.033
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 34.034
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 35.035
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 36.036
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 37.037
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 38.038
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 39.039
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 40.04
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 41.041
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 42.042
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 43.043
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 44.044
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 45.045
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 46.046
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 47.047
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 48.048
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 49.049
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 50.05
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 51.051
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 52.052
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 53.053
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 54.054
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 55.055
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 56.056
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 57.057
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 58.058
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 59.059
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 60.06
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 61.061
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 62.062
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 63.063
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 64.064
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 65.065
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 66.066
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 67.067
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 68.068
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 69.069
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 70.07
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 71.071
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 72.072
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 73.073
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 74.074
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 75.075
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 76.076
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 77.077
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 78.078
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 79.079
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 80.08
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 81.081
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 82.082
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 83.083
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 84.084
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 85.085
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 86.086
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 87.087
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 88.088
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 89.089
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 90.09
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 91.091
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 92.092
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 93.093
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 94.094
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 95.095
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 96.096
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 97.097
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 98.098
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 99.099
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 100.1
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 101.101
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 102.102
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 103.103
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 104.104
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 105.105
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 106.106
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 107.107
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 108.108
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 109.109
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 110.11
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 111.111
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 112.112
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 113.113
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 114.114
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 115.115
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 116.116
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 117.117
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 118.118
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 119.119
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 120.12
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 121.121
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 122.122
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 123.123
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 124.124
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 125.125
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 126.126
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 127.127
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 128.128
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 129.129
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 130.13
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 131.131
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 132.132
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 133.133
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 134.134
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 135.135
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 136.136
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 137.137
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 138.138
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 139.139
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 140.14
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 141.141
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 142.142
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 143.143
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 144.144
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 145.145
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 146.146
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 147.147
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 148.148
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 149.149
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 150.15
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 151.151
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 152.152
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 153.153
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 154.154
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 155.155
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 156.156
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 157.157
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 158.158
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 159.159
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 160.16
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 161.161
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 162.162
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 163.163
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 164.164
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 165.165
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 166.166
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 167.167
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 168.168
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 169.169
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 170.17
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 171.171
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 172.172
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 173.173
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 174.174
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 175.175
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 176.176
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 177.177
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 178.178
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 179.179
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 180.18
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 181.181
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 182.182
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 183.183
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 184.184
+            }
+          ],
+          "num_queries": 185
+        }
+      },
+      "gated_frames": [
+        {
+          "frame_id": 0,
+          "image_sha256": "a95396b32f647f274cd393c12f1305c267b0c6bbbd70d053a5e92a12a811d9f4",
+          "original_category": "inserted_scene",
+          "timestamp_s": 0.0
+        }
+      ],
+      "labels_sha256": "ea931d2c2726b118b224ab3f480d5bb38dd48d00069053d84ff0ecfaffea5b07",
+      "manifest_sha256": "85e51ae6bba974b3da22bd4a12ec71b84987450975b84b7f100b13e47e36e8b5",
+      "num_frames": 185,
+      "predictions_sha256": "474b086c1d64727e851037fd50a27fa82ef74fc63c317c85497c5b37d479fbfe",
+      "scores": {
+        "annotation_source": "human_self_reported",
+        "counting_convention": "split_on_presenter_return",
+        "policies": {
+          "black_gate_raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 2,
+            "mean_confirmation_delay_s": 0.5929999999999893,
+            "predicted_events": 2,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              1,
+              2,
+              2
+            ]
+          },
+          "debounced": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 2,
+            "mean_confirmation_delay_s": 1.5939999999999905,
+            "predicted_events": 2,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              1,
+              2,
+              2
+            ]
+          },
+          "raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 1.0,
+            "event_f1": 0.8,
+            "event_precision": 0.6666666666666666,
+            "event_recall": 1.0,
+            "event_true_positives": 2,
+            "mean_confirmation_delay_s": 0.5929999999999893,
+            "predicted_events": 3,
+            "query_accuracy": 0.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              1,
+              2,
+              2
+            ]
+          }
+        },
+        "query_times_s": [
+          0.0,
+          37.0,
+          74.0,
+          111.0,
+          148.0,
+          185.0
+        ],
+        "true_events": 2
+      },
+      "video_id": "sample_79"
+    },
+    {
+      "dense": {
+        "black_gate_raw": {
+          "absolute_error_sum": 2,
+          "correct": 201,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 21.021
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 50.05
+            }
+          ],
+          "num_queries": 203
+        },
+        "debounced": {
+          "absolute_error_sum": 1,
+          "correct": 202,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 3,
+              "timestamp_s": 170.17
+            }
+          ],
+          "num_queries": 203
+        },
+        "raw": {
+          "absolute_error_sum": 205,
+          "correct": 0,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 0.0
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 1.001
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 2.002
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 3.003
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 4.004
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 5.005
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 6.006
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 7.007
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 8.008
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 9.009
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 10.01
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 11.011
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 12.012
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 13.013
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 14.014
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 15.015
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 16.016
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 17.017
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 18.018
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 19.019
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 20.02
+            },
+            {
+              "absolute_error": 2,
+              "count": 2,
+              "target": 0,
+              "timestamp_s": 21.021
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 22.022
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 23.023
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 24.024
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 25.025
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 26.026
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 27.027
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 28.028
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 29.029
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 30.03
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 31.031
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 32.032
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 33.033
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 34.034
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 35.035
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 36.036
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 37.037
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 38.038
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 39.039
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 40.04
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 41.041
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 42.042
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 43.043
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 44.044
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 45.045
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 46.046
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 47.047
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 48.048
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 49.049
+            },
+            {
+              "absolute_error": 2,
+              "count": 3,
+              "target": 1,
+              "timestamp_s": 50.05
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 51.051
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 52.052
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 53.053
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 54.054
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 55.055
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 56.056
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 57.057
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 58.058
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 59.059
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 60.06
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 61.061
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 62.062
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 63.063
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 64.064
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 65.065
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 66.066
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 67.067
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 68.068
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 69.069
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 70.07
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 71.071
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 72.072
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 73.073
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 74.074
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 75.075
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 76.076
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 77.077
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 78.078
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 79.079
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 80.08
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 81.081
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 82.082
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 83.083
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 84.084
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 85.085
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 86.086
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 87.087
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 88.088
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 89.089
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 90.09
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 91.091
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 92.092
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 93.093
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 94.094
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 95.095
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 96.096
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 97.097
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 98.098
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 99.099
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 100.1
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 101.101
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 102.102
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 103.103
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 104.104
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 105.105
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 106.106
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 107.107
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 108.108
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 109.109
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 110.11
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 111.111
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 112.112
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 113.113
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 114.114
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 115.115
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 116.116
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 117.117
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 118.118
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 119.119
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 120.12
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 121.121
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 122.122
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 123.123
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 124.124
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 125.125
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 126.126
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 127.127
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 128.128
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 129.129
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 130.13
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 131.131
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 132.132
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 133.133
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 134.134
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 135.135
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 136.136
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 137.137
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 138.138
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 139.139
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 140.14
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 141.141
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 142.142
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 143.143
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 144.144
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 145.145
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 146.146
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 147.147
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 148.148
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 149.149
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 150.15
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 151.151
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 152.152
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 153.153
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 154.154
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 155.155
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 156.156
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 157.157
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 158.158
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 159.159
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 160.16
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 161.161
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 162.162
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 163.163
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 164.164
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 165.165
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 166.166
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 167.167
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 168.168
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 169.169
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 170.17
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 171.171
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 172.172
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 173.173
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 174.174
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 175.175
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 176.176
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 177.177
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 178.178
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 179.179
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 180.18
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 181.181
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 182.182
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 183.183
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 184.184
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 185.185
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 186.186
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 187.187
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 188.188
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 189.189
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 190.19
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 191.191
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 192.192
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 193.193
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 194.194
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 195.195
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 196.196
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 197.197
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 198.198
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 199.199
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 200.2
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 201.201
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 202.202
+            }
+          ],
+          "num_queries": 203
+        }
+      },
+      "gated_frames": [
+        {
+          "frame_id": 0,
+          "image_sha256": "a95396b32f647f274cd393c12f1305c267b0c6bbbd70d053a5e92a12a811d9f4",
+          "original_category": "inserted_scene",
+          "timestamp_s": 0.0
+        }
+      ],
+      "labels_sha256": "a0f7c5e3d6d94b5f6213556d03585570d72bee4a9476b0ed4b4d5cf4b8950238",
+      "manifest_sha256": "1e8fd26ed74f746b571ff27d63926e644885f32b1f69983dfd86f5f9afe4869b",
+      "num_frames": 203,
+      "predictions_sha256": "cc32eee904005b3f704fa0a1ac6d23dad3c58444f39ac0e0a663c1109805ae23",
+      "scores": {
+        "annotation_source": "human_self_reported",
+        "counting_convention": "split_on_presenter_return",
+        "policies": {
+          "black_gate_raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 0.18033333333332754,
+            "predicted_events": 3,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              1,
+              2,
+              2,
+              2,
+              3
+            ]
+          },
+          "debounced": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 1.18133333333333,
+            "predicted_events": 3,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              1,
+              2,
+              2,
+              2,
+              3
+            ]
+          },
+          "raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 1.0,
+            "event_f1": 0.8571428571428571,
+            "event_precision": 0.75,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 0.18033333333332754,
+            "predicted_events": 4,
+            "query_accuracy": 0.0,
+            "query_ground_truth": [
+              0,
+              1,
+              2,
+              2,
+              2,
+              3
+            ]
+          }
+        },
+        "query_times_s": [
+          0.0,
+          40.6,
+          81.2,
+          121.8,
+          162.4,
+          203.0
+        ],
+        "true_events": 3
+      },
+      "video_id": "sample_75"
+    },
+    {
+      "dense": {
+        "black_gate_raw": {
+          "absolute_error_sum": 1,
+          "correct": 202,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 50.05
+            }
+          ],
+          "num_queries": 203
+        },
+        "debounced": {
+          "absolute_error_sum": 2,
+          "correct": 201,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 2,
+              "timestamp_s": 82.082
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 3,
+              "timestamp_s": 130.13
+            }
+          ],
+          "num_queries": 203
+        },
+        "raw": {
+          "absolute_error_sum": 204,
+          "correct": 0,
+          "mismatches": [
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 0.0
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 1.001
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 2.002
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 3.003
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 4.004
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 5.005
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 6.006
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 7.007
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 8.008
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 9.009
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 10.01
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 11.011
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 12.012
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 13.013
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 14.014
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 15.015
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 16.016
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 17.017
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 18.018
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 19.019
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 20.02
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 21.021
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 22.022
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 23.023
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 24.024
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 25.025
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 26.026
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 27.027
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 28.028
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 29.029
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 30.03
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 31.031
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 32.032
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 33.033
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 34.034
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 35.035
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 36.036
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 37.037
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 38.038
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 39.039
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 40.04
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 41.041
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 42.042
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 43.043
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 44.044
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 45.045
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 46.046
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 47.047
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 48.048
+            },
+            {
+              "absolute_error": 1,
+              "count": 1,
+              "target": 0,
+              "timestamp_s": 49.049
+            },
+            {
+              "absolute_error": 2,
+              "count": 2,
+              "target": 0,
+              "timestamp_s": 50.05
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 51.051
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 52.052
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 53.053
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 54.054
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 55.055
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 56.056
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 57.057
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 58.058
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 59.059
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 60.06
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 61.061
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 62.062
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 63.063
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 64.064
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 65.065
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 66.066
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 67.067
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 68.068
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 69.069
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 70.07
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 71.071
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 72.072
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 73.073
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 74.074
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 75.075
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 76.076
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 77.077
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 78.078
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 79.079
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 80.08
+            },
+            {
+              "absolute_error": 1,
+              "count": 2,
+              "target": 1,
+              "timestamp_s": 81.081
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 82.082
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 83.083
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 84.084
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 85.085
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 86.086
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 87.087
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 88.088
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 89.089
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 90.09
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 91.091
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 92.092
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 93.093
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 94.094
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 95.095
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 96.096
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 97.097
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 98.098
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 99.099
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 100.1
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 101.101
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 102.102
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 103.103
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 104.104
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 105.105
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 106.106
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 107.107
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 108.108
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 109.109
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 110.11
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 111.111
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 112.112
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 113.113
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 114.114
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 115.115
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 116.116
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 117.117
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 118.118
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 119.119
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 120.12
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 121.121
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 122.122
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 123.123
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 124.124
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 125.125
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 126.126
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 127.127
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 128.128
+            },
+            {
+              "absolute_error": 1,
+              "count": 3,
+              "target": 2,
+              "timestamp_s": 129.129
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 130.13
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 131.131
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 132.132
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 133.133
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 134.134
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 135.135
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 136.136
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 137.137
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 138.138
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 139.139
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 140.14
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 141.141
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 142.142
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 143.143
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 144.144
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 145.145
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 146.146
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 147.147
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 148.148
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 149.149
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 150.15
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 151.151
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 152.152
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 153.153
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 154.154
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 155.155
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 156.156
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 157.157
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 158.158
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 159.159
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 160.16
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 161.161
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 162.162
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 163.163
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 164.164
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 165.165
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 166.166
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 167.167
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 168.168
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 169.169
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 170.17
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 171.171
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 172.172
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 173.173
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 174.174
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 175.175
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 176.176
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 177.177
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 178.178
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 179.179
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 180.18
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 181.181
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 182.182
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 183.183
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 184.184
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 185.185
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 186.186
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 187.187
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 188.188
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 189.189
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 190.19
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 191.191
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 192.192
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 193.193
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 194.194
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 195.195
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 196.196
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 197.197
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 198.198
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 199.199
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 200.2
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 201.201
+            },
+            {
+              "absolute_error": 1,
+              "count": 4,
+              "target": 3,
+              "timestamp_s": 202.202
+            }
+          ],
+          "num_queries": 203
+        }
+      },
+      "gated_frames": [
+        {
+          "frame_id": 0,
+          "image_sha256": "a95396b32f647f274cd393c12f1305c267b0c6bbbd70d053a5e92a12a811d9f4",
+          "original_category": "inserted_scene",
+          "timestamp_s": 0.0
+        }
+      ],
+      "labels_sha256": "e691bec1d099a887afdf63e4e8351c519fefe7fbb2de0ce34df93fb43e3ae08d",
+      "manifest_sha256": "40d0242cf1bc82191a14bf0cd55aa52aa4560b6a721a0ccb999ca04ed5ad3c6f",
+      "num_frames": 203,
+      "predictions_sha256": "541b6f88b5e07fba07a505ede1e7992033bf7976ea88df6b591c7f8f26537021",
+      "scores": {
+        "annotation_source": "human_self_reported",
+        "counting_convention": "split_on_presenter_return",
+        "policies": {
+          "black_gate_raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 0.5043333333333232,
+            "predicted_events": 3,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              2,
+              3,
+              3
+            ]
+          },
+          "debounced": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 0.0,
+            "event_f1": 1.0,
+            "event_precision": 1.0,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 1.505333333333328,
+            "predicted_events": 3,
+            "query_accuracy": 1.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              2,
+              3,
+              3
+            ]
+          },
+          "raw": {
+            "confirmation_delay_definition": "signed media time, not wall-clock end-to-end latency",
+            "count_mae": 1.0,
+            "event_f1": 0.8571428571428571,
+            "event_precision": 0.75,
+            "event_recall": 1.0,
+            "event_true_positives": 3,
+            "mean_confirmation_delay_s": 0.5043333333333232,
+            "predicted_events": 4,
+            "query_accuracy": 0.0,
+            "query_ground_truth": [
+              0,
+              0,
+              1,
+              2,
+              3,
+              3
+            ]
+          }
+        },
+        "query_times_s": [
+          0.0,
+          40.6,
+          81.2,
+          121.8,
+          162.4,
+          203.0
+        ],
+        "true_events": 3
+      },
+      "video_id": "sample_76"
+    }
+  ],
+  "delay_definition": "Signed media-time delay on IoU>=0.5 matched events; not live wall-clock latency",
+  "gate_rule": "Every decoded RGB channel value equals zero; any timestamp; supply unknown to raw1/1 counter",
+  "measured_gpu_savings": null,
+  "measured_runtime_savings": null,
+  "new_model_calls": 0,
+  "scope": "Posthoc artifact replay on previously inspected three-video cohort; no held-out claim",
+  "source_hashes_unchanged": true,
+  "unknown_policy": "hold active state; reset pending confirmation streaks",
+  "version": "exact-black-posthoc-v1"
+}

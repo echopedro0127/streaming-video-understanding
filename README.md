@@ -1,6 +1,12 @@
 # Streaming Video Understanding with Lightweight Temporal Memory
 
-Latest: [three-video human event validation](experiments/2026-10-26/event-state-validation/human-review-v1/README.md),
+Latest: [exact-black posthoc control](experiments/2026-10-27/black-frame-control/README.md).
+On the same inspected3-video/8-event cohort, gating only all-zero RGB frames
+matches confirmation's100%event precision/recall and18-query MAE0, with signed
+media confirmation delay0.405s versus1.406s. This explains startup-artifact gains;
+it is not new held-out validation or measured inference acceleration.
+
+Previous: [three-video human event validation](experiments/2026-10-26/event-state-validation/human-review-v1/README.md),
 8 labelled events / 591 frame classifications. Raw/confirmation precision is
 72.7%/100%, both recall100%; every gain is startup black-frame suppression and costs
 1.001s extra media confirmation delay. No general temporal-memory gain claimed.
